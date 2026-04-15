@@ -1,3 +1,10 @@
-#include "artifact.h"
+#include "Item.h"
 
-artifact::artifact() {}
+class Artifact : public Item {
+public:
+    
+    Artifact() : Item() {}
+
+    Artifact(string n, bool c): Item(n,c, "Artifact") {}
+};
+
