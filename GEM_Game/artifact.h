@@ -1,10 +1,12 @@
 #ifndef ARTIFACT_H
 #define ARTIFACT_H
 
-class artifact
-{
+#include "Item.h"
+
+class Artifact : public Item {
 public:
-    artifact();
+    Artifact();
+    Artifact(string n, bool c);
 };
 
-#endif // ARTIFACT_H
+#endif
