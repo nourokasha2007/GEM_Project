@@ -63,9 +63,6 @@ void Player::reset()
 {
     x = 0;
     y = 0;
-    score = 0;
-    hintsUsed = 0;
-    foundItems.clear();
 }
 
 int Player::getScore() const

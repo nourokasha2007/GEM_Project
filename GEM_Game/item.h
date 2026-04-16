@@ -18,6 +18,7 @@ public:
     string getName();
     bool isCollected();
     string getType();
+    void clear();
 };
 
 #endif
