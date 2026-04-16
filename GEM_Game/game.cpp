@@ -66,7 +66,6 @@ void Game::update(float diffTime)
 
 void Game::loadLevel(int levelindex)
 {
-    // 🔥 prevent memory leak
     if (currentLevel)
     {
         delete currentLevel;
@@ -126,4 +125,13 @@ Gamestate Game::getstate() const
 Game::~Game()
 {
     delete currentLevel;
+}
+Player& Game::getPlayer()
+{
+    return player;
+}
+
+int Game::getLevelIndex() const
+{
+    return currentLevelIndex;
 }

@@ -26,6 +26,7 @@ private:
     Inventory inventory;
     Level* currentLevel;
 
+
 public:
     Game();
     void startGame();
@@ -39,9 +40,10 @@ public:
     void collectItem(int index);
     void checkWin();
     void checkLose();
-
     Gamestate getstate() const;
     ~Game();
+    Player& getPlayer();
+    int getLevelIndex() const;
 };
 
 #endif
