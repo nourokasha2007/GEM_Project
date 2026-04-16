@@ -2,22 +2,46 @@
 #define GAMEWINDOW_H
 
 #include <QMainWindow>
+#include <QStackedWidget>
+#include <QLabel>
+#include <QTimer>
+#include <QKeyEvent>
+#include <QPushButton>
 
-QT_BEGIN_NAMESPACE
-namespace Ui {
-class MainWindow;
-}
-QT_END_NAMESPACE
+#include "Game.h"
 
-class MainWindow : public QMainWindow
+class GameWindow : public QMainWindow
 {
     Q_OBJECT
 
-public:
-    explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow() override;
+private:
+    Game game;
+
+    QStackedWidget *stack;
+
+    QWidget *startScreen;
+    QWidget *gameScreen;
+    QWidget *gameOverScreen;
+
+    QLabel *clockLabel;
+    QLabel *scoreLabel;
+    QLabel *statusLabel;
+
+    QTimer *timer;
+    int seconds;
 
 private:
-    Ui::MainWindow *ui;
+    void startGame();
+    void pauseGame();
+    void restartGame();
+    void exitGame();
+    void updateGame();
+
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+
+public:
+    GameWindow(QWidget *parent = nullptr);
 };
-#endif // GAMEWINDOW_H
+
+#endif
