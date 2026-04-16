@@ -35,6 +35,7 @@ public:
     string getType() {
         return type;
         }
+
 };
 
 

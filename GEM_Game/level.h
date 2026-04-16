@@ -1,10 +1,14 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 
-class level
+class Level
 {
 public:
-    level();
+    Level() = default;
+    virtual void setup() = 0;
+    virtual void update() = 0;
+
+    virtual ~Level() = default;
 };
 
-#endif // LEVEL_H
+#endif
