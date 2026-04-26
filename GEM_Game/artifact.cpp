@@ -1,6 +1,6 @@
 
 #include "artifact.h"
-#include "item.h"
+
 
 Artifact::Artifact() : Item() {}
 
