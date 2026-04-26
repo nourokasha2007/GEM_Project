@@ -1,7 +1,8 @@
 #ifndef ARTIFACT_H
 #define ARTIFACT_H
-
-#include "Item.h"
+#include <string>
+#include "item.h"
+using namespace std;
 
 class Artifact : public Item {
 public:

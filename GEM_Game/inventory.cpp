@@ -1,8 +1,9 @@
-#include "Inventory.h"
+#include "inventory.h"
 #include <iostream>
 using namespace std;
 
 void Inventory::addItem(Item* item) {
+    item->collect();
     items.push_back(item);
 }
 
@@ -22,4 +23,13 @@ int Inventory::countItem(string name) {
     }
 
     return count;
+}
+
+bool Inventory::hasItem(string name) {
+    for (int i = 0; i < items.size(); i++) {
+        if (items[i]->getName() == name) {
+            return true;
+        }
+    }
+    return false;
 }
