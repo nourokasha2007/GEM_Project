@@ -27,9 +27,3 @@ bool Item::isCollected() {
 string Item::getType() {
     return type;
 }
-
-void Item::clear() {
-    name = "";
-    type = "";
-    collected = false;
-}
