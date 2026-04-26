@@ -1,10 +1,10 @@
-#include "Item.h"
+#include item.h"
+#include "artifact.h"
 
-class Artifact : public Item {
-public:
-    
-    Artifact() : Item() {}
 
-    Artifact(string n, bool c): Item(n,c, "Artifact") {}
-};
+Artifact::Artifact() : Item() {}
+
+
+Artifact::Artifact(string n, bool c): Item(n,c, "Artifact") {}
+
 
