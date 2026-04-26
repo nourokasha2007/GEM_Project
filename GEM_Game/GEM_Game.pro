@@ -9,6 +9,7 @@ CONFIG += c++17
 SOURCES += \
     artifact.cpp \
     character.cpp \
+    enemy.cpp \
     game.cpp \
     gameObject.cpp \
     gameWindow.cpp \
@@ -22,6 +23,7 @@ SOURCES += \
 HEADERS += \
     artifact.h \
     character.h \
+    enemy.h \
     game.h \
     gameObject.h \
     gameWindow.h \
