@@ -15,12 +15,6 @@ SOURCES += \
     hint.cpp \
     item.cpp \
     level.cpp \
-    level1.cpp \
-    level1Enemy.cpp \
-    level2.cpp \
-    level2Enemy.cpp \
-    level3.cpp \
-    level3Enemy.cpp \
     main.cpp \
     obstacle.cpp \
     player.cpp
@@ -34,12 +28,6 @@ HEADERS += \
     hint.h \
     item.h \
     level.h \
-    level1.h \
-    level1Enemy.h \
-    level2.h \
-    level2Enemy.h \
-    level3.h \
-    level3Enemy.h \
     obstacle.h \
     player.h
 
