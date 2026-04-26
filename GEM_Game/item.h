@@ -1,10 +1,24 @@
 #ifndef ITEM_H
 #define ITEM_H
 
-class item
-{
+#include <string>
+using namespace std;
+
+class Item {
+protected:
+    string name;
+    bool collected;
+    string type;
+
 public:
-    item();
+    Item();
+    Item(string n, bool c, string t);
+
+    void collect();
+    string getName();
+    bool isCollected();
+    string getType();
+    void clear();
 };
 
-#endif // ITEM_H
+#endif
