@@ -31,7 +31,7 @@ Item::Item(string n, bool c, string t) {
     string Item::getType() {
         return type;
         }
-};
+
 
 
 
