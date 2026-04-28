@@ -2,7 +2,7 @@
 #define INVENTORY_H
 
 #include <vector>
-#include "Item.h"
+#include "item.h"
 using namespace std;
 
 class Inventory {

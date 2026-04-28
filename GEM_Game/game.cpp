@@ -1,4 +1,4 @@
-#include "Game.h"
+#include "game.h"
 #include "Level1.h"
 #include <iostream>
 

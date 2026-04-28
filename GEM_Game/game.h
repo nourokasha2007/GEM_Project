@@ -8,7 +8,8 @@ enum class Gamestate
 {
     playing,
     paused,
-    exiting
+    exiting,
+    gameOver
 };
 
 class Game
