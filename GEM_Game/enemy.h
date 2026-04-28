@@ -1,3 +1,4 @@
+/*
 #ifndef ENEMY_H
 #define ENEMY_H
 
@@ -26,3 +27,4 @@ public:
 };
 
 #endif // ENEMY_H
+*/

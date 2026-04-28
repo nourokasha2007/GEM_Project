@@ -3,45 +3,74 @@
 
 #include <QMainWindow>
 #include <QStackedWidget>
+#include <QWidget>
 #include <QLabel>
+#include <QPushButton>
 #include <QTimer>
 #include <QKeyEvent>
-#include <QPushButton>
+
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QGraphicsPixmapItem>
 
 #include "Game.h"
+#include "level.h"
 
 class GameWindow : public QMainWindow
 {
     Q_OBJECT
 
-private:
-    Game game;
+public:
+    explicit GameWindow(QWidget *parent = nullptr);
 
-    QStackedWidget *stack;
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
 
-    QWidget *startScreen;
-    QWidget *gameScreen;
-    QWidget *gameOverScreen;
-
-    QLabel *clockLabel;
-    QLabel *scoreLabel;
-    QLabel *statusLabel;
-
-    QTimer *timer;
-    int seconds;
-
-private:
+private slots:
     void startGame();
     void pauseGame();
     void restartGame();
     void exitGame();
     void updateGame();
 
-protected:
-    void keyPressEvent(QKeyEvent *event) override;
+private:
+    //-----------------------------------
+    // Core game logic
+    //-----------------------------------
+    Game game;
+    Level* currentLevel;
 
-public:
-    GameWindow(QWidget *parent = nullptr);
+    //-----------------------------------
+    // Stacked screens
+    //-----------------------------------
+    QStackedWidget *stack;
+    QWidget *startScreen;
+    QWidget *gameScreen;
+    QWidget *gameOverScreen;
+
+    //-----------------------------------
+    // HUD labels
+    //-----------------------------------
+    QLabel *clockLabel;
+    QLabel *scoreLabel;
+    QLabel *statusLabel;
+
+    //-----------------------------------
+    // Timer
+    //-----------------------------------
+    QTimer *timer;
+    int seconds;
+
+    //-----------------------------------
+    // Graphics system
+    //-----------------------------------
+    QGraphicsScene *scene;
+    QGraphicsView *view;
+    //-----------------------------------
+    // Visual player sprite
+    //-----------------------------------
+    QGraphicsPixmapItem *playerSprite;
+    void mousePressEvent(QMouseEvent *event);
 };
 
 #endif

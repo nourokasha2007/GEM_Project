@@ -1,14 +1,11 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "Player.h"
-#include "Inventory.h"
-#include "Level.h"
-#include "Level1.h"
-#include "Level2.h"
-#include "Level3.h"
+#include "player.h"
+#include "level.h"
 
-enum class Gamestate{
+enum class Gamestate
+{
     playing,
     paused,
     exiting
@@ -16,34 +13,44 @@ enum class Gamestate{
 
 class Game
 {
-private:
-    Gamestate state;
-    bool isRunning;
-    float timer;
-    float startTime;
-    Player player;
-    int currentLevelIndex;
-    Inventory inventory;
-    Level* currentLevel;
-
-
 public:
     Game();
+    ~Game();
+
     void startGame();
     void pauseGame();
     void resumeGame();
     void restartGame();
     void exitGame();
+
     void update(float diffTime);
+
     void loadLevel(int levelindex);
     void nextLevel();
-    void collectItem(int index);
+
     void checkWin();
     void checkLose();
+
     Gamestate getstate() const;
-    ~Game();
+
     Player& getPlayer();
     int getLevelIndex() const;
+
+    Level* getCurrentLevel() const { return currentLevel; }
+
+private:
+    Player player;
+
+    Level* currentLevel;
+
+    Gamestate state;
+
+    float timer;
+    float startTime;
+
+    int currentLevelIndex;
+
+    bool isRunning;
 };
 
 #endif

@@ -1,14 +1,19 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 
+#include <QGraphicsScene>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsRectItem>
+#include <vector>
+
 class Level
 {
+protected:
+    QGraphicsPixmapItem* background;
 public:
-    Level() = default;
-    virtual void setup() = 0;
-    virtual void update() = 0;
-
-    virtual ~Level() = default;
+    std::vector<QGraphicsRectItem*> obstacles;
+    std::vector<QGraphicsPixmapItem*> artifacts;
+   virtual void loadScene(QGraphicsScene* scene)=0;
 };
 
 #endif
