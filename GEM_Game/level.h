@@ -13,7 +13,8 @@ protected:
 public:
     std::vector<QGraphicsRectItem*> obstacles;
     std::vector<QGraphicsPixmapItem*> artifacts;
-   virtual void loadScene(QGraphicsScene* scene)=0;
+    virtual void loadScene(QGraphicsScene* scene) = 0;
+    virtual ~Level() = default;
 };
 
 #endif

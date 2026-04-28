@@ -8,12 +8,14 @@
 #include <QPushButton>
 #include <QTimer>
 #include <QKeyEvent>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGraphicsPixmapItem>
 
-#include "Game.h"
+#include "game.h"
 #include "level.h"
 
 class GameWindow : public QMainWindow
@@ -24,53 +26,53 @@ public:
     explicit GameWindow(QWidget *parent = nullptr);
 
 protected:
+    // Input Handling
     void keyPressEvent(QKeyEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
 private slots:
+    // Navigation and Logic slots
     void startGame();
     void pauseGame();
     void restartGame();
     void exitGame();
-    void updateGame();
+    void updateGame(); // Triggered by the QTimer
 
 private:
     //-----------------------------------
-    // Core game logic
+    // Core Game Logic
     //-----------------------------------
     Game game;
     Level* currentLevel;
-
-    //-----------------------------------
-    // Stacked screens
-    //-----------------------------------
-    QStackedWidget *stack;
-    QWidget *startScreen;
-    QWidget *gameScreen;
-    QWidget *gameOverScreen;
-
-    //-----------------------------------
-    // HUD labels
-    //-----------------------------------
-    QLabel *clockLabel;
-    QLabel *scoreLabel;
-    QLabel *statusLabel;
-
-    //-----------------------------------
-    // Timer
-    //-----------------------------------
     QTimer *timer;
     int seconds;
 
     //-----------------------------------
-    // Graphics system
+    // UI Structure (The Stack)
+    //-----------------------------------
+    QStackedWidget *stack;      // The main container
+
+    QWidget *startScreen;       // Page 0
+    QWidget *gameScreen;        // Page 1
+    QWidget *gameOverScreen;    // Page 2 (Used for Win, Lose, and Game Over)
+
+    //-----------------------------------
+    // HUD & Feedback Components
+    //-----------------------------------
+    // These are updated dynamically in the .cpp
+    QLabel *clockLabel;
+    QLabel *scoreLabel;
+    QLabel *statusLabel;        // Displays "You Win", "You Lose", etc.
+
+    //-----------------------------------
+    // Graphics System
     //-----------------------------------
     QGraphicsScene *scene;
     QGraphicsView *view;
-    //-----------------------------------
-    // Visual player sprite
-    //-----------------------------------
     QGraphicsPixmapItem *playerSprite;
-    void mousePressEvent(QMouseEvent *event);
+
+    // Helper function to setup the UI layouts
+    void setupScreens();
 };
 
-#endif
+#endif // GAMEWINDOW_H

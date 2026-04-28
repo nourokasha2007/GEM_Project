@@ -26,23 +26,72 @@ GameWindow::GameWindow(QWidget *parent)
 
     /* ================= START SCREEN ================= */
     {
-        startScreen->setStyleSheet(
-            "background-color: #d7c4a3;"
-            "color: #3b2f2f;"
+        // Background image label (fills the widget)
+        QLabel *bg = new QLabel(startScreen);
+        bg->setPixmap(
+            QPixmap(":/new/prefix1/images/Gemini_Generated_Image_ibun6yibun6yibun.png")
+                .scaled(1200, 800, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation)
             );
+        bg->setAlignment(Qt::AlignCenter);
+        bg->setGeometry(0, 0, 1200, 800);
 
+        // Semi-transparent dark overlay for readability
+        QLabel *overlay = new QLabel(startScreen);
+        overlay->setGeometry(0, 0, 1200, 800);
+        overlay->setStyleSheet("background-color: rgba(0, 0, 0, 120);");
+
+        // Layout sitting on top
         QVBoxLayout *layout = new QVBoxLayout(startScreen);
         layout->setAlignment(Qt::AlignCenter);
+        layout->setSpacing(20);
 
+        // Title
         QLabel *title = new QLabel("GEM : NIGHT SHIFT");
         title->setAlignment(Qt::AlignCenter);
         title->setStyleSheet(
-            "font-size:32px;"
-            "font-weight:bold;"
+            "font-size: 52px;"
+            "font-weight: bold;"
+            "color: #f5d78e;"
+            "letter-spacing: 8px;"
+            "background: transparent;"
+            "font-family: \'Palatino Linotype\', serif;"
             );
 
-        QPushButton *startBtn = new QPushButton("START");
-        startBtn->setFixedSize(220,60);
+        // Subtitle
+        QLabel *subtitle = new QLabel("A Museum After Midnight");
+        subtitle->setAlignment(Qt::AlignCenter);
+        subtitle->setStyleSheet(
+            "font-size: 18px;"
+            "color: #d4b483;"
+            "letter-spacing: 4px;"
+            "background: transparent;"
+            "font-style: italic;"
+            "font-family: \'Palatino Linotype\', serif;"
+            );
+
+        // START Button
+        QPushButton *startBtn = new QPushButton("\u25B6   ENTER THE MUSEUM");
+        startBtn->setFixedSize(320, 65);
+        startBtn->setCursor(Qt::PointingHandCursor);
+        startBtn->setStyleSheet(
+            "QPushButton {"
+            "  background-color: rgba(180, 130, 60, 200);"
+            "  color: #fff8e7;"
+            "  font-size: 18px;"
+            "  font-weight: bold;"
+            "  letter-spacing: 3px;"
+            "  border: 2px solid #f5d78e;"
+            "  border-radius: 4px;"
+            "}"
+            "QPushButton:hover {"
+            "  background-color: rgba(210, 160, 80, 230);"
+            "  color: #ffffff;"
+            "  border: 2px solid #ffffff;"
+            "}"
+            "QPushButton:pressed {"
+            "  background-color: rgba(140, 100, 40, 255);"
+            "}"
+            );
 
         connect(
             startBtn,
@@ -51,8 +100,14 @@ GameWindow::GameWindow(QWidget *parent)
             &GameWindow::startGame
             );
 
-        layout->addWidget(title);
-        layout->addWidget(startBtn);
+        layout->addStretch(3);
+        layout->addWidget(title,    0, Qt::AlignCenter);
+        layout->addWidget(subtitle, 0, Qt::AlignCenter);
+        layout->addSpacing(16);
+        layout->addWidget(startBtn, 0, Qt::AlignCenter);
+        layout->addStretch(1);
+
+        startScreen->setMinimumSize(1000, 700);
 
         stack->addWidget(startScreen);
     }
@@ -222,8 +277,8 @@ void GameWindow::startGame()
     //----------------------------------
     playerSprite =
         scene->addPixmap(
-        QPixmap(":/new/prefix1/images/ChatGPT Image Apr 28, 2026, 05_48_57 PM.png"));
-        playerSprite->setScale(0.08);
+            QPixmap(":/new/prefix1/images/ChatGPT Image Apr 28, 2026, 05_48_57 PM.png"));
+    playerSprite->setScale(0.08);
 
     playerSprite->setPos(
         game.getPlayer().getX(),
@@ -268,34 +323,47 @@ void GameWindow::exitGame()
 void GameWindow::updateGame()
 {
     seconds++;
-
     game.update(1.0f);
 
+    // 1. Update the Clock Display
     int h = seconds / 3600;
     int m = (seconds % 3600) / 60;
     int s = seconds % 60;
 
     clockLabel->setText(
         QString("%1:%2:%3")
-            .arg(h,2,10,QChar('0'))
-            .arg(m,2,10,QChar('0'))
-            .arg(s,2,10,QChar('0'))
+            .arg(h, 2, 10, QChar('0'))
+            .arg(m, 2, 10, QChar('0'))
+            .arg(s, 2, 10, QChar('0'))
         );
 
-    scoreLabel->setText(
-        "Score: " +
-        QString::number(
-            game.getPlayer().getScore()
-            )
-        );
+    // 2. Update the Score Display
+    scoreLabel->setText("Score: " + QString::number(game.getPlayer().getScore()));
 
+    // 3. CHECK FOR WIN/LOSS CONDITIONS
+    // Check if player lost (e.g., hit too many obstacles or time ran out)
+    if (game.getstate() == Gamestate::gameOver) {
+        timer->stop();
+        // If you made 'over' a class member in .h, you can change the text:
+        // statusLabel->setText("YOU DIED");
+        stack->setCurrentWidget(gameOverScreen);
+        return; // Stop processing further
+    }
+
+    // Check if player won (e.g., collected enough gems)
+    if (game.getPlayer().getScore() >= 100) {
+        timer->stop();
+        // statusLabel->setText("MISSION ACCOMPLISHED");
+        stack->setCurrentWidget(gameOverScreen);
+        return;
+    }
+
+    // 4. Update HUD Status
     statusLabel->setText(
-        (game.getstate() ==
-         Gamestate::playing)
-            ? "ALIVE"
-            : "PAUSED"
+        (game.getstate() == Gamestate::playing) ? "ALIVE" : "PAUSED"
         );
 }
+
 /* ================= MOVEMENT ================= */
 
 void GameWindow::keyPressEvent(
@@ -412,8 +480,8 @@ void GameWindow::keyPressEvent(
             );
     }
 }
-    void GameWindow::mousePressEvent(QMouseEvent *event)
-    {
-        QPointF pos = view->mapToScene(event->pos());
-        qDebug() << "CLICK:" << pos;
-    }
+void GameWindow::mousePressEvent(QMouseEvent *event)
+{
+    QPointF pos = view->mapToScene(event->pos());
+    qDebug() << "CLICK:" << pos;
+}

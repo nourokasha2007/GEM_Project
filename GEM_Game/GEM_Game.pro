@@ -15,6 +15,7 @@ SOURCES += \
     gameObject.cpp \
     gameWindow.cpp \
     hint.cpp \
+    inventory.cpp \
     item.cpp \
     level.cpp \
     main.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     gameObject.h \
     gameWindow.h \
     hint.h \
+    inventory.h \
     item.h \
     level.h \
     obstacle.h \
