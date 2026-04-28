@@ -1,14 +1,22 @@
-#include "gameWindow.h"
-#include "ui_gameWindow.h"
+#include "gamewindow.h"
+#include "ui_gamewindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+GameWindow::GameWindow(QWidget *parent)
+    : QMainWindow(parent),
+    ui(new Ui::GameWindow())
 {
     ui->setupUi(this);
+
+    windowWidth = this->width();
+    windowHeight = this->height();
 }
 
-MainWindow::~MainWindow()
+GameWindow::~GameWindow()
 {
     delete ui;
+}
+
+void GameWindow::on_pushButton_clicked()
+{
+    ui->label->setText("Game Started!");
 }

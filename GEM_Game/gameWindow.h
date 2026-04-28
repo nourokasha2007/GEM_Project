@@ -1,23 +1,30 @@
-#ifndef GAMEWINDOW_H
+
+
+@#ifndef GAMEWINDOW_H
 #define GAMEWINDOW_H
 
 #include <QMainWindow>
 
-QT_BEGIN_NAMESPACE
 namespace Ui {
-class MainWindow;
+class GameWindow;
 }
-QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
+class GameWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow() override;
+    explicit GameWindow(QWidget *parent = nullptr);
+    ~GameWindow();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::GameWindow *ui;
+
+    int windowWidth;
+    int windowHeight;
+
+private slots:
+    void on_pushButton_clicked();
 };
-#endif // GAMEWINDOW_H
+
+#endif
