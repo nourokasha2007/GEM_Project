@@ -7,35 +7,33 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Level1.cpp \
     artifact.cpp \
     character.cpp \
+    enemy.cpp \
     game.cpp \
     gameObject.cpp \
     gameWindow.cpp \
     hint.cpp \
     item.cpp \
-    level1Enemy.cpp \
-    level2Enemy.cpp \
-    level3Enemy.cpp \
+    level.cpp \
     main.cpp \
     obstacle.cpp \
-    player.cpp \
-    room.cpp
+    player.cpp
 
 HEADERS += \
+    Level1.h \
     artifact.h \
     character.h \
+    enemy.h \
     game.h \
     gameObject.h \
     gameWindow.h \
     hint.h \
     item.h \
-    level1Enemy.h \
-    level2Enemy.h \
-    level3Enemy.h \
+    level.h \
     obstacle.h \
-    player.h \
-    room.h
+    player.h
 
 FORMS += \
     gameWindow.ui
@@ -46,4 +44,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    media_resources.qrc
+    resources.qrc

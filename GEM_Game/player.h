@@ -38,6 +38,7 @@ public:
     vector<QString> getFoundItems() const;
 
     bool isWinner() const;
+    void deductScore(int points);
 };
 
 #endif

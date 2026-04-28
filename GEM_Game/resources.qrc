@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/new/prefix1">
+        <file>images/level1 background.png</file>
+        <file>images/ChatGPT Image Apr 28, 2026, 05_48_57 PM.png</file>
+    </qresource>
+</RCC>
