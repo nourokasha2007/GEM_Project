@@ -1,3 +1,4 @@
+/*
 #include "enemy.h"
 // #include "player.h"
 
@@ -25,7 +26,8 @@ void Enemy::setDamage(int newDamage) {
 
 // Collision Logic
 
-bool Enemy::checkCollision(const Player& /*targetPlayer*/) const {
+#include "player.h"
+bool Enemy::checkCollision(const Player& targetPlayer) const {
 
     // Placeholder for Ahmed's logic later:
     // if (this->x == targetPlayer.getX() && this->y == targetPlayer.getY())
@@ -35,3 +37,4 @@ bool Enemy::checkCollision(const Player& /*targetPlayer*/) const {
 
     return false;
 }
+*/

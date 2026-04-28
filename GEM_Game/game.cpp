@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Level1.h"
 #include <iostream>
 
 using namespace std;
@@ -16,11 +17,15 @@ Game::Game() : player("Start", 0, 0)
 void Game::startGame()
 {
     cout << "Game Started\n";
+
     state = Gamestate::playing;
     timer = startTime;
+
     player.reset();
+
     currentLevelIndex = 1;
     loadLevel(currentLevelIndex);
+
     isRunning = true;
 }
 
@@ -39,9 +44,12 @@ void Game::resumeGame()
 void Game::restartGame()
 {
     cout << "Game Restarted\n";
+
     timer = startTime;
     player.reset();
+
     loadLevel(currentLevelIndex);
+
     state = Gamestate::playing;
     isRunning = true;
 }
@@ -49,17 +57,20 @@ void Game::restartGame()
 void Game::exitGame()
 {
     cout << "Game Exiting\n";
+
     state = Gamestate::exiting;
     isRunning = false;
 }
 
 void Game::update(float diffTime)
 {
-    if (state != Gamestate::playing){
-        return;}else{
-        timer += diffTime;}
-    if (currentLevel)
-        currentLevel->update();
+    if (state != Gamestate::playing)
+        return;
+
+    timer += diffTime;
+
+    // ❌ REMOVED: currentLevel->update(); (does not exist)
+
     checkWin();
     checkLose();
 }
@@ -74,20 +85,13 @@ void Game::loadLevel(int levelindex)
 
     currentLevelIndex = levelindex;
 
+    // Create correct level
     if (currentLevelIndex == 1)
         currentLevel = new Level1();
-    /*
-    else if (currentLevelIndex == 2)
-        currentLevel = new Level2();
-    else if (currentLevelIndex == 3)
-        currentLevel = new Level3();
     else
-        currentLevel = new Level1();
-    */
-    player.reset();
+        currentLevel = new Level1(); // fallback for now
 
-    if (currentLevel)
-        currentLevel->setup();
+    player.reset();
 
     cout << "Loaded Level " << levelindex << endl;
 }
@@ -126,6 +130,7 @@ Game::~Game()
 {
     delete currentLevel;
 }
+
 Player& Game::getPlayer()
 {
     return player;

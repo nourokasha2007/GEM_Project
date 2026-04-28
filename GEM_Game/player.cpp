@@ -19,15 +19,14 @@ void Player::moveTo(int newX, int newY)
     x = newX;
     y = newY;
 }
-
 void Player::moveUp()
 {
-    y++;
+    y--;
 }
 
 void Player::moveDown()
 {
-    y--;
+    y++;
 }
 
 void Player::moveLeft()
@@ -39,16 +38,15 @@ void Player::moveRight()
 {
     x++;
 }
-
 void Player::collectItem(QString item)
 {
     foundItems.push_back(item);
 }
 
-void Player::interactCharacter(QString character)
+/*void Player::interactCharacter(QString character)
 {
 }
-
+*/
 void Player::useHint()
 {
     hintsUsed++;
@@ -61,8 +59,11 @@ void Player::addScore(int points)
 
 void Player::reset()
 {
-    x = 0;
-    y = 0;
+    x = 100;
+    y = 600;
+    score = 0;
+    hintsUsed = 0;
+    foundItems.clear();
 }
 
 int Player::getScore() const
@@ -88,4 +89,11 @@ vector<QString> Player::getFoundItems() const
 bool Player::isWinner() const
 {
     return score >= 100;
+}
+void Player::deductScore(int points)
+{
+    score -= points;
+
+    if(score < 0)
+        score = 0;
 }
