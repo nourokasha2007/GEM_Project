@@ -8,6 +8,8 @@
 #include <QPushButton>
 #include <QTimer>
 #include <QKeyEvent>
+#include <QResizeEvent>
+#include <QLineEdit>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
@@ -28,6 +30,7 @@ public:
 protected:
     // Input Handling
     void keyPressEvent(QKeyEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
 
 private slots:
@@ -37,6 +40,7 @@ private slots:
     void restartGame();
     void exitGame();
     void updateGame(); // Triggered by the QTimer
+    void showBriefingPopup(const QString &playerName);
 
 private:
     //-----------------------------------
@@ -63,6 +67,8 @@ private:
     QLabel *clockLabel;
     QLabel *scoreLabel;
     QLabel *statusLabel;        // Displays "You Win", "You Lose", etc.
+    QLabel *bgOverlay;          // Start screen dark overlay (resizes with window)
+    QLineEdit *guestNameEdit;   // Guest name input on start screen
 
     //-----------------------------------
     // Graphics System

@@ -26,89 +26,95 @@ GameWindow::GameWindow(QWidget *parent)
 
     /* ================= START SCREEN ================= */
     {
-        // Background image label (fills the widget)
-        QLabel *bg = new QLabel(startScreen);
-        bg->setPixmap(
-            QPixmap(":/new/prefix1/images/Gemini_Generated_Image_ibun6yibun6yibun.png")
-                .scaled(1200, 800, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation)
+        // --- Background via stylesheet (auto-scales with window) ---
+        startScreen->setStyleSheet(
+            "QWidget#startScreen {"
+            "  background-image: url(:/new/prefix1/images/PHOTO-2026-04-29-21-07-06.jpg);"
+            "  background-position: center;"
+            "  background-repeat: no-repeat;"
+            "  background-color: #000000;"
+            "}"
             );
-        bg->setAlignment(Qt::AlignCenter);
-        bg->setGeometry(0, 0, 1200, 800);
+        startScreen->setObjectName("startScreen");
 
-        // Semi-transparent dark overlay for readability
-        QLabel *overlay = new QLabel(startScreen);
-        overlay->setGeometry(0, 0, 1200, 800);
-        overlay->setStyleSheet("background-color: rgba(0, 0, 0, 120);");
+        // --- Dark overlay (member, resizes with window) ---
+        bgOverlay = new QLabel(startScreen);
+        bgOverlay->setStyleSheet("background-color: rgba(0,0,0,110);");
+        bgOverlay->setGeometry(0, 0, 9999, 9999);
 
-        // Layout sitting on top
+        // --- Main vertical layout ---
         QVBoxLayout *layout = new QVBoxLayout(startScreen);
         layout->setAlignment(Qt::AlignCenter);
-        layout->setSpacing(20);
+        layout->setSpacing(12);
 
-        // Title
-        QLabel *title = new QLabel("GEM : NIGHT SHIFT");
-        title->setAlignment(Qt::AlignCenter);
-        title->setStyleSheet(
-            "font-size: 52px;"
-            "font-weight: bold;"
-            "color: #f5d78e;"
-            "letter-spacing: 8px;"
-            "background: transparent;"
-            "font-family: \'Palatino Linotype\', serif;"
+        // ── GUEST-ONLY CARD ───────────────────────────────────────
+        QWidget *card = new QWidget();
+        card->setFixedSize(380, 220);
+        card->setStyleSheet(
+            "background-color: rgba(10, 5, 0, 185);"
+            "border: 1px solid rgba(200, 160, 60, 160);"
+            "border-radius: 10px;"
             );
 
-        // Subtitle
-        QLabel *subtitle = new QLabel("A Museum After Midnight");
-        subtitle->setAlignment(Qt::AlignCenter);
-        subtitle->setStyleSheet(
-            "font-size: 18px;"
-            "color: #d4b483;"
-            "letter-spacing: 4px;"
-            "background: transparent;"
-            "font-style: italic;"
-            "font-family: \'Palatino Linotype\', serif;"
+        QVBoxLayout *cardLayout = new QVBoxLayout(card);
+        cardLayout->setSpacing(12);
+        cardLayout->setContentsMargins(30, 24, 30, 24);
+
+        QLabel *cardTitle = new QLabel("ENTER THE MUSEUM");
+        cardTitle->setAlignment(Qt::AlignCenter);
+        cardTitle->setStyleSheet(
+            "font-size: 14px; font-weight: bold; color: #c8a84b;"
+            "letter-spacing: 4px; background: transparent; border: none;"
             );
 
-        // START Button
-        QPushButton *startBtn = new QPushButton("\u25B6   ENTER THE MUSEUM");
-        startBtn->setFixedSize(320, 65);
-        startBtn->setCursor(Qt::PointingHandCursor);
-        startBtn->setStyleSheet(
+        guestNameEdit = new QLineEdit();
+        guestNameEdit->setPlaceholderText("Your Name");
+        guestNameEdit->setFixedHeight(44);
+        guestNameEdit->setStyleSheet(
+            "QLineEdit {"
+            "  background-color: rgba(255,255,255,15);"
+            "  border: 1px solid rgba(200,160,60,120);"
+            "  border-radius: 4px; color: #f5e6c8;"
+            "  font-size: 15px; padding-left: 12px;"
+            "}"
+            "QLineEdit:focus {"
+            "  border: 1px solid #c8a84b;"
+            "  background-color: rgba(255,255,255,25);"
+            "}"
+            );
+
+        QPushButton *enterBtn = new QPushButton("\u25B6   PROTECT THE HERITAGE");
+        enterBtn->setFixedHeight(48);
+        enterBtn->setCursor(Qt::PointingHandCursor);
+        enterBtn->setStyleSheet(
             "QPushButton {"
-            "  background-color: rgba(180, 130, 60, 200);"
-            "  color: #fff8e7;"
-            "  font-size: 18px;"
-            "  font-weight: bold;"
-            "  letter-spacing: 3px;"
-            "  border: 2px solid #f5d78e;"
-            "  border-radius: 4px;"
+            "  background-color: rgba(180,130,40,220); color: #fff8e7;"
+            "  font-size: 15px; font-weight: bold; letter-spacing: 3px;"
+            "  border: 2px solid #c8a84b; border-radius: 4px;"
             "}"
             "QPushButton:hover {"
-            "  background-color: rgba(210, 160, 80, 230);"
-            "  color: #ffffff;"
-            "  border: 2px solid #ffffff;"
+            "  background-color: rgba(220,170,60,240);"
+            "  border: 2px solid #ffffff; color: #ffffff;"
             "}"
-            "QPushButton:pressed {"
-            "  background-color: rgba(140, 100, 40, 255);"
-            "}"
+            "QPushButton:pressed { background-color: rgba(130,90,20,255); }"
             );
 
-        connect(
-            startBtn,
-            &QPushButton::clicked,
-            this,
-            &GameWindow::startGame
-            );
+        cardLayout->addWidget(cardTitle);
+        cardLayout->addWidget(guestNameEdit);
+        cardLayout->addSpacing(4);
+        cardLayout->addWidget(enterBtn);
+
+        connect(enterBtn, &QPushButton::clicked, this, [=]() {
+            QString name = guestNameEdit->text().trimmed();
+            if (name.isEmpty()) name = "Night Guard";
+            showBriefingPopup(name);
+        });
 
         layout->addStretch(3);
-        layout->addWidget(title,    0, Qt::AlignCenter);
-        layout->addWidget(subtitle, 0, Qt::AlignCenter);
-        layout->addSpacing(16);
-        layout->addWidget(startBtn, 0, Qt::AlignCenter);
+        layout->addWidget(card, 0, Qt::AlignCenter);
         layout->addStretch(1);
 
         startScreen->setMinimumSize(1000, 700);
-
         stack->addWidget(startScreen);
     }
 
@@ -251,6 +257,110 @@ GameWindow::GameWindow(QWidget *parent)
     stack->setCurrentWidget(
         startScreen
         );
+
+    showMaximized(); // Fill the entire screen
+}
+
+
+/* ================= BRIEFING POPUP ================= */
+
+void GameWindow::showBriefingPopup(const QString &playerName)
+{
+    // Fullscreen dim overlay
+    QWidget *dimmer = new QWidget(this);
+    dimmer->setGeometry(0, 0, width(), height());
+    dimmer->setStyleSheet("background-color: rgba(0,0,0,180);");
+    dimmer->show();
+    dimmer->raise();
+
+    // Popup card
+    QWidget *popup = new QWidget(dimmer);
+    popup->setFixedSize(620, 480);
+    popup->move((dimmer->width() - 620) / 2, (dimmer->height() - 480) / 2);
+    popup->setStyleSheet(
+        "background-color: rgba(8, 4, 0, 230);"
+        "border: 2px solid rgba(200, 160, 60, 200);"
+        "border-radius: 12px;"
+        );
+
+    QVBoxLayout *pl = new QVBoxLayout(popup);
+    pl->setContentsMargins(40, 32, 40, 28);
+    pl->setSpacing(14);
+
+    // Header
+    QLabel *header = new QLabel("NIGHT SHIFT INITIATED!");
+    header->setAlignment(Qt::AlignCenter);
+    header->setStyleSheet(
+        "font-size: 22px; font-weight: bold; color: #f5d060;"
+        "letter-spacing: 4px; background: transparent; border: none;"
+        );
+
+    // Welcome line
+    QString welcomeText = QString(
+                              "Welcome aboard, <b><span style='color:#f5d060;'>%1</span></b>, "
+                              "to the prestigious <b>GRAND EGYPTIAN MUSEUM!</b><br><br>"
+                              "The sun has set, the tourists are gone — but the halls are far from quiet. "
+                              "Priceless artifacts have vanished into the shadows!<br>"
+                              "As our lead Night Guard, the museum's legacy rests on your shoulders."
+                              ).arg(playerName);
+
+    QLabel *welcome = new QLabel(welcomeText);
+    welcome->setWordWrap(true);
+    welcome->setAlignment(Qt::AlignCenter);
+    welcome->setStyleSheet(
+        "font-size: 13px; color: #e8d5a8; background: transparent; border: none; line-height: 1.5;"
+        );
+
+    // Mission bullets
+    QLabel *missions = new QLabel(
+        "<span style='color:#c8a84b; font-weight:bold;'>YOUR MISSION BRIEFING</span><br><br>"
+        "<span style='color:#f5d060;'>&#9656;</span>  <b>RECOVER THE RELICS</b> — find every missing artifact before dawn.<br>"
+        "<span style='color:#f5d060;'>&#9656;</span>  <b>FACE THE UNKNOWN</b> — watch out for enemies lurking in the dark!<br>"
+        "<span style='color:#f5d060;'>&#9656;</span>  <b>LEVEL UP</b> — progress through increasingly challenging wings.<br>"
+        "<span style='color:#f5d060;'>&#9656;</span>  <b>FOLLOW THE TRAIL</b> — use hidden hints to track what was stolen."
+        );
+    missions->setWordWrap(true);
+    missions->setStyleSheet(
+        "font-size: 12px; color: #d4c090; background: transparent; border: none; line-height:1.6;"
+        );
+
+    // Clock warning
+    QLabel *warning = new QLabel("The museum opens at 7:00 AM sharp. Don't let history stay empty!");
+    warning->setAlignment(Qt::AlignCenter);
+    warning->setWordWrap(true);
+    warning->setStyleSheet(
+        "font-size: 12px; color: rgba(200,160,60,180); font-style:italic;"
+        "background: transparent; border: none;"
+        );
+
+    // Begin button
+    QPushButton *beginBtn = new QPushButton("\u25B6   PROTECT THE HERITAGE");
+    beginBtn->setFixedHeight(50);
+    beginBtn->setCursor(Qt::PointingHandCursor);
+    beginBtn->setStyleSheet(
+        "QPushButton {"
+        "  background-color: rgba(180,130,40,220);"
+        "  color: #fff8e7; font-size: 15px; font-weight: bold;"
+        "  letter-spacing: 3px; border: 2px solid #c8a84b; border-radius: 6px;"
+        "}"
+        "QPushButton:hover { background-color: rgba(220,170,60,240); border: 2px solid #fff; color:#fff; }"
+        "QPushButton:pressed { background-color: rgba(130,90,20,255); }"
+        );
+
+    pl->addWidget(header);
+    pl->addWidget(welcome);
+    pl->addWidget(missions);
+    pl->addWidget(warning);
+    pl->addStretch(1);
+    pl->addWidget(beginBtn, 0, Qt::AlignCenter);
+
+    popup->show();
+
+    // Tap anywhere on dimmer (outside popup) also closes
+    connect(beginBtn, &QPushButton::clicked, this, [=]() {
+        dimmer->deleteLater();
+        startGame();
+    });
 }
 
 /* ================= START GAME ================= */
@@ -479,6 +589,17 @@ void GameWindow::keyPressEvent(
             startScreen
             );
     }
+}
+
+/* ================= RESIZE EVENT ================= */
+
+void GameWindow::resizeEvent(QResizeEvent *event)
+{
+    QMainWindow::resizeEvent(event);
+    if (bgOverlay)
+        bgOverlay->setGeometry(0, 0, width(), height());
+    if (startScreen)
+        startScreen->setGeometry(0, 0, width(), height());
 }
 void GameWindow::mousePressEvent(QMouseEvent *event)
 {
