@@ -1,8 +1,8 @@
 <RCC>
     <qresource prefix="/new/prefix1">
-        <file>images/level1 background.png</file>
         <file>images/ChatGPT Image Apr 28, 2026, 05_48_57 PM.png</file>
         <file>images/Gemini_Generated_Image_ibun6yibun6yibun.png</file>
         <file>images/PHOTO-2026-04-29-21-07-06.jpg</file>
+        <file>images/level1.png</file>
     </qresource>
 </RCC>
