@@ -8,7 +8,7 @@ Level1::Level1()
 
 void Level1::loadScene(QGraphicsScene *scene)
 {
-    background = scene->addPixmap(QPixmap(":/new/prefix1/images/level1 background.png"));
+    background = scene->addPixmap(QPixmap(":/new/prefix1/images/level1.png"));
 
     QGraphicsRectItem* statue1 =
         scene->addRect(
@@ -50,6 +50,15 @@ void Level1::loadScene(QGraphicsScene *scene)
             );
 
     obstacles.push_back(rightWall);
+    QGraphicsRectItem* coffin1 =
+        scene->addRect(
+            986,711,
+            100,160,
+            QPen(Qt::red),
+            QBrush(Qt::red)
+            );
+
+    obstacles.push_back(coffin1);
 }
     /*
     QGraphicsPixmapItem* artifact1 =
