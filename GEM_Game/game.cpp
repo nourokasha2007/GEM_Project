@@ -1,19 +1,8 @@
 #include "game.h"
-#include "artifact.h"
-#include "tools.h"
-
-Artifact coin("Coin", false);
-Artifact statue("Statue", false);
-Artifact scroll("Ancient Scroll", false);
-Artifact mask("Golden Mask", false);
-Artifact nose("Abu El Hol Nose", false);
-
-Tool flashlight("Flashlight", false, 3);
-Tool map("Map", false, 1);
-Tool timerBoost("Timer Boost", false, 1);
 #include "Level1.h"
 #include <iostream>
-
+#include "artifact.h"
+#include "tools.h"
 using namespace std;
 
 Game::Game() : player("Start", 0, 0)
@@ -81,7 +70,9 @@ void Game::update(float diffTime)
 
     timer += diffTime;
 
-    // ❌ REMOVED: currentLevel->update(); (does not exist)
+    // If your Level class later supports update, you can enable this:
+    // if (currentLevel)
+    //     currentLevel->update(diffTime);
 
     checkWin();
     checkLose();
@@ -97,11 +88,10 @@ void Game::loadLevel(int levelindex)
 
     currentLevelIndex = levelindex;
 
-    // Create correct level
     if (currentLevelIndex == 1)
         currentLevel = new Level1();
     else
-        currentLevel = new Level1(); // fallback for now
+        currentLevel = new Level1(); // fallback
 
     player.reset();
 
@@ -152,3 +142,12 @@ int Game::getLevelIndex() const
 {
     return currentLevelIndex;
 }
+Artifact coin("Coin", false);
+Artifact statue("Statue", false);
+Artifact scroll("Ancient Scroll", false);
+Artifact mask("Golden Mask", false);
+Artifact nose("Abu El Hol Nose", false);
+
+Tool flashlight("Flashlight", false, 3);
+Tool map("Map", false, 1);
+Tool timerBoost("Timer Boost", false, 1);
