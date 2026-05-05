@@ -8,7 +8,7 @@ void Inventory::addItem(Item* item) {
 }
 
 void Inventory::showItems() {
-    for (int i = 0; i < items.size(); i++) {
+    for (size_t i = 0; i < items.size(); i++) {
         cout << items[i]->getName() << endl;
     }
 }
@@ -16,7 +16,7 @@ void Inventory::showItems() {
 int Inventory::countItem(string name) {
     int count = 0;
 
-    for (int i = 0; i < items.size(); i++) {
+    for (size_t i = 0; i < items.size(); i++) {
         if (items[i]->getName() == name) {
             count++;
         }
