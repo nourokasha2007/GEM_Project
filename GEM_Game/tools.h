@@ -1,7 +1,8 @@
 #ifndef TOOL_H
 #define TOOL_H
-
-#include "Item.h"
+#include <string>
+#include "item.h"
+using namespace std;
 
 class Tool : public Item {
 private:
