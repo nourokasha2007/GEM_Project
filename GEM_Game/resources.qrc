@@ -4,5 +4,12 @@
         <file>images/Gemini_Generated_Image_ibun6yibun6yibun.png</file>
         <file>images/PHOTO-2026-04-29-21-07-06.jpg</file>
         <file>images/level1.png</file>
+        <file>images/coin.png</file>
+        <file>images/amulet.png</file>
+        <file>images/mask.png</file>
+        <file>images/nose.png</file>
+        <file>images/timerboost.png</file>
+        <file>images/scroll.png</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>
