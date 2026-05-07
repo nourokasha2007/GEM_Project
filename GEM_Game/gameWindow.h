@@ -76,7 +76,7 @@ private:
     QGraphicsScene *scene;
     QGraphicsView *view;
     QGraphicsPixmapItem *playerSprite;
-
+    QImage collisionMask;
     // Helper function to setup the UI layouts
     void setupScreens();
 };
