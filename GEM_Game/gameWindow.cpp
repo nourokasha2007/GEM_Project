@@ -23,6 +23,7 @@ GameWindow::GameWindow(QWidget *parent)
 
     currentLevel = nullptr;
     playerSprite = nullptr;
+    coinCount=3;
 
     /* ================= START SCREEN ================= */
     {
@@ -155,6 +156,121 @@ GameWindow::GameWindow(QWidget *parent)
             new QGraphicsView(scene);
 
         view->setFixedSize(1000,700);
+
+        coinIcon = new QLabel(gameScreen);
+
+        coinIcon->setPixmap(
+            QPixmap(":/new/prefix1/images/coin2.png")
+                .scaled(40, 40, Qt::KeepAspectRatio, Qt::SmoothTransformation)
+            );
+
+        coinIcon->move(120, 350);
+
+
+        coinCounter = new QLabel(gameScreen);
+
+        coinCounter->setText("x3");
+
+        coinCounter->setStyleSheet(
+            "color: white;"
+            "font-size: 24px;"
+            "font-weight: bold;"
+            );
+        coinCounter->move(180, 360);
+
+        coinIcon->show();
+        coinCounter->show();
+
+
+        scrollIcon = new QLabel(gameScreen);
+
+        scrollIcon->setPixmap(
+            QPixmap(":/new/prefix1/images/scroll2.png")
+                .scaled(40, 40, Qt::KeepAspectRatio, Qt::SmoothTransformation)
+            );
+
+        scrollIcon->move(120, 150);
+
+        scrollCounter = new QLabel("x3", gameScreen);
+
+        scrollCounter->setStyleSheet(
+            "color:white;"
+            "font-size:24px;"
+            "font-weight:bold;"
+            );
+
+        scrollCounter->move(180, 160);
+
+        scrollIcon->show();
+        scrollCounter->show();
+
+        maskIcon = new QLabel(gameScreen);
+
+        maskIcon->setPixmap(
+            QPixmap(":/new/prefix1/images/mask2.png")
+                .scaled(40, 40, Qt::KeepAspectRatio, Qt::SmoothTransformation)
+            );
+
+        maskIcon->move(120, 200);
+
+        maskCounter = new QLabel("x3", gameScreen);
+
+        maskCounter->setStyleSheet(
+            "color:white;"
+            "font-size:24px;"
+            "font-weight:bold;"
+            );
+
+        maskCounter->move(180, 210);
+
+        maskIcon->show();
+        maskCounter->show();
+
+        amuletIcon = new QLabel(gameScreen);
+
+        amuletIcon->setPixmap(
+            QPixmap(":/new/prefix1/images/amulet2.png")
+                .scaled(40, 40, Qt::KeepAspectRatio, Qt::SmoothTransformation)
+            );
+
+        amuletIcon->move(120, 250);
+
+        amuletCounter = new QLabel("x3", gameScreen);
+
+        amuletCounter->setStyleSheet(
+            "color:white;"
+            "font-size:24px;"
+            "font-weight:bold;"
+            );
+
+        amuletCounter->move(180, 260);
+
+        amuletIcon->show();
+        amuletCounter->show();
+
+        timerIcon = new QLabel(gameScreen);
+
+        timerIcon->setPixmap(
+            QPixmap(":/new/prefix1/images/timer.png")
+                .scaled(40, 40, Qt::KeepAspectRatio, Qt::SmoothTransformation)
+            );
+
+        timerIcon->move(120, 300);
+
+        timerCounter = new QLabel("x3", gameScreen);
+
+        timerCounter->setStyleSheet(
+            "color:white;"
+            "font-size:24px;"
+            "font-weight:bold;"
+            );
+
+        timerCounter->move(180, 310);
+
+        timerIcon->show();
+        timerCounter->show();
+
+
 
         mainLayout->addWidget(
             view,
@@ -568,6 +684,14 @@ void GameWindow::keyPressEvent(
 
             game.getPlayer()
                 .addScore(10);
+
+            if (coinCount > 0) {
+                coinCount--;
+            }
+
+            coinCounter->setText(
+                "x" + QString::number(coinCount)
+                );
 
             i--;
         }
