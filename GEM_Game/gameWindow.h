@@ -19,6 +19,7 @@
 
 #include "game.h"
 #include "level.h"
+#include "level1enemy.h"
 
 class GameWindow : public QMainWindow
 {
@@ -76,6 +77,7 @@ private:
     QGraphicsScene *scene;
     QGraphicsView *view;
     QGraphicsPixmapItem *playerSprite;
+    Level1Enemy *enemy;
 
     // Helper function to setup the UI layouts
     void setupScreens();

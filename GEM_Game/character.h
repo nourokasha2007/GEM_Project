@@ -1,10 +1,10 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
-class character
+class Character
 {
 public:
-    character();
+    Character();
 };
 
 #endif // CHARACTER_H

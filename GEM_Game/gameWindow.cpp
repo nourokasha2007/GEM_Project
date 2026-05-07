@@ -23,6 +23,7 @@ GameWindow::GameWindow(QWidget *parent)
 
     currentLevel = nullptr;
     playerSprite = nullptr;
+    enemy = nullptr;
 
     /* ================= START SCREEN ================= */
     {
@@ -394,6 +395,13 @@ void GameWindow::startGame()
         game.getPlayer().getX(),
         game.getPlayer().getY()
         );
+
+    //----------------------------------
+    // Create enemy
+    //----------------------------------
+    enemy = new Level1Enemy(&game.getPlayer());
+    scene->addItem(enemy);
+    enemy->setPos(500, 500);  // Initial position for the mummy
 
     stack->setCurrentWidget(
         gameScreen

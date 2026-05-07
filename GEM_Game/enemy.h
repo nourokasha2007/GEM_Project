@@ -1,30 +1,24 @@
-/*
 #ifndef ENEMY_H
 #define ENEMY_H
 
+#include <QGraphicsPixmapItem>
+#include <QObject>
 #include "character.h"
 
-// allows enemy to know player exists
-class Player;
-
-class Enemy : public Character {
-protected:
-    int damageValue;
-
+class Enemy : public QObject, public QGraphicsPixmapItem, public Character {
+    Q_OBJECT
 public:
-    // Constructor and Virtual Destructor
-    Enemy(int startX, int startY, int startSpeed, int startDamage);
-    virtual ~Enemy();
+    Enemy(int hp, int dmg, double spd);
+    virtual ~Enemy() = default;
 
-    // Getters and Setters (Const correct!)
-    int getDamage() const;
-    void setDamage(int newDamage);
+    // Standard enemy functions
+    void takeDamage(int amount);
+    int getDamage() const { return damage; }
 
-    // Collision Logic
-    bool checkCollision(const Player& targetPlayer) const;
-
-    virtual void triggerGimmick() = 0;
+protected:
+    int health;
+    int damage;
+    double speed;
 };
 
 #endif // ENEMY_H
-*/

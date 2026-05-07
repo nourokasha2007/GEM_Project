@@ -1,3 +1,3 @@
 #include "character.h"
 
-character::character() {}
+Character::Character() {}
