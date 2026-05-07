@@ -17,6 +17,9 @@
 #include <QGraphicsView>
 #include <QGraphicsPixmapItem>
 
+#include <QPixmap>
+#include <QRect>
+
 #include "game.h"
 #include "level.h"
 
@@ -79,6 +82,9 @@ private:
 
     // Helper function to setup the UI layouts
     void setupScreens();
+
+
+
 };
 
 #endif // GAMEWINDOW_H
