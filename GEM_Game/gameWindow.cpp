@@ -547,11 +547,10 @@ void GameWindow::keyPressEvent(
     //-----------------------------------
     // Artifact collection
     //-----------------------------------
-    for(
-        auto artifact :
-        currentLevel->artifacts
-        )
+    for (size_t i = 0; i < currentLevel->artifacts.size(); i++)
     {
+        QGraphicsItem* artifact =
+            currentLevel->artifacts[i];
         if(
             playerSprite
                 ->collidesWithItem(
@@ -563,8 +562,14 @@ void GameWindow::keyPressEvent(
                 artifact
                 );
 
+            currentLevel->artifacts.erase(
+                currentLevel->artifacts.begin() + i
+                );
+
             game.getPlayer()
                 .addScore(10);
+
+            i--;
         }
     }
 
