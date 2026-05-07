@@ -1,5 +1,5 @@
 #include <QApplication>
-#include "gamewindow.h"
+#include "gameWindow.h"
 
 int main(int argc, char *argv[])
 {
