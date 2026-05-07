@@ -1,6 +1,6 @@
 #include "gameWindow.h"
 #include "Level1.h"
-
+#include <QImage>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGraphicsScene>
@@ -154,8 +154,17 @@ GameWindow::GameWindow(QWidget *parent)
         view =
             new QGraphicsView(scene);
 
-        view->setFixedSize(1000,700);
+        // Disable scrolling
+        view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+        view->setFocusPolicy(Qt::NoFocus);
+
+        this->setFocusPolicy(Qt::StrongFocus);
+
+        // Fixed game size
+        view->setFixedSize(1400,700);
+        view->scale(0.7, 0.7);
         mainLayout->addWidget(
             view,
             0,
@@ -377,11 +386,14 @@ void GameWindow::startGame()
     //----------------------------------
     // Load level visuals
     //----------------------------------
+      collisionMask = QImage(":/new/prefix1/images/level1 BW.png");
     currentLevel =
         game.getCurrentLevel();
-
     currentLevel->loadScene(scene);
 
+    view->setSceneRect(0, 0, 1448, 1086);
+    qDebug() << collisionMask.isNull();
+    qDebug() << collisionMask.width() << collisionMask.height();
     //----------------------------------
     // Create player sprite
     //----------------------------------
@@ -398,6 +410,11 @@ void GameWindow::startGame()
     stack->setCurrentWidget(
         gameScreen
         );
+  view->clearFocus();
+    gameScreen->setFocus();
+    this->setFocus();
+
+    activateWindow();
 }
 
 /* ================= PAUSE ================= */
@@ -406,6 +423,7 @@ void GameWindow::pauseGame()
 {
     game.pauseGame();
     timer->stop();
+
 }
 
 /* ================= RESTART ================= */
@@ -476,118 +494,78 @@ void GameWindow::updateGame()
 
 /* ================= MOVEMENT ================= */
 
-void GameWindow::keyPressEvent(
-    QKeyEvent *event
-    )
+void GameWindow::keyPressEvent(QKeyEvent *event)
 {
-    if(
-        stack->currentWidget()
-        != gameScreen
-        )
+    qDebug() << "KEY WORKING";
+    if(stack->currentWidget() != gameScreen)
         return;
 
-    int step = 20;
+    int step = 3;
 
-    QPointF oldPos =
-        playerSprite->pos();
+    QPointF newPos = playerSprite->pos();
 
-    QPointF newPos =
-        oldPos;
+    if(event->key() == Qt::Key_Up)
+        newPos.setY(newPos.y() - step);
 
-    if(event->key()==Qt::Key_W)
-        newPos.setY(
-            newPos.y()-step
-            );
+    if(event->key() == Qt::Key_Down)
+        newPos.setY(newPos.y() + step);
 
-    if(event->key()==Qt::Key_S)
-        newPos.setY(
-            newPos.y()+step
-            );
+    if(event->key() == Qt::Key_Left)
+        newPos.setX(newPos.x() - step);
 
-    if(event->key()==Qt::Key_A)
-        newPos.setX(
-            newPos.x()-step
-            );
+    if(event->key() == Qt::Key_Right)
+        newPos.setX(newPos.x() + step);
 
-    if(event->key()==Qt::Key_D)
-        newPos.setX(
-            newPos.x()+step
-            );
+    // Player feet position
+    QRectF rect = playerSprite->sceneBoundingRect();
 
-    playerSprite->setPos(
-        newPos
+    QPointF scenePos(
+        newPos.x() + rect.width() / 2,
+        newPos.y() + rect.height() - 5
         );
 
-    //-----------------------------------
-    // Collision with statues/walls
-    //-----------------------------------
-    for(
-        auto obstacle :
-        currentLevel->obstacles
-        )
+    QRectF sceneRect = scene->sceneRect();
+
+    int maskX = (scenePos.x() / sceneRect.width()) * collisionMask.width();
+
+    int maskY = (scenePos.y() / sceneRect.height()) * collisionMask.height();
+
+    if(maskX >= 0 &&
+        maskY >= 0 &&
+        maskX < collisionMask.width() &&
+        maskY < collisionMask.height())
     {
-        if(
-            playerSprite
-                ->collidesWithItem(
-                    obstacle
-                    )
-            )
+        QColor color = collisionMask.pixelColor(maskX, maskY);
+
+        qDebug() << maskX << maskY << color;
+
+        if(color.red() < 20 &&
+            color.green() < 20 &&
+            color.blue() < 20)
         {
-            playerSprite->setPos(
-                oldPos
-                );
-
-            game.getPlayer()
-                .deductScore(5);
-
-            break;
+            qDebug() << "BLOCKED";
+        }
+        else
+        {
+            playerSprite->setPos(newPos);
         }
     }
 
     //-----------------------------------
-    // Artifact collection
+    // Sync logical player
     //-----------------------------------
-    for(
-        auto artifact :
-        currentLevel->artifacts
-        )
-    {
-        if(
-            playerSprite
-                ->collidesWithItem(
-                    artifact
-                    )
-            )
-        {
-            scene->removeItem(
-                artifact
-                );
-
-            game.getPlayer()
-                .addScore(10);
-        }
-    }
-
-    //-----------------------------------
-    // Sync logical player position
-    //-----------------------------------
-    game.getPlayer().moveTo(
-        newPos.x(),
-        newPos.y()
+game.getPlayer().moveTo(
+        playerSprite->pos().x(),
+        playerSprite->pos().y()
         );
 
     //-----------------------------------
     // Escape
     //-----------------------------------
-    if(
-        event->key() ==
-        Qt::Key_Escape
-        )
+    if(event->key() == Qt::Key_Escape)
     {
         pauseGame();
-        stack->setCurrentWidget(
-            startScreen
-            );
+        stack->setCurrentWidget(startScreen);
     }
 }
 
@@ -605,4 +583,15 @@ void GameWindow::mousePressEvent(QMouseEvent *event)
 {
     QPointF pos = view->mapToScene(event->pos());
     qDebug() << "CLICK:" << pos;
-}
+        QPoint viewPos = view->mapFrom(this, event->pos());
+
+        QPointF scenePos = view->mapToScene(viewPos);
+
+        int x = scenePos.x();
+        int y = scenePos.y();
+
+        QColor color = collisionMask.pixelColor(x, y);
+
+        qDebug() << x << y;
+        qDebug() << color;
+    }

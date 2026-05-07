@@ -59,8 +59,8 @@ void Player::addScore(int points)
 
 void Player::reset()
 {
-    x = 100;
-    y = 600;
+    x = 635;
+    y = 700;
     score = 0;
     hintsUsed = 0;
     foundItems.clear();

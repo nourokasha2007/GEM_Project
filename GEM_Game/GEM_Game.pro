@@ -20,7 +20,8 @@ SOURCES += \
     level.cpp \
     main.cpp \
     obstacle.cpp \
-    player.cpp
+    player.cpp \
+    tools.cpp
 
 HEADERS += \
     Level1.h \
@@ -35,7 +36,8 @@ HEADERS += \
     item.h \
     level.h \
     obstacle.h \
-    player.h
+    player.h \
+    tools.h
 
 FORMS += \
     gameWindow.ui

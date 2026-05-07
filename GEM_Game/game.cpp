@@ -18,7 +18,6 @@ Game::Game() : player("Start", 0, 0)
 void Game::startGame()
 {
     cout << "Game Started\n";
-
     state = Gamestate::playing;
     timer = startTime;
 
