@@ -556,7 +556,39 @@ void GameWindow::keyPressEvent(QKeyEvent *event)
     //-----------------------------------
 game.getPlayer().moveTo(
         playerSprite->pos().x(),
-        playerSprite->pos().y()
+        playerSprite->pos().y());
+    for (size_t i = 0; i < currentLevel->artifacts.size(); i++)
+    {
+        QGraphicsItem* artifact =
+            currentLevel->artifacts[i];
+        if(
+            playerSprite
+                ->collidesWithItem(
+                    artifact
+                    )
+            )
+        {
+            scene->removeItem(
+                artifact
+                );
+
+            currentLevel->artifacts.erase(
+                currentLevel->artifacts.begin() + i
+                );
+
+            game.getPlayer()
+                .addScore(10);
+
+            i--;
+        }
+    }
+
+    //-----------------------------------
+    // Sync logical player position
+    //-----------------------------------
+    game.getPlayer().moveTo(
+        newPos.x(),
+        newPos.y()
         );
 
     //-----------------------------------

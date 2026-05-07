@@ -1,63 +1,72 @@
 #include "game.h"
 #include "Level1.h"
-#include <iostream>
 #include "artifact.h"
 #include "tools.h"
+
+#include <iostream>
+
 using namespace std;
 
-Game::Game() : player("Start", 0, 0)
+// ===== ARTIFACTS =====
+Artifact coin("Coin", false);
+Artifact amulet("Amulet", false);
+Artifact scroll("Ancient Scroll", false);
+Artifact mask("Golden Mask", false);
+Artifact nose("Abu El Hol Nose", false);
+Artifact statue("Statue", false);
+
+// ===== TOOLS =====
+Tool flashlight("Flashlight", false, 3);
+Tool map("Map", false, 1);
+Tool timerBoost("Timer Boost", false, 1);
+
+Game::Game() : player("Player", 100, 600)
 {
-    startTime = 0;
-    timer = startTime;
     state = Gamestate::paused;
+    currentLevel = new Level1();
     currentLevelIndex = 1;
     isRunning = false;
-    currentLevel = nullptr;
+    timer = 0;
+    startTime = 0;
+}
+
+Game::~Game()
+{
+    delete currentLevel;
 }
 
 void Game::startGame()
 {
     cout << "Game Started\n";
+
     state = Gamestate::playing;
-    timer = startTime;
-
-    player.reset();
-
-    currentLevelIndex = 1;
-    loadLevel(currentLevelIndex);
-
     isRunning = true;
 }
 
 void Game::pauseGame()
 {
-    cout << "Game Paused\n";
     state = Gamestate::paused;
+    isRunning = false;
 }
 
 void Game::resumeGame()
 {
-    cout << "Game Resumed\n";
-    state = Gamestate::playing;
-}
-
-void Game::restartGame()
-{
-    cout << "Game Restarted\n";
-
-    timer = startTime;
-    player.reset();
-
-    loadLevel(currentLevelIndex);
-
     state = Gamestate::playing;
     isRunning = true;
 }
 
+void Game::restartGame()
+{
+    player.reset();
+
+    state = Gamestate::playing;
+    isRunning = true;
+
+    timer = 0;
+}
+
 void Game::exitGame()
 {
-    cout << "Game Exiting\n";
-
     state = Gamestate::exiting;
     isRunning = false;
 }
@@ -69,28 +78,20 @@ void Game::update(float diffTime)
 
     timer += diffTime;
 
-    // If your Level class later supports update, you can enable this:
-    // if (currentLevel)
-    //     currentLevel->update(diffTime);
-
     checkWin();
     checkLose();
 }
 
 void Game::loadLevel(int levelindex)
 {
-    if (currentLevel)
-    {
-        delete currentLevel;
-        currentLevel = nullptr;
-    }
-
     currentLevelIndex = levelindex;
+
+    delete currentLevel;
 
     if (currentLevelIndex == 1)
         currentLevel = new Level1();
     else
-        currentLevel = new Level1(); // fallback
+        currentLevel = new Level1();
 
     player.reset();
 
@@ -100,36 +101,23 @@ void Game::loadLevel(int levelindex)
 void Game::nextLevel()
 {
     currentLevelIndex++;
-    loadLevel(currentLevelIndex);
-    timer = startTime;
 }
 
 void Game::checkWin()
 {
-    if (player.getScore() >= 100)
-    {
-        cout << "Level Complete!\n";
-        nextLevel();
+    if (player.isWinner()) {
+        state = Gamestate::gameOver;
     }
 }
 
 void Game::checkLose()
 {
-    if (timer > 300)
-    {
-        cout << "You Lost!\n";
-        restartGame();
-    }
+
 }
 
 Gamestate Game::getstate() const
 {
     return state;
-}
-
-Game::~Game()
-{
-    delete currentLevel;
 }
 
 Player& Game::getPlayer()
@@ -141,12 +129,3 @@ int Game::getLevelIndex() const
 {
     return currentLevelIndex;
 }
-Artifact coin("Coin", false);
-Artifact statue("Statue", false);
-Artifact scroll("Ancient Scroll", false);
-Artifact mask("Golden Mask", false);
-Artifact nose("Abu El Hol Nose", false);
-
-Tool flashlight("Flashlight", false, 3);
-Tool map("Map", false, 1);
-Tool timerBoost("Timer Boost", false, 1);
