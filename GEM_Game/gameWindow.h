@@ -63,6 +63,26 @@ private:
     QWidget *gameScreen;        // Page 1
     QWidget *gameOverScreen;    // Page 2 (Used for Win, Lose, and Game Over)
 
+    QLabel *coinIcon;
+    QLabel *scrollIcon;
+    QLabel *maskIcon;
+    QLabel *amuletIcon;
+    QLabel *timerIcon;
+    QLabel *noseIcon;
+
+    QLabel *coinCounter;
+    QLabel *scrollCounter;
+    QLabel *maskCounter;
+    QLabel *amuletCounter;
+    QLabel *timerCounter;
+    QLabel *noseCounter;
+
+    int coinCount=3;
+    int scrollCount = 3;
+    int maskCount = 3;
+    int amuletCount = 3;
+    int timerCount = 3;
+
     //-----------------------------------
     // HUD & Feedback Components
     //-----------------------------------
