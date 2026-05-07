@@ -9,6 +9,7 @@ using namespace std;
 class Player
 {
 private:
+    int health; // 1. Add health here
     int score;
     QString currentLocation;
     int x;
@@ -18,6 +19,11 @@ private:
 
 public:
     Player(QString name, int startX, int startY);
+
+    // Health interaction with enemies/projectiles
+    int getHealth() const;
+    void takeDamage(int amount);
+
 
     void moveTo(int newX, int newY);
     void moveUp();

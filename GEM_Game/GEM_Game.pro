@@ -1,6 +1,14 @@
 QT += widgets
 
 CONFIG += c++17
+# Force same startup/entrypoint style as Qt (avoids __imp___argc unresolved)
+CONFIG += console_app
+
+
+
+
+
+
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.

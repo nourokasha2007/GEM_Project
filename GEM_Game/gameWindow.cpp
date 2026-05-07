@@ -399,9 +399,10 @@ void GameWindow::startGame()
     //----------------------------------
     // Create enemy
     //----------------------------------
-    enemy = new Level1Enemy(&game.getPlayer());
+    enemy = new Level1Enemy(&game.getPlayer(), playerSprite);
     scene->addItem(enemy);
     enemy->setPos(500, 500);  // Initial position for the mummy
+
 
     stack->setCurrentWidget(
         gameScreen
