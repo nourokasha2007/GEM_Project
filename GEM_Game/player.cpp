@@ -1,5 +1,5 @@
 #include "player.h"
-
+#include <unistd.h>
 
 
 
@@ -43,10 +43,8 @@ void Player::collectItem(QString item)
     foundItems.push_back(item);
 }
 
-/*void Player::interactCharacter(QString character)
-{
-}
-*/
+// void Player::interactCharacter(QString character);
+
 void Player::useHint()
 {
     hintsUsed++;
