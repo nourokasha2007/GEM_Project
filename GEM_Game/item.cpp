@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 #include "item.h"
 
 Item::Item() {
@@ -27,3 +28,51 @@ bool Item::isCollected() {
 string Item::getType() {
     return type;
 }
+=======
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include "item.h"
+using namespace std;
+
+Item::Item(){
+        name = "";
+        type = "";
+        collected = false;
+    }
+
+Item::Item(string n, bool c, string t) {
+        name = n;
+        type=t;
+        collected = c;
+    }
+
+    void Item::collect() {
+        collected = true;
+    }
+
+    string Item::getName() {
+        return name;
+    }
+
+    bool Item::isCollected() {
+        return collected;
+    }
+    string Item::getType() {
+        return type;
+        }
+
+
+
+
+
+
+ 
+
+    
+    
+    
+    
+   
+>>>>>>> Stashed changes
