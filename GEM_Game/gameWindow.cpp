@@ -24,6 +24,7 @@ GameWindow::GameWindow(QWidget *parent)
     currentLevel = nullptr;
     playerSprite = nullptr;
     coinCount=3;
+    seconds = 300;
 
     /* ================= START SCREEN ================= */
     {
@@ -485,7 +486,7 @@ void GameWindow::startGame()
 {
     game.startGame();
 
-    seconds = 0;
+    seconds = 300;
     timer->start(1000);
 
     scene->clear();
@@ -530,7 +531,7 @@ void GameWindow::restartGame()
 {
     game.restartGame();
 
-    seconds = 0;
+    seconds = 300;
     timer->start(1000);
 
     startGame();
@@ -548,7 +549,18 @@ void GameWindow::exitGame()
 
 void GameWindow::updateGame()
 {
-    seconds++;
+    seconds--;
+    if (seconds <= 0)
+    {
+        timer->stop();
+
+        stack->setCurrentWidget(
+            gameOverScreen
+            );
+
+        return;
+    }
+
     game.update(1.0f);
 
     // 1. Update the Clock Display
@@ -681,6 +693,13 @@ void GameWindow::keyPressEvent(
             currentLevel->artifacts.erase(
                 currentLevel->artifacts.begin() + i
                 );
+
+            QString type = artifact->data(0).toString();
+
+            if (type == "timer")
+            {
+                seconds += 30;
+            }
 
             game.getPlayer()
                 .addScore(10);
