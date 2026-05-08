@@ -1,19 +1,51 @@
 #ifndef INVENTORY_H
 #define INVENTORY_H
-#include <string>
-#include <vector>
-#include "item.h"
-using namespace std;
 
-class Inventory {
+#include "item.h"
+
+#include <vector>
+
+#include <QString>
+
+class Inventory
+{
 private:
-    vector<Item*> items;
+
+    //================ ITEMS =================//
+
+    std::vector<Item*> items;
 
 public:
-    void addItem(Item* item);
-    void showItems();
-    int countItem(string name);
-    bool hasItem(string name);
+
+    //================ CORE =================//
+
+    Inventory();
+
+    ~Inventory();
+
+    //================ ITEMS =================//
+
+    void addItem(
+        Item* item
+        );
+
+    void removeItem(
+        QString name
+        );
+
+    bool hasItem(
+        QString name
+        ) const;
+
+    int countItem(
+        QString name
+        ) const;
+
+    void clear();
+
+    //================ GETTERS =================//
+
+    std::vector<Item*> getItems() const;
 };
 
 #endif

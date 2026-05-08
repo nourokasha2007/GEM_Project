@@ -1,6 +1,5 @@
 #ifndef GAMEWINDOW_H
 #define GAMEWINDOW_H
-
 #include <QMainWindow>
 #include <QStackedWidget>
 #include <QWidget>
@@ -12,16 +11,11 @@
 #include <QLineEdit>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGraphicsPixmapItem>
-
-#include <QPixmap>
-#include <QRect>
-
+#include <QImage>
 #include "game.h"
-#include "level.h"
 
 class GameWindow : public QMainWindow
 {
@@ -31,80 +25,104 @@ public:
     explicit GameWindow(QWidget *parent = nullptr);
 
 protected:
-    // Input Handling
     void keyPressEvent(QKeyEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
-    void mousePressEvent(QMouseEvent *event) override;
 
 private slots:
-    // Navigation and Logic slots
+
     void startGame();
+
     void pauseGame();
+
     void restartGame();
+
     void exitGame();
-    void updateGame(); // Triggered by the QTimer
+
+    void updateGame();
+
     void showBriefingPopup(const QString &playerName);
 
 private:
-    //-----------------------------------
-    // Core Game Logic
-    //-----------------------------------
+
+    //================ GAME =================//
+
     Game game;
+
     Level* currentLevel;
-    QTimer *timer;
+
+    QTimer* timer;
+
     int seconds;
 
-    //-----------------------------------
-    // UI Structure (The Stack)
-    //-----------------------------------
-    QStackedWidget *stack;      // The main container
+    //================ STACK =================//
 
-    QWidget *startScreen;       // Page 0
-    QWidget *gameScreen;        // Page 1
-    QWidget *gameOverScreen;    // Page 2 (Used for Win, Lose, and Game Over)
+    QStackedWidget* stack;
 
-    QLabel *coinIcon;
-    QLabel *scrollIcon;
-    QLabel *maskIcon;
-    QLabel *amuletIcon;
-    QLabel *timerIcon;
-    QLabel *noseIcon;
+    QWidget* startScreen;
 
-    QLabel *coinCounter;
-    QLabel *scrollCounter;
-    QLabel *maskCounter;
-    QLabel *amuletCounter;
-    QLabel *timerCounter;
-    QLabel *noseCounter;
+    QWidget* gameScreen;
 
-    int coinCount=3;
-    int scrollCount = 3;
-    int maskCount = 3;
-    int amuletCount = 3;
-    int timerCount = 3;
+    QWidget* gameOverScreen;
 
-    //-----------------------------------
-    // HUD & Feedback Components
-    //-----------------------------------
-    // These are updated dynamically in the .cpp
-    QLabel *clockLabel;
-    QLabel *scoreLabel;
-    QLabel *statusLabel;        // Displays "You Win", "You Lose", etc.
-    QLabel *bgOverlay;          // Start screen dark overlay (resizes with window)
-    QLineEdit *guestNameEdit;   // Guest name input on start screen
+    //================ HUD =================//
 
-    //-----------------------------------
-    // Graphics System
-    //-----------------------------------
-    QGraphicsScene *scene;
-    QGraphicsView *view;
-    QGraphicsPixmapItem *playerSprite;
+    QLabel* clockLabel;
+
+    QLabel* scoreLabel;
+
+    QLabel* statusLabel;
+
+    QLabel* bgOverlay;
+
+    QLineEdit* guestNameEdit;
+
+    //================ INVENTORY =================//
+
+    QLabel* coinIcon;
+    QLabel* scrollIcon;
+    QLabel* maskIcon;
+    QLabel* amuletIcon;
+    QLabel* timerIcon;
+
+    QLabel* coinCounter;
+    QLabel* scrollCounter;
+    QLabel* maskCounter;
+    QLabel* amuletCounter;
+    QLabel* timerCounter;
+
+    //================ GRAPHICS =================//
+
+    QGraphicsScene* scene;
+
+    QGraphicsView* view;
+
+    QGraphicsPixmapItem* playerSprite;
+
     QImage collisionMask;
-    // Helper function to setup the UI layouts
-    void setupScreens();
 
+    //================ HELPERS =================//
 
+    void setupStartScreen();
 
+    void setupGameScreen();
+
+    void setupGameOverScreen();
+
+    void setupHUD(QVBoxLayout* mainLayout);
+
+    void setupInventoryUI(QHBoxLayout* gameLayout);
+
+    void setupButtons(QVBoxLayout* mainLayout);
+
+    void updateHUD();
+
+    void updateInventoryUI();
+
+    void movePlayer(int dx, int dy);
+
+    bool isWalkable(QPointF newPos);
+
+    void checkArtifactCollisions();
 };
 
-#endif // GAMEWINDOW_H
+#endif

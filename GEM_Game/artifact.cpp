@@ -1,8 +1,24 @@
-
 #include "artifact.h"
 
+/* ================= DEFAULT CONSTRUCTOR ================= */
 
-Artifact::Artifact() : Item() {}
+Artifact::Artifact()
+    : Item()
+{
 
+}
 
-Artifact::Artifact(string n, bool c): Item(n,c, "Artifact") {}
+/* ================= PARAMETERIZED CONSTRUCTOR ================= */
+
+Artifact::Artifact(
+    std::string name,
+    bool collected
+    )
+    : Item(
+          name,
+          collected,
+          "Artifact"
+          )
+{
+
+}

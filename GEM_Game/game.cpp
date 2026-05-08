@@ -1,129 +1,308 @@
 #include "game.h"
+
 #include "Level1.h"
-#include "artifact.h"
-#include "tools.h"
 
 #include <iostream>
 
 using namespace std;
 
-// ===== ARTIFACTS =====
-Artifact coin("Coin", false);
-Artifact amulet("Amulet", false);
-Artifact scroll("Ancient Scroll", false);
-Artifact mask("Golden Mask", false);
-Artifact nose("Abu El Hol Nose", false);
-Artifact statue("Statue", false);
+/* ================= CONSTRUCTOR ================= */
 
-// ===== TOOLS =====
-Tool flashlight("Flashlight", false, 3);
-Tool map("Map", false, 1);
-Tool timerBoost("Timer Boost", false, 1);
-
-Game::Game() : player("Player", 100, 600)
+Game::Game()
+    : player("Player", 100, 600)
 {
-    state = Gamestate::paused;
-    currentLevel = new Level1();
-    currentLevelIndex = 1;
-    isRunning = false;
-    timer = 0;
-    startTime = 0;
+    state =
+        Gamestate::paused;
+
+    currentLevel =
+        new Level1();
+
+    currentLevelIndex =
+        1;
+
+    isRunning =
+        false;
+
+    timer =
+        0;
+
+    startTime =
+        0;
+
+    //================ COUNTS ================//
+
+    coinCount =
+        3;
+
+    scrollCount =
+        3;
+
+    maskCount =
+        3;
+
+    amuletCount =
+        3;
+
+    timerCount =
+        3;
 }
+
+/* ================= DESTRUCTOR ================= */
 
 Game::~Game()
 {
     delete currentLevel;
 }
 
+/* ================= START ================= */
+
 void Game::startGame()
 {
-    cout << "Game Started\n";
+    state =
+        Gamestate::playing;
 
-    state = Gamestate::playing;
-    isRunning = true;
+    isRunning =
+        true;
 }
+
+/* ================= PAUSE ================= */
 
 void Game::pauseGame()
 {
-    state = Gamestate::paused;
-    isRunning = false;
+    state =
+        Gamestate::paused;
+
+    isRunning =
+        false;
 }
+
+/* ================= RESUME ================= */
 
 void Game::resumeGame()
 {
-    state = Gamestate::playing;
-    isRunning = true;
+    state =
+        Gamestate::playing;
+
+    isRunning =
+        true;
 }
+
+/* ================= RESTART ================= */
 
 void Game::restartGame()
 {
     player.reset();
 
-    state = Gamestate::playing;
-    isRunning = true;
+    state =
+        Gamestate::playing;
 
-    timer = 0;
+    isRunning =
+        true;
+
+    timer =
+        0;
+
+    //================ RESET COUNTS ================//
+
+    coinCount =
+        3;
+
+    scrollCount =
+        3;
+
+    maskCount =
+        3;
+
+    amuletCount =
+        3;
+
+    timerCount =
+        3;
 }
+
+/* ================= EXIT ================= */
 
 void Game::exitGame()
 {
-    state = Gamestate::exiting;
-    isRunning = false;
+    state =
+        Gamestate::exiting;
+
+    isRunning =
+        false;
 }
+
+/* ================= UPDATE ================= */
 
 void Game::update(float diffTime)
 {
-    if (state != Gamestate::playing)
+    if(state != Gamestate::playing)
         return;
 
     timer += diffTime;
 
     checkWin();
+
     checkLose();
 }
 
+/* ================= LOAD LEVEL ================= */
+
 void Game::loadLevel(int levelindex)
 {
-    currentLevelIndex = levelindex;
+    currentLevelIndex =
+        levelindex;
 
     delete currentLevel;
 
-    if (currentLevelIndex == 1)
-        currentLevel = new Level1();
+    if(levelindex == 1)
+    {
+        currentLevel =
+            new Level1();
+    }
+
     else
-        currentLevel = new Level1();
+    {
+        currentLevel =
+            new Level1();
+    }
 
     player.reset();
-
-    cout << "Loaded Level " << levelindex << endl;
 }
+
+/* ================= NEXT LEVEL ================= */
 
 void Game::nextLevel()
 {
     currentLevelIndex++;
 }
 
+/* ================= COLLECT ARTIFACT ================= */
+
+void Game::collectArtifact(QString type)
+{
+    //================ SCORE ================//
+
+    player.addScore(10);
+
+    //================ PLAYER MEMORY ================//
+
+    player.collectItem(type);
+
+    //================ COUNTERS ================//
+
+    if(type == "coin")
+    {
+        if(coinCount > 0)
+            coinCount--;
+    }
+
+    else if(type == "scroll")
+    {
+        if(scrollCount > 0)
+            scrollCount--;
+    }
+
+    else if(type == "mask")
+    {
+        if(maskCount > 0)
+            maskCount--;
+    }
+
+    else if(type == "amulet")
+    {
+        if(amuletCount > 0)
+            amuletCount--;
+    }
+
+    else if(type == "timer")
+    {
+        if(timerCount > 0)
+            timerCount--;
+    }
+
+    checkWin();
+}
+
+/* ================= GET COUNTS ================= */
+
+int Game::getArtifactCount(QString type) const
+{
+    if(type == "coin")
+        return coinCount;
+
+    if(type == "scroll")
+        return scrollCount;
+
+    if(type == "mask")
+        return maskCount;
+
+    if(type == "amulet")
+        return amuletCount;
+
+    if(type == "timer")
+        return timerCount;
+
+    return 0;
+}
+
+/* ================= HAS COLLECTED ================= */
+
+bool Game::hasCollected(QString type) const
+{
+    vector<QString> items =
+        player.getFoundItems();
+
+    for(size_t i = 0; i < items.size(); i++)
+    {
+        if(items[i] == type)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/* ================= WIN ================= */
+
 void Game::checkWin()
 {
-    if (player.isWinner()) {
-        state = Gamestate::gameOver;
+    if(player.getScore() >= 100)
+    {
+        state =
+            Gamestate::gameOver;
     }
 }
+
+/* ================= LOSE ================= */
 
 void Game::checkLose()
 {
 
 }
 
+/* ================= GET STATE ================= */
+
 Gamestate Game::getstate() const
 {
     return state;
 }
 
+/* ================= GET PLAYER ================= */
+
 Player& Game::getPlayer()
 {
     return player;
 }
+
+/* ================= GET LEVEL ================= */
+
+Level* Game::getCurrentLevel() const
+{
+    return currentLevel;
+}
+
+/* ================= GET LEVEL INDEX ================= */
 
 int Game::getLevelIndex() const
 {
