@@ -718,8 +718,9 @@ void GameWindow::startGame()
     mummy->setZValue(999);
     scene->addItem(mummy);
 
-    connect(mummy, &Level1Enemy::reduceTime, this, [=](int amount){
-        seconds -= amount;
+    // time reduction
+    connect(mummy, &Level1Enemy::reduceTime, this, [=]{
+        seconds -= 30;
 
         if (seconds < 0) {
             seconds = 0;
