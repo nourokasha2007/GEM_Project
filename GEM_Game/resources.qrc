@@ -1,20 +1,25 @@
 <RCC>
     <qresource prefix="/new/prefix1">
+
         <file>images/ChatGPT Image Apr 28, 2026, 05_48_57 PM.png</file>
         <file>images/Gemini_Generated_Image_ibun6yibun6yibun.png</file>
         <file>images/PHOTO-2026-04-29-21-07-06.jpg</file>
-<<<<<<< HEAD
+
         <file>images/level1 (1).png</file>
         <file>images/level1 BW.png</file>
-=======
         <file>images/level1.png</file>
+
         <file>images/nose.png</file>
+
         <file>images/coin2.png</file>
         <file>images/scroll2.png</file>
         <file>images/mask2.png</file>
         <file>images/amulet2.png</file>
+
         <file>images/timer.png</file>
->>>>>>> 779c9ad3fe6b9a28b944af05ba18919a873ec5b1
+
     </qresource>
+
     <qresource prefix="/"/>
+
 </RCC>
