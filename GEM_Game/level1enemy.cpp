@@ -15,7 +15,7 @@ Level1Enemy::Level1Enemy(Player* target, QGraphicsPixmapItem* pSprite)
 
     loadAssets();
     setPixmap(imgIdle);
-    setScale(3.0);
+    setScale(4.0);
 
     QTimer* timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Level1Enemy::updateAI);
@@ -38,14 +38,14 @@ void Level1Enemy::updateAI() {
     double dy = player->getY() - this->y();
     double distance = std::sqrt(dx * dx + dy * dy);
 
-    if (distance < 400) {
+    if (distance < 700) {
         isChasing = true;
     }
 
     if (isChasing) {
         shootCooldownMs -= 33;
         if (shootCooldownMs <= 0) {
-            shootCooldownMs = 3000;
+            shootCooldownMs = 7000;
             shootHomingProjectile();
         }
 
@@ -74,7 +74,7 @@ void Level1Enemy::shootHomingProjectile() {
     if (!scn) return;
 
     QGraphicsPixmapItem* proj = scn->addPixmap(imgProjectile);
-    proj->setScale(0.15);
+    proj->setScale(0.2);
     proj->setPos(this->x(), this->y());
     proj->setZValue(999);
 
@@ -113,7 +113,7 @@ void Level1Enemy::shootHomingProjectile() {
         double nx = vx / dist;
         double ny = vy / dist;
 
-        proj->setPos(bx + nx * 10.0, by + ny * 10.0);
+        proj->setPos(bx + nx * 3.0, by + ny * 3.0);
     });
 
     homingTimer->start(50);
