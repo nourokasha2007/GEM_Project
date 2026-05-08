@@ -1,171 +1,195 @@
 #include "Level1.h"
 #include <QBrush>
-#include <QPen>
-#include <QGraphicsPixmapItem>
-#include <QPixmap>
 #include <QDebug>
+#include <QPen>
+#include <QPixmap>
 
 Level1::Level1()
 {
-    // optional: initialize level data here
+
 }
+
+/* ================= LOAD SCENE ================= */
 
 void Level1::loadScene(QGraphicsScene *scene)
 {
-    // ===== BACKGROUND =====
-    QPixmap bg(":/new/prefix1/images/level1.png");
+    //================ BACKGROUND ================//
 
-    background = scene->addPixmap(bg);
-
+    QPixmap bg(":/new/prefix1/images/level1 (1).png" );
+    background =scene->addPixmap(bg);
     scene->setSceneRect(bg.rect());
-
-    qDebug() << "coin null?"
-             << QPixmap(":/new/prefix1/images/coin2.png").isNull();
-
-    /*
-    // ===== OBSTACLES =====
-
-    QGraphicsRectItem* leftWall =
-        scene->addRect(
-            829,891,
-            30,50,
-            QPen(Qt::red),
-            QBrush(Qt::red)
-        );
-
-    obstacles.push_back(leftWall);
-
-    QGraphicsRectItem* rightWall =
-        scene->addRect(
-            1055,891,
-            30,50,
-            QPen(Qt::red),
-            QBrush(Qt::red)
-        );
-
-    obstacles.push_back(rightWall);
-
-    QGraphicsRectItem* coffin3 =
-        scene->addRect(
-            986,711,
-            100,160,
-            QPen(Qt::red),
-            QBrush(Qt::red)
-        );
-
-    obstacles.push_back(coffin3);
-    */
 
     double s = 0.025;
 
-    // ===== COINS =====
-    QGraphicsPixmapItem* coin1 =
-        scene->addPixmap(QPixmap(":/new/prefix1/images/coin2.png"));
-    coin1->setPos(310, 500);
-    coin1->setScale(s);
-    coin1->setOpacity(0.9);
-    coin1->setZValue(999);
-    artifacts.push_back(coin1);
+    //================ COINS ================//
 
-    QGraphicsPixmapItem* coin2 =
-        scene->addPixmap(QPixmap(":/new/prefix1/images/coin2.png"));
-    coin2->setPos(520, 620);
-    coin2->setScale(s);
-    coin2->setZValue(999);
-    artifacts.push_back(coin2);
+    addArtifact(
+        scene,
+        ":/new/prefix1/images/coin2.png",
+        "coin",
+        310,
+        500,
+        s
+        );
 
-    QGraphicsPixmapItem* coin3 =
-        scene->addPixmap(QPixmap(":/new/prefix1/images/coin2.png"));
-    coin3->setPos(950, 650);
-    coin3->setScale(s);
-    coin3->setZValue(999);
-    artifacts.push_back(coin3);
+    addArtifact(
+        scene,
+        ":/new/prefix1/images/coin2.png",
+        "coin",
+        520,
+        620,
+        s
+        );
 
-    // ===== SCROLLS =====
-    QGraphicsPixmapItem* scroll1 =
-        scene->addPixmap(QPixmap(":/new/prefix1/images/scroll2.png"));
-    scroll1->setPos(420, 800);
-    scroll1->setScale(s);
-    scroll1->setZValue(999);
-    artifacts.push_back(scroll1);
+    addArtifact(
+        scene,
+        ":/new/prefix1/images/coin2.png",
+        "coin",
+        950,
+        650,
+        s
+        );
 
-    QGraphicsPixmapItem* scroll2 =
-        scene->addPixmap(QPixmap(":/new/prefix1/images/scroll2.png"));
-    scroll2->setPos(1030, 580);
-    scroll2->setScale(s);
-    scroll2->setZValue(999);
-    artifacts.push_back(scroll2);
+    //================ SCROLLS ================//
 
-    QGraphicsPixmapItem* scroll3 =
-        scene->addPixmap(QPixmap(":/new/prefix1/images/scroll2.png"));
-    scroll3->setPos(720, 760);
-    scroll3->setScale(s);
-    scroll3->setZValue(999);
-    artifacts.push_back(scroll3);
+    addArtifact(
+        scene,
+        ":/new/prefix1/images/scroll2.png",
+        "scroll",
+        420,
+        800,
+        s
+        );
 
-    // ===== MASKS =====
-    QGraphicsPixmapItem* mask1 =
-        scene->addPixmap(QPixmap(":/new/prefix1/images/mask2.png"));
-    mask1->setPos(300, 860);
-    mask1->setScale(s);
-    mask1->setZValue(999);
-    artifacts.push_back(mask1);
+    addArtifact(
+        scene,
+        ":/new/prefix1/images/scroll2.png",
+        "scroll",
+        1030,
+        580,
+        s
+        );
 
-    QGraphicsPixmapItem* mask2 =
-        scene->addPixmap(QPixmap(":/new/prefix1/images/mask2.png"));
-    mask2->setPos(960, 400);
-    mask2->setScale(s);
-    mask2->setZValue(999);
-    artifacts.push_back(mask2);
+    addArtifact(
+        scene,
+        ":/new/prefix1/images/scroll2.png",
+        "scroll",
+        720,
+        760,
+        s
+        );
 
-    QGraphicsPixmapItem* mask3 =
-        scene->addPixmap(QPixmap(":/new/prefix1/images/mask2.png"));
-    mask3->setPos(900, 850);
-    mask3->setScale(s);
-    mask3->setZValue(999);
-    artifacts.push_back(mask3);
+    //================ MASKS ================//
 
-    // ===== AMULETS =====
-    QGraphicsPixmapItem* amulet1 =
-        scene->addPixmap(QPixmap(":/new/prefix1/images/amulet2.png"));
-    amulet1->setPos(470, 430);
-    amulet1->setScale(s);
-    amulet1->setZValue(999);
-    artifacts.push_back(amulet1);
+    addArtifact(
+        scene,
+        ":/new/prefix1/images/mask2.png",
+        "mask",
+        300,
+        860,
+        s
+        );
 
-    QGraphicsPixmapItem* amulet2 =
-        scene->addPixmap(QPixmap(":/new/prefix1/images/amulet2.png"));
-    amulet2->setPos(870, 700);
-    amulet2->setScale(s);
-    amulet2->setZValue(999);
-    artifacts.push_back(amulet2);
+    addArtifact(
+        scene,
+        ":/new/prefix1/images/mask2.png",
+        "mask",
+        960,
+        400,
+        s
+        );
 
-    QGraphicsPixmapItem* amulet3 =
-        scene->addPixmap(QPixmap(":/new/prefix1/images/amulet2.png"));
-    amulet3->setPos(1070, 380);
-    amulet3->setScale(s);
-    amulet3->setZValue(999);
-    artifacts.push_back(amulet3);
+    addArtifact(
+        scene,
+        ":/new/prefix1/images/mask2.png",
+        "mask",
+        900,
+        850,
+        s
+        );
 
-    // ===== TIMERS =====
-    QGraphicsPixmapItem* timer1 =
-        scene->addPixmap(QPixmap(":/new/prefix1/images/timer.png"));
-    timer1->setPos(610, 410);
-    timer1->setScale(s);
-    timer1->setZValue(999);
-    artifacts.push_back(timer1);
+    //================ AMULETS ================//
 
-    QGraphicsPixmapItem* timer2 =
-        scene->addPixmap(QPixmap(":/new/prefix1/images/timer.png"));
-    timer2->setPos(850, 540);
-    timer2->setScale(s);
-    timer2->setZValue(999);
-    artifacts.push_back(timer2);
+    addArtifact(
+        scene,
+        ":/new/prefix1/images/amulet2.png",
+        "amulet",
+        470,
+        430,
+        s
+        );
 
-    QGraphicsPixmapItem* timer3 =
-        scene->addPixmap(QPixmap(":/new/prefix1/images/timer.png"));
-    timer3->setPos(1090, 500);
-    timer3->setScale(s);
-    timer3->setZValue(999);
-    artifacts.push_back(timer3);
+    addArtifact(
+        scene,
+        ":/new/prefix1/images/amulet2.png",
+        "amulet",
+        870,
+        700,
+        s
+        );
+
+    addArtifact(
+        scene,
+        ":/new/prefix1/images/amulet2.png",
+        "amulet",
+        1070,
+        380,
+        s
+        );
+
+    //================ TIMERS ================//
+
+    addArtifact(
+        scene,
+        ":/new/prefix1/images/timer.png",
+        "timer",
+        610,
+        410,
+        s
+        );
+
+    addArtifact(
+        scene,
+        ":/new/prefix1/images/timer.png",
+        "timer",
+        850,
+        540,
+        s
+        );
+
+    addArtifact(
+        scene,
+        ":/new/prefix1/images/timer.png",
+        "timer",
+        1090,
+        500,
+        s
+        );
+}
+
+/* ================= ADD ARTIFACT ================= */
+
+void Level1::addArtifact(
+    QGraphicsScene* scene,
+    QString imagePath,
+    QString type,
+    int x,
+    int y,
+    double scale
+    )
+{
+    QGraphicsPixmapItem* item =
+        scene->addPixmap(
+            QPixmap(imagePath)
+            );
+
+    item->setPos(x, y);
+
+    item->setScale(scale);
+
+    item->setZValue(999);
+
+    item->setData(0, type);
+
+    artifacts.push_back(item);
 }

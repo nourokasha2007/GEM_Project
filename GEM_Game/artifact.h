@@ -1,13 +1,22 @@
 #ifndef ARTIFACT_H
 #define ARTIFACT_H
-#include <string>
-#include "item.h"
-using namespace std;
 
-class Artifact : public Item {
+#include "item.h"
+
+#include <string>
+
+class Artifact : public Item
+{
 public:
+
+    //================ CONSTRUCTORS =================//
+
     Artifact();
-    Artifact(string n, bool c);
+
+    Artifact(
+        std::string name,
+        bool collected
+        );
 };
 
 #endif

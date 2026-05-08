@@ -1,24 +1,43 @@
 #include "player.h"
-#include <unistd.h>
 
+/* ================= CONSTRUCTOR ================= */
 
-
-using namespace std;
-
-Player::Player(QString name, int startX, int startY)
+Player::Player(
+    QString name,
+    int startX,
+    int startY
+    )
 {
-    x = startX;
-    y = startY;
-    score = 0;
-    hintsUsed = 0;
-    currentLocation = name;
+    x =
+        startX;
+
+    y =
+        startY;
+
+    score =
+        0;
+
+    hintsUsed =
+        0;
+
+    currentLocation =
+        name;
 }
 
-void Player::moveTo(int newX, int newY)
+/* ================= MOVEMENT ================= */
+
+void Player::moveTo(
+    int newX,
+    int newY
+    )
 {
-    x = newX;
-    y = newY;
+    x =
+        newX;
+
+    y =
+        newY;
 }
+
 void Player::moveUp()
 {
     y--;
@@ -38,36 +57,48 @@ void Player::moveRight()
 {
     x++;
 }
-void Player::collectItem(QString item)
+
+/* ================= INVENTORY ================= */
+
+void Player::collectItem(
+    QString item
+    )
 {
     foundItems.push_back(item);
 }
 
-// void Player::interactCharacter(QString character);
-
-void Player::useHint()
+std::vector<QString> Player::getFoundItems() const
 {
-    hintsUsed++;
+    return foundItems;
 }
 
-void Player::addScore(int points)
+/* ================= SCORE ================= */
+
+void Player::addScore(
+    int points
+    )
 {
     score += points;
 }
 
-void Player::reset()
+void Player::deductScore(
+    int points
+    )
 {
-    x = 635;
-    y = 700;
-    score = 0;
-    hintsUsed = 0;
-    foundItems.clear();
+    score -= points;
+
+    if(score < 0)
+    {
+        score = 0;
+    }
 }
 
 int Player::getScore() const
 {
     return score;
 }
+
+/* ================= POSITION ================= */
 
 int Player::getX() const
 {
@@ -79,19 +110,33 @@ int Player::getY() const
     return y;
 }
 
-vector<QString> Player::getFoundItems() const
+/* ================= HINTS ================= */
+
+void Player::useHint()
 {
-    return foundItems;
+    hintsUsed++;
 }
+
+/* ================= GAME ================= */
 
 bool Player::isWinner() const
 {
     return score >= 100;
 }
-void Player::deductScore(int points)
-{
-    score -= points;
 
-    if(score < 0)
-        score = 0;
+void Player::reset()
+{
+    x =
+        635;
+
+    y =
+        700;
+
+    score =
+        0;
+
+    hintsUsed =
+        0;
+
+    foundItems.clear();
 }

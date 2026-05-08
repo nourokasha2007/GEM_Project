@@ -2,43 +2,89 @@
 #define PLAYER_H
 
 #include <QString>
-#include <vector>
 
-using namespace std;
+#include <vector>
 
 class Player
 {
 private:
-    int score;
-    QString currentLocation;
+
+    //================ POSITION =================//
+
     int x;
+
     int y;
+
+    //================ PLAYER DATA =================//
+
+    int score;
+
     int hintsUsed;
-    vector<QString> foundItems;
+
+    QString currentLocation;
+
+    std::vector<QString> foundItems;
 
 public:
-    Player(QString name, int startX, int startY);
 
-    void moveTo(int newX, int newY);
+    //================ CONSTRUCTOR =================//
+
+    Player(
+        QString name,
+        int startX,
+        int startY
+        );
+
+    //================ MOVEMENT =================//
+
+    void moveTo(
+        int newX,
+        int newY
+        );
+
     void moveUp();
+
     void moveDown();
+
     void moveLeft();
+
     void moveRight();
 
-    void collectItem(QString item);
-    void interactCharacter(QString character);
-    void useHint();
-    void addScore(int points);
+    //================ INVENTORY =================//
 
-    void reset();
+    void collectItem(
+        QString item
+        );
+
+    std::vector<QString> getFoundItems() const;
+
+    //================ SCORE =================//
+
+    void addScore(
+        int points
+        );
+
+    void deductScore(
+        int points
+        );
 
     int getScore() const;
+
+    //================ POSITION GETTERS =================//
+
     int getX() const;
+
     int getY() const;
-    vector<QString> getFoundItems() const;
+
+    //================ HINTS =================//
+
+    void useHint();
+
+    //================ GAME =================//
 
     bool isWinner() const;
-    void deductScore(int points);
+
+    void reset();
 };
 
 #endif
