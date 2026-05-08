@@ -713,11 +713,20 @@ void GameWindow::startGame()
 
     stack->setCurrentWidget(gameScreen);
 
-    Level1Enemy* mummy = new Level1Enemy(playerSprite);
-    mummy->setPos(800, 500); // Set starting coordinates
-    mummy->setScale(3);
-    mummy->setZValue(999);    // Adjust size as needed
+    Level1Enemy* mummy = new Level1Enemy(&game.getPlayer(), playerSprite);
+    mummy->setPos(800, 500);
+    mummy->setZValue(999);
     scene->addItem(mummy);
+
+    connect(mummy, &Level1Enemy::reduceTime, this, [=](int amount){
+        seconds -= amount;
+
+        if (seconds < 0) {
+            seconds = 0;
+        }
+
+        updateHUD();
+    });
 
     stack->setCurrentWidget(gameScreen);
 

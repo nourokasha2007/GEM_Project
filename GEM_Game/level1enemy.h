@@ -3,17 +3,22 @@
 
 #include "enemy.h"
 #include <QPixmap>
-#include <QGraphicsScene>
+
+class Player;
 
 class Level1Enemy : public Enemy {
     Q_OBJECT
 public:
-    Level1Enemy(QGraphicsPixmapItem* targetSprite);
+    Level1Enemy(Player* target, QGraphicsPixmapItem* playerSprite);
+
+signals:
+    void reduceTime(int amount);
 
 public slots:
     void updateAI();
 
 private:
+    Player* player;
     QGraphicsPixmapItem* playerSprite;
     bool isChasing;
 
@@ -22,8 +27,12 @@ private:
     QPixmap imgBack;
     QPixmap imgLeft;
     QPixmap imgRight;
+    QPixmap imgProjectile;
+
+    int shootCooldownMs;
 
     void loadAssets();
+    void shootHomingProjectile();
 };
 
-#endif // LEVEL1ENEMY_H
+#endif
