@@ -1,6 +1,7 @@
 #include "gameWindow.h"
 #include <QDebug>
 #include <QPixmap>
+#include "level1enemy.h"
 
 GameWindow::GameWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -709,6 +710,14 @@ void GameWindow::startGame()
         game.getPlayer().getX(),
         game.getPlayer().getY()
         );
+
+    stack->setCurrentWidget(gameScreen);
+
+    Level1Enemy* mummy = new Level1Enemy(playerSprite);
+    mummy->setPos(800, 500); // Set starting coordinates
+    mummy->setScale(3);
+    mummy->setZValue(999);    // Adjust size as needed
+    scene->addItem(mummy);
 
     stack->setCurrentWidget(gameScreen);
 
