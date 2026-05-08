@@ -77,6 +77,12 @@ private:
     QLabel *timerCounter;
     QLabel *noseCounter;
 
+    QLabel *coinText;
+    QLabel *scrollText;
+    QLabel *maskText;
+    QLabel *amuletText;
+    QLabel *timerText;
+
     int coinCount=3;
     int scrollCount = 3;
     int maskCount = 3;

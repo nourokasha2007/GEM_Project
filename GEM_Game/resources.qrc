@@ -10,6 +10,11 @@
         <file>images/mask2.png</file>
         <file>images/amulet2.png</file>
         <file>images/timer.png</file>
+        <file>images/amulett.png</file>
+        <file>images/coint.png</file>
+        <file>images/maskt.png</file>
+        <file>images/scrollt.png</file>
+        <file>images/timert.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

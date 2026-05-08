@@ -160,8 +160,12 @@ GameWindow::GameWindow(QWidget *parent)
 
         coinIcon = new QLabel(gameScreen);
 
+        coinText = new QLabel(gameScreen);
+
+        coinText->setText("Coins");
+
         coinIcon->setPixmap(
-            QPixmap(":/new/prefix1/images/coin2.png")
+            QPixmap(":/new/prefix1/images/coint.png")
                 .scaled(40, 40, Qt::KeepAspectRatio, Qt::SmoothTransformation)
             );
 
@@ -182,11 +186,19 @@ GameWindow::GameWindow(QWidget *parent)
         coinIcon->show();
         coinCounter->show();
 
+        coinText->move(20, 360);
+
+        coinText->show();
+
 
         scrollIcon = new QLabel(gameScreen);
 
+        scrollText = new QLabel(gameScreen);
+
+         scrollText->setText("Scrolls");
+
         scrollIcon->setPixmap(
-            QPixmap(":/new/prefix1/images/scroll2.png")
+            QPixmap(":/new/prefix1/images/scrollt.png")
                 .scaled(40, 40, Qt::KeepAspectRatio, Qt::SmoothTransformation)
             );
 
@@ -205,10 +217,18 @@ GameWindow::GameWindow(QWidget *parent)
         scrollIcon->show();
         scrollCounter->show();
 
+        scrollText->move(20, 160);
+
+        scrollText->show();
+
         maskIcon = new QLabel(gameScreen);
 
+        maskText = new QLabel(gameScreen);
+
+         maskText->setText("Masks");
+
         maskIcon->setPixmap(
-            QPixmap(":/new/prefix1/images/mask2.png")
+            QPixmap(":/new/prefix1/images/maskt.png")
                 .scaled(40, 40, Qt::KeepAspectRatio, Qt::SmoothTransformation)
             );
 
@@ -227,10 +247,18 @@ GameWindow::GameWindow(QWidget *parent)
         maskIcon->show();
         maskCounter->show();
 
+        maskText->move(20, 210);
+
+        maskText->show();
+
         amuletIcon = new QLabel(gameScreen);
 
+        amuletText = new QLabel(gameScreen);
+
+         amuletText->setText("Amulets");
+
         amuletIcon->setPixmap(
-            QPixmap(":/new/prefix1/images/amulet2.png")
+            QPixmap(":/new/prefix1/images/amulett.png")
                 .scaled(40, 40, Qt::KeepAspectRatio, Qt::SmoothTransformation)
             );
 
@@ -249,10 +277,18 @@ GameWindow::GameWindow(QWidget *parent)
         amuletIcon->show();
         amuletCounter->show();
 
+        amuletText->move(20, 260);
+
+        amuletText->show();
+
         timerIcon = new QLabel(gameScreen);
 
+        timerText = new QLabel(gameScreen);
+
+         timerText->setText("Timers");
+
         timerIcon->setPixmap(
-            QPixmap(":/new/prefix1/images/timer.png")
+            QPixmap(":/new/prefix1/images/timert.png")
                 .scaled(40, 40, Qt::KeepAspectRatio, Qt::SmoothTransformation)
             );
 
@@ -270,6 +306,10 @@ GameWindow::GameWindow(QWidget *parent)
 
         timerIcon->show();
         timerCounter->show();
+
+        timerText->move(20, 310);
+
+        timerText->show();
 
 
 
