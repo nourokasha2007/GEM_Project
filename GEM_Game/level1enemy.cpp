@@ -1,63 +1,120 @@
 #include "level1enemy.h"
+#include "player.h"
+#include <QGraphicsScene>
 #include <QTimer>
+#include <QGraphicsPixmapItem>
 #include <cmath>
 
-Level1Enemy::Level1Enemy(QGraphicsPixmapItem* targetSprite)
-    : Enemy(100, 10, 1.2) // 100 HP, 10 Dmg, 1.2 Speed
-{
-    playerSprite = targetSprite;
-    isChasing = true;
+Level1Enemy::Level1Enemy(Player* target, QGraphicsPixmapItem* pSprite)
+    : Enemy(100, 10, 1.2) {
+
+    player = target;
+    playerSprite = pSprite;
+    isChasing = false;
+    shootCooldownMs = 3000;
 
     loadAssets();
     setPixmap(imgIdle);
+    setScale(3.0);
 
-    // AI Loop: Runs every 33ms (~30 FPS)
     QTimer* timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Level1Enemy::updateAI);
     timer->start(33);
 }
 
 void Level1Enemy::loadAssets() {
-    // Notice the (1) added to match your new file names
-    imgIdle.load(":/new/prefix1/images/lvl1 mummy idle(1).png");
-    imgForward.load(":/new/prefix1/images/lvl1 mummy walking forward(1).png");
-    imgBack.load(":/new/prefix1/images/lvl1 mummy walking back(1).png");
-    imgLeft.load(":/new/prefix1/images/lvl1mummy walking left(1).png");
-    imgRight.load(":/new/prefix1/images/lvl1 mummy walking right(1).png");
-
-    // // Projectile image
-    // imgProjectile.load(":/new/prefix1/images/fireball.png");
+    imgIdle.load("E:/University Stuff/CS 2 Course/CS 2 PROJECT/GEM_Project/GEM_Game/images/lvl1 mummy idle(1).png");
+    imgForward.load("E:/University Stuff/CS 2 Course/CS 2 PROJECT/GEM_Project/GEM_Game/images/lvl1 mummy walking forward(1).png");
+    imgBack.load("E:/University Stuff/CS 2 Course/CS 2 PROJECT/GEM_Project/GEM_Game/images/lvl1 mummy walking back(1).png");
+    imgLeft.load("E:/University Stuff/CS 2 Course/CS 2 PROJECT/GEM_Project/GEM_Game/images/lvl1mummy walking left(1).png");
+    imgRight.load("E:/University Stuff/CS 2 Course/CS 2 PROJECT/GEM_Project/GEM_Game/images/lvl1 mummy walking right(1).png");
+    imgProjectile.load("E:/University Stuff/CS 2 Course/CS 2 PROJECT/GEM_Project/GEM_Game/images/fireball.png");
 }
 
-void Level1Enemy::updateAI()
-{
-    if (!playerSprite || !isChasing) return;
+void Level1Enemy::updateAI() {
+    if (!player) return;
 
-    // Get current positions
-    double ex = this->x();
-    double ey = this->y();
-    double px = playerSprite->x();
-    double py = playerSprite->y();
+    double dx = player->getX() - this->x();
+    double dy = player->getY() - this->y();
+    double distance = std::sqrt(dx * dx + dy * dy);
 
-    // Calculate distance and direction
-    double dx = px - ex;
-    double dy = py - ey;
-    double dist = std::sqrt(dx * dx + dy * dy);
-
-    if (dist < 5.0) return; // Close enough, stop jittering
-
-    // Normalize and move
-    double nx = dx / dist;
-    double ny = dy / dist;
-
-    setPos(ex + (nx * speed), ey + (ny * speed));
-
-    // Update facing sprite based on dominant movement direction
-    if (std::abs(dx) > std::abs(dy)) {
-        if (dx > 0 && !imgRight.isNull()) setPixmap(imgRight);
-        else if (dx < 0 && !imgLeft.isNull()) setPixmap(imgLeft);
-    } else {
-        if (dy > 0 && !imgForward.isNull()) setPixmap(imgForward);
-        else if (dy < 0 && !imgBack.isNull()) setPixmap(imgBack);
+    if (distance < 400) {
+        isChasing = true;
     }
+
+    if (isChasing) {
+        shootCooldownMs -= 33;
+        if (shootCooldownMs <= 0) {
+            shootCooldownMs = 3000;
+            shootHomingProjectile();
+        }
+
+        if (std::abs(dx) > std::abs(dy)) {
+            if (dx > 0) {
+                setPos(x() + speed, y());
+                setPixmap(imgRight);
+            } else {
+                setPos(x() - speed, y());
+                setPixmap(imgLeft);
+            }
+        } else {
+            if (dy > 0) {
+                setPos(x(), y() + speed);
+                setPixmap(imgForward);
+            } else {
+                setPos(x(), y() - speed);
+                setPixmap(imgBack);
+            }
+        }
+    }
+}
+
+void Level1Enemy::shootHomingProjectile() {
+    QGraphicsScene* scn = scene();
+    if (!scn) return;
+
+    QGraphicsPixmapItem* proj = scn->addPixmap(imgProjectile);
+    proj->setScale(0.15);
+    proj->setPos(this->x(), this->y());
+    proj->setZValue(999);
+
+    QTimer* homingTimer = new QTimer();
+    homingTimer->setParent(this);
+
+    connect(homingTimer, &QTimer::timeout, this, [=]() mutable {
+        if (!player) {
+            homingTimer->stop();
+            scn->removeItem(proj);
+            delete proj;
+            homingTimer->deleteLater();
+            return;
+        }
+
+        double px = player->getX();
+        double py = player->getY();
+        double bx = proj->x();
+        double by = proj->y();
+
+        double vx = px - bx;
+        double vy = py - by;
+        double dist = std::sqrt(vx * vx + vy * vy);
+
+        if (dist < 20) {
+            emit reduceTime(15);
+            homingTimer->stop();
+            scn->removeItem(proj);
+            delete proj;
+            homingTimer->deleteLater();
+            return;
+        }
+
+        if (dist < 0.001) dist = 0.001;
+
+        double nx = vx / dist;
+        double ny = vy / dist;
+
+        proj->setPos(bx + nx * 10.0, by + ny * 10.0);
+    });
+
+    homingTimer->start(50);
 }
