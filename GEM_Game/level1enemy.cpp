@@ -4,6 +4,8 @@
 #include <QTimer>
 #include <QGraphicsPixmapItem>
 #include <cmath>
+#include <QElapsedTimer>
+
 
 Level1Enemy::Level1Enemy(Player* target, QGraphicsPixmapItem* pSprite)
     : Enemy(100, 10, 1.2) {
@@ -11,7 +13,8 @@ Level1Enemy::Level1Enemy(Player* target, QGraphicsPixmapItem* pSprite)
     player = target;
     playerSprite = pSprite;
     isChasing = false;
-    shootCooldownMs = 3000;
+    // Fireballs spawn every 8 seconds while chasing
+    shootCooldownMs = 8000;
 
     loadAssets();
     setPixmap(imgIdle);
@@ -49,30 +52,32 @@ void Level1Enemy::updateAI() {
     if (isChasing) {
         shootCooldownMs -= 33;
         if (shootCooldownMs <= 0) {
-            shootCooldownMs = 7000;
+            shootCooldownMs = 6000;
             shootHomingProjectile();
+        }
+
+        if (distance > speed) {
+            double moveX = (dx / distance) * speed;
+            double moveY = (dy / distance) * speed;
+
+            setPos(x() + moveX, y() + moveY);
         }
 
         if (std::abs(dx) > std::abs(dy)) {
             if (dx > 0) {
-                setPos(x() + speed, y());
                 setPixmap(imgRight);
             } else {
-                setPos(x() - speed, y());
                 setPixmap(imgLeft);
             }
         } else {
             if (dy > 0) {
-                setPos(x(), y() + speed);
                 setPixmap(imgForward);
             } else {
-                setPos(x(), y() - speed);
                 setPixmap(imgBack);
             }
         }
     }
 }
-
 void Level1Enemy::shootHomingProjectile() {
     QGraphicsScene* scn = scene();
     if (!scn) return;
@@ -85,6 +90,11 @@ void Level1Enemy::shootHomingProjectile() {
     QTimer* homingTimer = new QTimer();
     homingTimer->setParent(this);
 
+    // Despawn after 5 seconds
+    const int lifetimeMs = 9000;
+    QElapsedTimer lifetime;
+    lifetime.start();
+
     connect(homingTimer, &QTimer::timeout, this, [=]() mutable {
         if (!player) {
             homingTimer->stop();
@@ -93,6 +103,15 @@ void Level1Enemy::shootHomingProjectile() {
             homingTimer->deleteLater();
             return;
         }
+
+        if (lifetime.elapsed() >= lifetimeMs) {
+            homingTimer->stop();
+            scn->removeItem(proj);
+            delete proj;
+            homingTimer->deleteLater();
+            return;
+        }
+
 
         double px = player->getX();
         double py = player->getY();
@@ -105,7 +124,7 @@ void Level1Enemy::shootHomingProjectile() {
 
         if (dist < 10) {
             fireballHitSound->play();
-            emit reduceTime(15);
+            player->deductScore(10);
             homingTimer->stop();
             scn->removeItem(proj);
             delete proj;
@@ -118,7 +137,7 @@ void Level1Enemy::shootHomingProjectile() {
         double nx = vx / dist;
         double ny = vy / dist;
 
-        proj->setPos(bx + nx * 3.0, by + ny * 3.0);
+        proj->setPos(bx + nx * 4.0, by + ny * 4.0);
     });
 
     homingTimer->start(50);
