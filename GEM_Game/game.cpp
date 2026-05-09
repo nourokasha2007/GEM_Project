@@ -11,34 +11,25 @@ using namespace std;
 Game::Game()
     : player("Player", 100, 600)
 {
-    state =
-        Gamestate::paused;
+    state = Gamestate::paused;
 
-    currentLevel =
-        new Level1();
+    currentLevel =new Level1();
 
-    currentLevelIndex =
-        1;
+    currentLevelIndex = 1;
 
-    isRunning =
-        false;
+    isRunning = false;
 
-    timer =
-        0;
+    timer = 0;
 
-    startTime =
-        0;
+    startTime =0;
 
     //================ COUNTS ================//
 
-    coinCount =
-        3;
+    coinCount = 3;
 
-    scrollCount =
-        3;
+    scrollCount =3;
 
-    maskCount =
-        3;
+    maskCount =  3;
 
     amuletCount =
         3;
@@ -267,10 +258,9 @@ bool Game::hasCollected(QString type) const
 
 void Game::checkWin()
 {
-    if(player.getScore() >= 100)
+    if(player.getScore() >= 120)
     {
-        state =
-            Gamestate::gameOver;
+        state =Gamestate::gameOver;
     }
 }
 

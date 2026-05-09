@@ -2,11 +2,7 @@
 
 /* ================= CONSTRUCTOR ================= */
 
-Player::Player(
-    QString name,
-    int startX,
-    int startY
-    )
+Player::Player(QString name, int startX, int startY)
 {
     x =
         startX;
@@ -126,11 +122,9 @@ bool Player::isWinner() const
 
 void Player::reset()
 {
-    x =
-        635;
+    x =100;
 
-    y =
-        700;
+    y =600;
 
     score =
         0;

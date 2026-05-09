@@ -916,12 +916,60 @@ void GameWindow::pauseGame()
 }
 
 /* ================= RESTART ================= */
-
 void GameWindow::restartGame()
 {
+    timer->stop();
+
+    //================ CLEAR SCENE ================//
+
+    scene->clear();
+
+    //================ RESET GAME LOGIC ================//
+
     game.restartGame();
 
-    startGame();
+    //================ RELOAD LEVEL ================//
+
+    game.loadLevel(
+        game.getLevelIndex()
+        );
+
+    currentLevel =
+        game.getCurrentLevel();
+
+    currentLevel->loadScene(scene);
+
+    //================ RECREATE PLAYER ================//
+
+    playerSprite =
+        scene->addPixmap(
+            QPixmap(":/new/prefix1/images/ChatGPT Image Apr 28, 2026, 05_48_57 PM.png")
+            );
+
+    playerSprite->setScale(0.08);
+
+    playerSprite->setPos(
+        game.getPlayer().getX(),
+        game.getPlayer().getY()
+        );
+
+    //================ RESET TIMER ================//
+
+    seconds = 300;
+
+    timer->start(1000);
+
+    //================ UPDATE UI ================//
+
+    updateInventoryUI();
+
+    updateHUD();
+
+    stack->setCurrentWidget(
+        gameScreen
+        );
+
+    setFocus();
 }
 
 /* ================= EXIT ================= */
