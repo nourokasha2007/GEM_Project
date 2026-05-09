@@ -8,6 +8,8 @@
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
 #include <QDebug>
+#include <QFile>
+#include <QTextStream>
 
 /* ================= CONSTRUCTOR ================= */
 
@@ -332,6 +334,12 @@ GameWindow::GameWindow(QWidget *parent)
         QPushButton *exitBtn =
             new QPushButton("EXIT");
 
+        QPushButton *saveBtn =
+            new QPushButton("SAVE");
+
+        QPushButton *loadBtn =
+            new QPushButton("LOAD");
+
         connect(
             pauseBtn,
             &QPushButton::clicked,
@@ -353,9 +361,25 @@ GameWindow::GameWindow(QWidget *parent)
             &GameWindow::exitGame
             );
 
+        connect(
+            saveBtn,
+            &QPushButton::clicked,
+            this,
+            &GameWindow::saveGame
+            );
+
+        connect(
+            loadBtn,
+            &QPushButton::clicked,
+            this,
+            &GameWindow::loadGame
+            );
+
         buttons->addWidget(pauseBtn);
         buttons->addWidget(restartBtn);
         buttons->addWidget(exitBtn);
+        buttons->addWidget(saveBtn);
+        buttons->addWidget(loadBtn);
 
         mainLayout->addLayout(buttons);
 
@@ -775,6 +799,89 @@ void GameWindow::keyPressEvent(
         pauseGame();
         stack->setCurrentWidget(
             startScreen
+            );
+    }
+}
+
+/* ================= SAVE AND LOAD FILES ================= */
+
+void GameWindow::saveGame()
+{
+    QFile file("savegame.txt");
+
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream out(&file);
+
+        out << game.getPlayer().getX() << "\n";
+        out << game.getPlayer().getY() << "\n";
+
+        out << game.getPlayer().getScore() << "\n";
+
+        out << seconds << "\n";
+
+        out << coinCount << "\n";
+        out << scrollCount << "\n";
+        out << maskCount << "\n";
+        out << amuletCount << "\n";
+        out << timerCount << "\n";
+
+        file.close();
+    }
+}
+
+
+void GameWindow::loadGame()
+{
+    QFile file("savegame.txt");
+
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QTextStream in(&file);
+
+        int x;
+        int y;
+        int score;
+
+        in >> x;
+        in >> y;
+        in >> score;
+
+        in >> seconds;
+
+        in >> coinCount;
+        in >> scrollCount;
+        in >> maskCount;
+        in >> amuletCount;
+        in >> timerCount;
+
+        file.close();
+
+        game.getPlayer().moveTo(x, y);
+
+        if (playerSprite != nullptr)
+        {
+            playerSprite->setPos(x, y);
+        }
+
+        coinCounter->setText(
+            "x" + QString::number(coinCount)
+            );
+
+        scrollCounter->setText(
+            "x" + QString::number(scrollCount)
+            );
+
+        maskCounter->setText(
+            "x" + QString::number(maskCount)
+            );
+
+        amuletCounter->setText(
+            "x" + QString::number(amuletCount)
+            );
+
+        timerCounter->setText(
+            "x" + QString::number(timerCount)
             );
     }
 }
