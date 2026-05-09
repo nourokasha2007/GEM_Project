@@ -12,6 +12,9 @@
         <file>images/amulet2.png</file>
         <file>images/timer.png</file>
         <file>images/masktrial.png</file>
+
+        <file>images/ChatGPT Image May 8, 2026, 09_48_17 PM.png</file>
+
         <file>images/fireball.png</file>
         <file>images/lvl1 mummy idle(1).png</file>
         <file>images/lvl1 mummy walking back(1).png</file>
@@ -20,6 +23,7 @@
         <file>images/lvl1mummy walking left(1).png</file>
         <file>sounds/desert sounds.wav</file>
         <file>sounds/fireball boom.wav</file>
+
     </qresource>
     <qresource prefix="/"/>
 </RCC>
