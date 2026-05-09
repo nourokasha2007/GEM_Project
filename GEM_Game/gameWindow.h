@@ -109,6 +109,9 @@ private:
     // Helper function to setup the UI layouts
     void setupScreens();
 
+    void saveGame();
+    void loadGame();
+
 
 
 };
