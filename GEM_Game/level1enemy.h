@@ -3,6 +3,8 @@
 
 #include "enemy.h"
 #include <QPixmap>
+#include <QSoundEffect>
+#include <QUrl>
 
 class Player;
 
@@ -28,6 +30,7 @@ private:
     QPixmap imgLeft;
     QPixmap imgRight;
     QPixmap imgProjectile;
+    QSoundEffect* fireballHitSound;
 
     int shootCooldownMs;
 

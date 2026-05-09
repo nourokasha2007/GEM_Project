@@ -32,6 +32,13 @@ GameWindow::GameWindow(QWidget *parent)
     stack->setCurrentWidget(startScreen);
 
     showMaximized();
+
+    // adding fireball boom sound
+    startMusic = new QSoundEffect(this);
+    startMusic->setSource(QUrl("qrc:/new/prefix1/sounds/desert sounds.wav"));
+    startMusic->setVolume(0.5);
+    startMusic->setLoopCount(QSoundEffect::Infinite);
+    startMusic->play();
 }
 
 /* ================= START SCREEN ================= */
