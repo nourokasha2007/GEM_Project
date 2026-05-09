@@ -38,3 +38,25 @@ bool Enemy::checkCollision(const Player& targetPlayer) const {
     return false;
 }
 */
+#include "enemy.h"
+
+Enemy::Enemy(int hp, int dmg, double spd)
+    : QObject(), QGraphicsPixmapItem(), character()
+{
+    this->health = hp;
+    this->damage = dmg;
+    this->speed = spd;
+}
+
+void Enemy::takeDamage(int amount)
+{
+    health -= amount;
+    if (health <= 0) {
+        delete this;
+    }
+}
+
+int Enemy::getDamage() const
+{
+    return damage;
+}

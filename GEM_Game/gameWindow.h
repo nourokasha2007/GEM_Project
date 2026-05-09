@@ -15,6 +15,8 @@
 #include <QGraphicsView>
 #include <QGraphicsPixmapItem>
 #include <QImage>
+#include <QSoundEffect>
+#include <QUrl>
 #include "game.h"
 
 class GameWindow : public QMainWindow
@@ -99,6 +101,10 @@ private:
     QGraphicsPixmapItem* playerSprite;
 
     QImage collisionMask;
+
+    //================ Sound ====================//
+
+    QSoundEffect* startMusic;
 
     //================ HELPERS =================//
 
