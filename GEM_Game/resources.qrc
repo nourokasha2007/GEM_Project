@@ -12,7 +12,19 @@
         <file>images/amulet2.png</file>
         <file>images/timer.png</file>
         <file>images/masktrial.png</file>
+<<<<<<< HEAD
         <file>images/ChatGPT Image May 8, 2026, 09_48_17 PM.png</file>
+=======
+        <file>images/fireball.png</file>
+        <file>images/lvl1 mummy idle(1).png</file>
+        <file>images/lvl1 mummy walking back(1).png</file>
+        <file>images/lvl1 mummy walking forward(1).png</file>
+        <file>images/lvl1 mummy walking right(1).png</file>
+        <file>images/lvl1mummy walking left(1).png</file>
+        <file>sounds/desert sounds.wav</file>
+        <file>../../../../../Downloads/soundreality-explosion-fx-343683.wav</file>
+        <file>sounds/fireball boom.wav</file>
+>>>>>>> a24ee692ac4fb256aaa563d8420bcb63b27e9ba3
     </qresource>
     <qresource prefix="/"/>
 </RCC>
