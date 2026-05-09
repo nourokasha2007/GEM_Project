@@ -17,18 +17,22 @@ Level1Enemy::Level1Enemy(Player* target, QGraphicsPixmapItem* pSprite)
     setPixmap(imgIdle);
     setScale(4.0);
 
+    fireballHitSound = new QSoundEffect(this);
+    fireballHitSound->setSource(QUrl("qrc:/new/prefix1/sounds/fireball boom.wav"));
+    fireballHitSound->setVolume(1.0);
+
     QTimer* timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Level1Enemy::updateAI);
     timer->start(33);
 }
 
 void Level1Enemy::loadAssets() {
-    imgIdle.load("E:/University Stuff/CS 2 Course/CS 2 PROJECT/GEM_Project/GEM_Game/images/lvl1 mummy idle(1).png");
-    imgForward.load("E:/University Stuff/CS 2 Course/CS 2 PROJECT/GEM_Project/GEM_Game/images/lvl1 mummy walking forward(1).png");
-    imgBack.load("E:/University Stuff/CS 2 Course/CS 2 PROJECT/GEM_Project/GEM_Game/images/lvl1 mummy walking back(1).png");
-    imgLeft.load("E:/University Stuff/CS 2 Course/CS 2 PROJECT/GEM_Project/GEM_Game/images/lvl1mummy walking left(1).png");
-    imgRight.load("E:/University Stuff/CS 2 Course/CS 2 PROJECT/GEM_Project/GEM_Game/images/lvl1 mummy walking right(1).png");
-    imgProjectile.load("E:/University Stuff/CS 2 Course/CS 2 PROJECT/GEM_Project/GEM_Game/images/fireball.png");
+    imgIdle.load(":/new/prefix1/images/lvl1 mummy idle(1).png");
+    imgForward.load(":/new/prefix1/images/lvl1 mummy walking forward(1).png");
+    imgBack.load(":/new/prefix1/images/lvl1 mummy walking back(1).png");
+    imgLeft.load(":/new/prefix1/images/lvl1mummy walking left(1).png");
+    imgRight.load(":/new/prefix1/images/lvl1 mummy walking right(1).png");
+    imgProjectile.load(":/new/prefix1/images/fireball.png");
 }
 
 void Level1Enemy::updateAI() {
@@ -99,7 +103,8 @@ void Level1Enemy::shootHomingProjectile() {
         double vy = py - by;
         double dist = std::sqrt(vx * vx + vy * vy);
 
-        if (dist < 20) {
+        if (dist < 10) {
+            fireballHitSound->play();
             emit reduceTime(15);
             homingTimer->stop();
             scn->removeItem(proj);
