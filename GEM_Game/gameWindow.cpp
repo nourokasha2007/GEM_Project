@@ -1,6 +1,7 @@
 #include "gameWindow.h"
 #include <QDebug>
 #include <QPixmap>
+#include "level1enemy.h"
 
 GameWindow::GameWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -31,6 +32,13 @@ GameWindow::GameWindow(QWidget *parent)
     stack->setCurrentWidget(startScreen);
 
     showMaximized();
+
+    // adding fireball boom sound
+    startMusic = new QSoundEffect(this);
+    startMusic->setSource(QUrl("qrc:/new/prefix1/sounds/desert sounds.wav"));
+    startMusic->setVolume(0.5);
+    startMusic->setLoopCount(QSoundEffect::Infinite);
+    startMusic->play();
 }
 
 /* ================= START SCREEN ================= */
@@ -709,6 +717,19 @@ void GameWindow::startGame()
         game.getPlayer().getX(),
         game.getPlayer().getY()
         );
+
+    stack->setCurrentWidget(gameScreen);
+
+    Level1Enemy* mummy = new Level1Enemy(&game.getPlayer(), playerSprite);
+    mummy->setPos(800, 500);
+    mummy->setZValue(999);
+    scene->addItem(mummy);
+
+    connect(mummy, &Level1Enemy::reduceScore, this, [=]{
+        game.getPlayer().deductScore(10);
+        updateHUD();
+    });
+
 
     stack->setCurrentWidget(gameScreen);
 
