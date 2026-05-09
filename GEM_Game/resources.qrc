@@ -23,7 +23,11 @@
         <file>images/lvl1mummy walking left(1).png</file>
         <file>sounds/desert sounds.wav</file>
         <file>sounds/fireball boom.wav</file>
-
+        <file>images/amulett.png</file>
+        <file>images/coint.png</file>
+        <file>images/maskt.png</file>
+        <file>images/scrollt.png</file>
+        <file>images/timert.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
