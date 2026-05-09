@@ -1,4 +1,5 @@
 #include "Level1.h"
+
 #include <QBrush>
 #include <QDebug>
 #include <QPen>
@@ -15,9 +16,16 @@ void Level1::loadScene(QGraphicsScene *scene)
 {
     //================ BACKGROUND ================//
 
-    QPixmap bg(":/new/prefix1/images/level1 (1).png" );
-    background =scene->addPixmap(bg);
-    scene->setSceneRect(bg.rect());
+    QPixmap bg(
+        ":/new/prefix1/images/level1 (1).png"
+        );
+
+    background =
+        scene->addPixmap(bg);
+
+    scene->setSceneRect(
+        bg.rect()
+        );
 
     double s = 0.025;
 
@@ -25,7 +33,7 @@ void Level1::loadScene(QGraphicsScene *scene)
 
     addArtifact(
         scene,
-        ":/new/prefix1/images/coin2.png",
+        ":/new/prefix1/images/coint.png",
         "coin",
         310,
         500,
@@ -34,7 +42,7 @@ void Level1::loadScene(QGraphicsScene *scene)
 
     addArtifact(
         scene,
-        ":/new/prefix1/images/coin2.png",
+        ":/new/prefix1/images/coint.png",
         "coin",
         520,
         620,
@@ -43,7 +51,7 @@ void Level1::loadScene(QGraphicsScene *scene)
 
     addArtifact(
         scene,
-        ":/new/prefix1/images/coin2.png",
+        ":/new/prefix1/images/coint.png",
         "coin",
         950,
         650,
@@ -54,7 +62,7 @@ void Level1::loadScene(QGraphicsScene *scene)
 
     addArtifact(
         scene,
-        ":/new/prefix1/images/scroll2.png",
+        ":/new/prefix1/images/scrollt.png",
         "scroll",
         420,
         800,
@@ -63,7 +71,7 @@ void Level1::loadScene(QGraphicsScene *scene)
 
     addArtifact(
         scene,
-        ":/new/prefix1/images/scroll2.png",
+        ":/new/prefix1/images/scrollt.png",
         "scroll",
         1030,
         580,
@@ -72,7 +80,7 @@ void Level1::loadScene(QGraphicsScene *scene)
 
     addArtifact(
         scene,
-        ":/new/prefix1/images/scroll2.png",
+        ":/new/prefix1/images/scrollt.png",
         "scroll",
         720,
         760,
@@ -83,7 +91,7 @@ void Level1::loadScene(QGraphicsScene *scene)
 
     addArtifact(
         scene,
-        ":/new/prefix1/images/mask2.png",
+        ":/new/prefix1/images/maskt.png",
         "mask",
         300,
         860,
@@ -92,7 +100,7 @@ void Level1::loadScene(QGraphicsScene *scene)
 
     addArtifact(
         scene,
-        ":/new/prefix1/images/mask2.png",
+        ":/new/prefix1/images/maskt.png",
         "mask",
         960,
         400,
@@ -101,7 +109,7 @@ void Level1::loadScene(QGraphicsScene *scene)
 
     addArtifact(
         scene,
-        ":/new/prefix1/images/mask2.png",
+        ":/new/prefix1/images/maskt.png",
         "mask",
         900,
         850,
@@ -112,7 +120,7 @@ void Level1::loadScene(QGraphicsScene *scene)
 
     addArtifact(
         scene,
-        ":/new/prefix1/images/amulet2.png",
+        ":/new/prefix1/images/amulett.png",
         "amulet",
         470,
         430,
@@ -121,7 +129,7 @@ void Level1::loadScene(QGraphicsScene *scene)
 
     addArtifact(
         scene,
-        ":/new/prefix1/images/amulet2.png",
+        ":/new/prefix1/images/amulett.png",
         "amulet",
         870,
         700,
@@ -130,7 +138,7 @@ void Level1::loadScene(QGraphicsScene *scene)
 
     addArtifact(
         scene,
-        ":/new/prefix1/images/amulet2.png",
+        ":/new/prefix1/images/amulett.png",
         "amulet",
         1070,
         380,
@@ -141,7 +149,7 @@ void Level1::loadScene(QGraphicsScene *scene)
 
     addArtifact(
         scene,
-        ":/new/prefix1/images/timer.png",
+        ":/new/prefix1/images/timert.png",
         "timer",
         610,
         410,
@@ -150,7 +158,7 @@ void Level1::loadScene(QGraphicsScene *scene)
 
     addArtifact(
         scene,
-        ":/new/prefix1/images/timer.png",
+        ":/new/prefix1/images/timert.png",
         "timer",
         850,
         540,
@@ -159,7 +167,7 @@ void Level1::loadScene(QGraphicsScene *scene)
 
     addArtifact(
         scene,
-        ":/new/prefix1/images/timer.png",
+        ":/new/prefix1/images/timert.png",
         "timer",
         1090,
         500,
