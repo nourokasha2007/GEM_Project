@@ -14,7 +14,7 @@ public:
     Level1Enemy(Player* target, QGraphicsPixmapItem* playerSprite);
 
 signals:
-    void reduceTime(int amount);
+    void reduceScore(int amount);
 
 public slots:
     void updateAI();

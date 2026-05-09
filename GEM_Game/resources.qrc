@@ -19,7 +19,6 @@
         <file>images/lvl1 mummy walking right(1).png</file>
         <file>images/lvl1mummy walking left(1).png</file>
         <file>sounds/desert sounds.wav</file>
-        <file>../../../../../Downloads/soundreality-explosion-fx-343683.wav</file>
         <file>sounds/fireball boom.wav</file>
     </qresource>
     <qresource prefix="/"/>

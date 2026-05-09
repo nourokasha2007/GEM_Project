@@ -725,16 +725,11 @@ void GameWindow::startGame()
     mummy->setZValue(999);
     scene->addItem(mummy);
 
-    // time reduction
-    connect(mummy, &Level1Enemy::reduceTime, this, [=]{
-        seconds -= 30;
-
-        if (seconds < 0) {
-            seconds = 0;
-        }
-
+    connect(mummy, &Level1Enemy::reduceScore, this, [=]{
+        game.getPlayer().deductScore(10);
         updateHUD();
     });
+
 
     stack->setCurrentWidget(gameScreen);
 
