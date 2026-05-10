@@ -14,6 +14,7 @@ QMAKE_CFLAGS += -Wno-error=implicit-function-declaration
 SOURCES += \
     Level1.cpp \
     Level2.cpp \
+    Level2enemy.cpp \
     artifact.cpp \
     character.cpp \
     enemy.cpp \
@@ -33,6 +34,7 @@ SOURCES += \
 HEADERS += \
     Level1.h \
     Level2.h \
+    Level2enemy.h \
     artifact.h \
     character.h \
     enemy.h \

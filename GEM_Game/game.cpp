@@ -1,9 +1,8 @@
 #include "game.h"
-
 #include "Level1.h"
+#include "Level2.h"   // ← NEW
 
 #include <iostream>
-
 using namespace std;
 
 /* ================= CONSTRUCTOR ================= */
@@ -11,31 +10,18 @@ using namespace std;
 Game::Game()
     : player("Player", 100, 600)
 {
-    state = Gamestate::paused;
-
-    currentLevel =new Level1();
-
+    state             = Gamestate::paused;
+    currentLevel      = new Level1();
     currentLevelIndex = 1;
+    isRunning         = false;
+    timer             = 0;
+    startTime         = 0;
 
-    isRunning = false;
-
-    timer = 0;
-
-    startTime =0;
-
-    //================ COUNTS ================//
-
-    coinCount = 3;
-
-    scrollCount =3;
-
-    maskCount =  3;
-
-    amuletCount =
-        3;
-
-    timerCount =
-        3;
+    coinCount   = 3;
+    scrollCount = 3;
+    maskCount   = 3;
+    amuletCount = 3;
+    timerCount  = 3;
 }
 
 /* ================= DESTRUCTOR ================= */
@@ -49,33 +35,24 @@ Game::~Game()
 
 void Game::startGame()
 {
-    state =
-        Gamestate::playing;
-
-    isRunning =
-        true;
+    state     = Gamestate::playing;
+    isRunning = true;
 }
 
 /* ================= PAUSE ================= */
 
 void Game::pauseGame()
 {
-    state =
-        Gamestate::paused;
-
-    isRunning =
-        false;
+    state     = Gamestate::paused;
+    isRunning = false;
 }
 
 /* ================= RESUME ================= */
 
 void Game::resumeGame()
 {
-    state =
-        Gamestate::playing;
-
-    isRunning =
-        true;
+    state     = Gamestate::playing;
+    isRunning = true;
 }
 
 /* ================= RESTART ================= */
@@ -83,56 +60,35 @@ void Game::resumeGame()
 void Game::restartGame()
 {
     player.reset();
+    state     = Gamestate::playing;
+    isRunning = true;
+    timer     = 0;
 
-    state =
-        Gamestate::playing;
-
-    isRunning =
-        true;
-
-    timer =
-        0;
-
-    //================ RESET COUNTS ================//
-
-    coinCount =
-        3;
-
-    scrollCount =
-        3;
-
-    maskCount =
-        3;
-
-    amuletCount =
-        3;
-
-    timerCount =
-        3;
+    coinCount   = 3;
+    scrollCount = 3;
+    maskCount   = 3;
+    amuletCount = 3;
+    timerCount  = 3;
 }
 
 /* ================= EXIT ================= */
 
 void Game::exitGame()
 {
-    state =
-        Gamestate::exiting;
-
-    isRunning =
-        false;
+    state     = Gamestate::exiting;
+    isRunning = false;
 }
 
 /* ================= UPDATE ================= */
 
 void Game::update(float diffTime)
 {
-    if(state != Gamestate::playing)
+    if (state != Gamestate::playing)
         return;
 
     timer += diffTime;
 
     checkWin();
-
     checkLose();
 }
 
@@ -140,22 +96,13 @@ void Game::update(float diffTime)
 
 void Game::loadLevel(int levelindex)
 {
-    currentLevelIndex =
-        levelindex;
-
+    currentLevelIndex = levelindex;
     delete currentLevel;
 
-    if(levelindex == 1)
-    {
-        currentLevel =
-            new Level1();
-    }
-
+    if (levelindex == 2)
+        currentLevel = new Level2();   // ← Level2 now properly created
     else
-    {
-        currentLevel =
-            new Level1();
-    }
+        currentLevel = new Level1();
 
     player.reset();
 }
@@ -171,45 +118,15 @@ void Game::nextLevel()
 
 void Game::collectArtifact(QString type)
 {
-    //================ SCORE ================//
-
     player.addScore(10);
-
-    //================ PLAYER MEMORY ================//
-
     player.collectItem(type);
 
-    //================ COUNTERS ================//
-
-    if(type == "coin")
-    {
-        if(coinCount > 0)
-            coinCount--;
-    }
-
-    else if(type == "scroll")
-    {
-        if(scrollCount > 0)
-            scrollCount--;
-    }
-
-    else if(type == "mask")
-    {
-        if(maskCount > 0)
-            maskCount--;
-    }
-
-    else if(type == "amulet")
-    {
-        if(amuletCount > 0)
-            amuletCount--;
-    }
-
-    else if(type == "timer")
-    {
-        if(timerCount > 0)
-            timerCount--;
-    }
+    if      (type == "coin"   && coinCount   > 0) coinCount--;
+    else if (type == "scroll" && scrollCount > 0) scrollCount--;
+    else if (type == "mask"   && maskCount   > 0) maskCount--;
+    else if (type == "amulet" && amuletCount > 0) amuletCount--;
+    else if (type == "timer"  && timerCount  > 0) timerCount--;
+    // "rock" type (Level 2) just adds score — no separate counter needed
 
     checkWin();
 }
@@ -218,21 +135,11 @@ void Game::collectArtifact(QString type)
 
 int Game::getArtifactCount(QString type) const
 {
-    if(type == "coin")
-        return coinCount;
-
-    if(type == "scroll")
-        return scrollCount;
-
-    if(type == "mask")
-        return maskCount;
-
-    if(type == "amulet")
-        return amuletCount;
-
-    if(type == "timer")
-        return timerCount;
-
+    if (type == "coin")   return coinCount;
+    if (type == "scroll") return scrollCount;
+    if (type == "mask")   return maskCount;
+    if (type == "amulet") return amuletCount;
+    if (type == "timer")  return timerCount;
     return 0;
 }
 
@@ -240,17 +147,9 @@ int Game::getArtifactCount(QString type) const
 
 bool Game::hasCollected(QString type) const
 {
-    vector<QString> items =
-        player.getFoundItems();
-
-    for(size_t i = 0; i < items.size(); i++)
-    {
-        if(items[i] == type)
-        {
-            return true;
-        }
-    }
-
+    vector<QString> items = player.getFoundItems();
+    for (size_t i = 0; i < items.size(); i++)
+        if (items[i] == type) return true;
     return false;
 }
 
@@ -258,43 +157,22 @@ bool Game::hasCollected(QString type) const
 
 void Game::checkWin()
 {
-    if(player.getScore() >= 120)
-    {
-        state =Gamestate::gameOver;
-    }
+    // Win is now handled by GameWindow (door collision in Level 2),
+    // so we only trigger the old score-based check as a fallback.
+    if (player.getScore() >= 150)
+        state = Gamestate::gameOver;
 }
 
 /* ================= LOSE ================= */
 
 void Game::checkLose()
 {
-
+    // Handled by timer countdown in GameWindow
 }
 
-/* ================= GET STATE ================= */
+/* ================= GETTERS ================= */
 
-Gamestate Game::getstate() const
-{
-    return state;
-}
-
-/* ================= GET PLAYER ================= */
-
-Player& Game::getPlayer()
-{
-    return player;
-}
-
-/* ================= GET LEVEL ================= */
-
-Level* Game::getCurrentLevel() const
-{
-    return currentLevel;
-}
-
-/* ================= GET LEVEL INDEX ================= */
-
-int Game::getLevelIndex() const
-{
-    return currentLevelIndex;
-}
+Gamestate Game::getstate()      const { return state; }
+Player&   Game::getPlayer()           { return player; }
+Level*    Game::getCurrentLevel() const { return currentLevel; }
+int       Game::getLevelIndex()   const { return currentLevelIndex; }
