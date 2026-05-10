@@ -176,7 +176,7 @@ GameWindow::GameWindow(QWidget *parent)
 
         coinCounter = new QLabel(gameScreen);
 
-        coinCounter->setText("x3");
+        coinCounter->setText("x2");
 
         coinCounter->setStyleSheet(
             "color: white;"
@@ -206,7 +206,7 @@ GameWindow::GameWindow(QWidget *parent)
 
         scrollIcon->move(120, 150);
 
-        scrollCounter = new QLabel("x3", gameScreen);
+        scrollCounter = new QLabel("x2", gameScreen);
 
         scrollCounter->setStyleSheet(
             "color:white;"
@@ -236,7 +236,7 @@ GameWindow::GameWindow(QWidget *parent)
 
         maskIcon->move(120, 200);
 
-        maskCounter = new QLabel("x3", gameScreen);
+        maskCounter = new QLabel("x2", gameScreen);
 
         maskCounter->setStyleSheet(
             "color:white;"
@@ -266,7 +266,7 @@ GameWindow::GameWindow(QWidget *parent)
 
         amuletIcon->move(120, 250);
 
-        amuletCounter = new QLabel("x3", gameScreen);
+        amuletCounter = new QLabel("x2", gameScreen);
 
         amuletCounter->setStyleSheet(
             "color:white;"
@@ -296,7 +296,7 @@ GameWindow::GameWindow(QWidget *parent)
 
         timerIcon->move(120, 300);
 
-        timerCounter = new QLabel("x3", gameScreen);
+        timerCounter = new QLabel("x2", gameScreen);
 
         timerCounter->setStyleSheet(
             "color:white;"
@@ -335,10 +335,10 @@ GameWindow::GameWindow(QWidget *parent)
             new QPushButton("EXIT");
 
         QPushButton *saveBtn =
-            new QPushButton("SAVE");
+            new QPushButton("SAVE", gameScreen);
 
         QPushButton *loadBtn =
-            new QPushButton("LOAD");
+            new QPushButton("LOAD", gameScreen);
 
         connect(
             pauseBtn,
@@ -378,8 +378,15 @@ GameWindow::GameWindow(QWidget *parent)
         buttons->addWidget(pauseBtn);
         buttons->addWidget(restartBtn);
         buttons->addWidget(exitBtn);
-        buttons->addWidget(saveBtn);
-        buttons->addWidget(loadBtn);
+
+        saveBtn->move(1300, 200);
+        loadBtn->move(1300, 250);
+
+        saveBtn->resize(100, 35);
+        loadBtn->resize(100, 35);
+
+        saveBtn->show();
+        loadBtn->show();
 
         mainLayout->addLayout(buttons);
 

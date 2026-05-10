@@ -89,11 +89,7 @@ void Level1::loadScene(QGraphicsScene *scene)
     coin2->setZValue(999);
     artifacts.push_back(coin2);
 
-    QGraphicsPixmapItem* coin3 = scene->addPixmap(QPixmap(":/new/prefix1/images/coint.png"));
-    coin3->setPos(950, 650);
-    coin3->setScale(s);
-    coin3->setZValue(999);
-    artifacts.push_back(coin3);
+
 
 
     // ===== SCROLLS (3) =====
@@ -103,37 +99,29 @@ void Level1::loadScene(QGraphicsScene *scene)
     scroll1->setZValue(999);
     artifacts.push_back(scroll1);
 
+
+
     QGraphicsPixmapItem* scroll2 = scene->addPixmap(QPixmap(":/new/prefix1/images/scrollt.png"));
-    scroll2->setPos(1030, 580);
+    scroll2->setPos(720, 760);
     scroll2->setScale(s);
     scroll2->setZValue(999);
     artifacts.push_back(scroll2);
 
-    QGraphicsPixmapItem* scroll3 = scene->addPixmap(QPixmap(":/new/prefix1/images/scrollt.png"));
-    scroll3->setPos(720, 760);
-    scroll3->setScale(s);
-    scroll3->setZValue(999);
-    artifacts.push_back(scroll3);
-
 
     // ===== MASKS (3) =====
+
+
     QGraphicsPixmapItem* mask1 = scene->addPixmap(QPixmap(":/new/prefix1/images/maskt.png"));
-    mask1->setPos(300, 860);
+    mask1->setPos(960, 400);
     mask1->setScale(s);
     mask1->setZValue(999);
     artifacts.push_back(mask1);
 
     QGraphicsPixmapItem* mask2 = scene->addPixmap(QPixmap(":/new/prefix1/images/maskt.png"));
-    mask2->setPos(960, 400);
+    mask2->setPos(900,850);
     mask2->setScale(s);
     mask2->setZValue(999);
     artifacts.push_back(mask2);
-
-    QGraphicsPixmapItem* mask3 = scene->addPixmap(QPixmap(":/new/prefix1/images/maskt.png"));
-    mask3->setPos(900,850);
-    mask3->setScale(s);
-    mask3->setZValue(999);
-    artifacts.push_back(mask3);
 
 
     // ===== AMULETS (3) =====
@@ -149,11 +137,7 @@ void Level1::loadScene(QGraphicsScene *scene)
     amulet2->setZValue(999);
     artifacts.push_back(amulet2);
 
-    QGraphicsPixmapItem* amulet3 = scene->addPixmap(QPixmap(":/new/prefix1/images/amulett.png"));
-    amulet3->setPos(1070, 380);
-    amulet3->setScale(s);
-    amulet3->setZValue(999);
-    artifacts.push_back(amulet3);
+
 
 
     // ===== TIMER TOOLS (3) =====
@@ -169,9 +153,5 @@ void Level1::loadScene(QGraphicsScene *scene)
     timer2->setZValue(999);
     artifacts.push_back(timer2);
 
-    QGraphicsPixmapItem* timer3 = scene->addPixmap(QPixmap(":/new/prefix1/images/timert.png"));
-    timer3->setPos(1090, 500);
-    timer3->setScale(s);
-    timer3->setZValue(999);
-    artifacts.push_back(timer3);
+
 }
