@@ -4,7 +4,6 @@
 #include "level1enemy.h"
 #include <QFile>
 #include <QTextStream>
-#include <stack>
 
 /* ================= CONSTRUCTOR ================= */
 
@@ -24,7 +23,7 @@ GameWindow::GameWindow(QWidget *parent)
     setupGameScreen();
 
     setupGameOverScreen();
-
+    setFocusPolicy(Qt::StrongFocus);
 
     /* ================= TIMER ================= */
     timer = new QTimer(this);
@@ -671,28 +670,58 @@ void GameWindow::setupButtons(QVBoxLayout* mainLayout)
     QPushButton* exitBtn =
         new QPushButton("EXIT");
 
-    connect(pauseBtn,
-            &QPushButton::clicked,
-            this,
-            &GameWindow::pauseGame);
+    QPushButton* saveBtn =
+        new QPushButton("SAVE");
 
-    connect(restartBtn,
-            &QPushButton::clicked,
-            this,
-            &GameWindow::restartGame);
+    QPushButton* loadBtn =
+        new QPushButton("LOAD");
 
-    connect(exitBtn,
-            &QPushButton::clicked,
-            this,
-            &GameWindow::exitGame);
+    //================ CONNECTS ================//
+
+    connect(
+        pauseBtn,
+        &QPushButton::clicked,
+        this,
+        &GameWindow::pauseGame
+        );
+
+    connect(
+        restartBtn,
+        &QPushButton::clicked,
+        this,
+        &GameWindow::restartGame
+        );
+
+    connect(
+        exitBtn,
+        &QPushButton::clicked,
+        this,
+        &GameWindow::exitGame
+        );
+
+    connect(saveBtn, &QPushButton::clicked,this,&GameWindow::saveGame );
+
+    connect(
+        loadBtn,
+        &QPushButton::clicked,
+        this,
+        &GameWindow::loadGame
+        );
+
+    //================ ADD TO LAYOUT ================//
 
     buttons->addWidget(pauseBtn);
+
     buttons->addWidget(restartBtn);
+
     buttons->addWidget(exitBtn);
+
+    buttons->addWidget(saveBtn);
+
+    buttons->addWidget(loadBtn);
 
     mainLayout->addLayout(buttons);
 }
-
 /* ================= START GAME ================= */
 
 void GameWindow::startGame()
@@ -740,7 +769,7 @@ void GameWindow::startGame()
 
     stack->setCurrentWidget(gameScreen);
 
-    setFocus();
+    this->setFocus();
 }
 
 /* ================= MOVEMENT ================= */
@@ -993,11 +1022,9 @@ void GameWindow::restartGame()
 
     updateHUD();
 
-    stack->setCurrentWidget(
-        gameScreen
-        );
+    stack->setCurrentWidget(gameScreen);
 
-    setFocus();
+    this->setFocus();
 }
 
 /* ================= EXIT ================= */
