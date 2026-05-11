@@ -18,7 +18,7 @@ Level1Enemy::Level1Enemy(Player* target, QGraphicsPixmapItem* pSprite)
 
     loadAssets();
     setPixmap(imgIdle);
-    setScale(4.0);
+    setScale(0.35);
 
     fireballHitSound = new QSoundEffect(this);
     fireballHitSound->setSource(QUrl("qrc:/new/prefix1/sounds/fireball boom.wav"));
@@ -30,11 +30,11 @@ Level1Enemy::Level1Enemy(Player* target, QGraphicsPixmapItem* pSprite)
 }
 
 void Level1Enemy::loadAssets() {
-    imgIdle.load(":/new/prefix1/images/lvl1 mummy idle(1).png");
-    imgForward.load(":/new/prefix1/images/lvl1 mummy walking forward(1).png");
-    imgBack.load(":/new/prefix1/images/lvl1 mummy walking back(1).png");
-    imgLeft.load(":/new/prefix1/images/lvl1mummy walking left(1).png");
-    imgRight.load(":/new/prefix1/images/lvl1 mummy walking right(1).png");
+    imgIdle.load(":/new/prefix1/images/spirit front.png");
+    imgForward.load(":/new/prefix1/images/spirit front.png");
+    imgBack.load(":/new/prefix1/images/spirit back.png");
+    imgLeft.load(":/new/prefix1/images/spirit left.png");
+    imgRight.load(":/new/prefix1/images/spirit right.png");
     imgProjectile.load(":/new/prefix1/images/fireball.png");
 }
 
