@@ -44,6 +44,8 @@ private slots:
     void exitGame();
     void updateGame(); // Triggered by the QTimer
     void showBriefingPopup(const QString &playerName);
+    void saveGame();
+
 
 private:
     //-----------------------------------
@@ -109,8 +111,7 @@ private:
     // Helper function to setup the UI layouts
     void setupScreens();
 
-    void saveGame();
-    void loadGame();
+
 
 
 
