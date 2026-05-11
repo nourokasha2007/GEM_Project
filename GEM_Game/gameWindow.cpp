@@ -1,3 +1,4 @@
+
 #include "gameWindow.h"
 #include <QDebug>
 #include <QPixmap>
@@ -862,7 +863,7 @@ void GameWindow::startGame()
         );
 
     //================ ENEMY =================//
-   mummy =new Level1Enemy(&game.getPlayer(),playerSprite);
+    mummy =new Level1Enemy(&game.getPlayer(),playerSprite);
 
     mummy->setPos(800, 500);
 
@@ -880,6 +881,13 @@ void GameWindow::startGame()
 
             updateHUD();
         }
+        );
+
+    connect(
+        mummy,
+        &Level1Enemy::playerKilled,
+        this,
+        &GameWindow::showFireballGameOver
         );
 
     stack->setCurrentWidget(gameScreen);
@@ -1144,6 +1152,168 @@ void GameWindow::keyPressEvent(
     case Qt::Key_Escape:pauseGame();
         break;
     }
+}
+
+/* ================= FIREBALL GAME OVER ================= */
+
+void GameWindow::showFireballGameOver()
+{
+    // Stop the game timer and pause everything
+    timer->stop();
+    game.pauseGame();
+    if (mummy) {
+        mummy->setPaused(true);
+    }
+
+    //================ FULL-SCREEN DARK OVERLAY =================//
+
+    QWidget* dimmer = new QWidget(this);
+    dimmer->setGeometry(0, 0, width(), height());
+    dimmer->setStyleSheet("background-color: rgba(0, 0, 0, 210);");
+    dimmer->show();
+    dimmer->raise();
+
+    //================ POPUP CARD =================//
+
+    QWidget* popup = new QWidget(dimmer);
+    popup->setFixedSize(600, 420);
+    popup->move(
+        (dimmer->width()  - 600) / 2,
+        (dimmer->height() - 420) / 2
+        );
+    popup->setStyleSheet(
+        "background-color: rgba(60, 5, 0, 240);"
+        "border: 3px solid rgba(220, 60, 20, 200);"
+        "border-radius: 16px;"
+        );
+
+    QVBoxLayout* layout = new QVBoxLayout(popup);
+    layout->setContentsMargins(50, 40, 50, 40);
+    layout->setSpacing(18);
+
+    //================ FIRE EMOJI ROW =================//
+
+    QLabel* flames = new QLabel("🔥  🔥  🔥");
+    flames->setAlignment(Qt::AlignCenter);
+    flames->setStyleSheet(
+        "font-size: 36px;"
+        "background: transparent;"
+        "border: none;"
+        );
+
+    //================ TITLE =================//
+
+    QLabel* title = new QLabel("GAME OVER");
+    title->setAlignment(Qt::AlignCenter);
+    title->setStyleSheet(
+        "font-size: 52px;"
+        "font-weight: bold;"
+        "letter-spacing: 10px;"
+        "color: #ff3300;"
+        "background: transparent;"
+        "border: none;"
+        );
+
+    //================ SUBTITLE =================//
+
+    QLabel* subtitle = new QLabel("You were consumed by the spirit's flames!");
+    subtitle->setAlignment(Qt::AlignCenter);
+    subtitle->setWordWrap(true);
+    subtitle->setStyleSheet(
+        "font-size: 15px;"
+        "color: #f5c89a;"
+        "background: transparent;"
+        "border: none;"
+        "letter-spacing: 2px;"
+        );
+
+    //================ HIT COUNTER =================//
+
+    QLabel* hitInfo = new QLabel("The fireball struck you 5 times.");
+    hitInfo->setAlignment(Qt::AlignCenter);
+    hitInfo->setStyleSheet(
+        "font-size: 13px;"
+        "color: rgba(255,120,60,200);"
+        "font-style: italic;"
+        "background: transparent;"
+        "border: none;"
+        );
+
+    //================ BUTTON STYLE =================//
+
+    QString btnStyle =
+        "QPushButton {"
+        "  background-color: rgba(180,130,40,220);"
+        "  color: #fff8e7;"
+        "  font-size: 15px;"
+        "  font-weight: bold;"
+        "  letter-spacing: 3px;"
+        "  border: 2px solid #c8a84b;"
+        "  border-radius: 8px;"
+        "  padding: 14px;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: rgba(220,170,60,240);"
+        "  border: 2px solid #ffffff;"
+        "  color: #ffffff;"
+        "}"
+        "QPushButton:pressed {"
+        "  background-color: rgba(130,90,20,255);"
+        "}";
+
+    //================ RESTART BUTTON =================//
+
+    QPushButton* restartBtn = new QPushButton("↺   TRY AGAIN");
+    restartBtn->setFixedHeight(52);
+    restartBtn->setCursor(Qt::PointingHandCursor);
+    restartBtn->setStyleSheet(btnStyle);
+
+    //================ EXIT BUTTON =================//
+
+    QPushButton* exitBtn = new QPushButton("✕   EXIT GAME");
+    exitBtn->setFixedHeight(52);
+    exitBtn->setCursor(Qt::PointingHandCursor);
+    exitBtn->setStyleSheet(
+        "QPushButton {"
+        "  background-color: rgba(100,30,20,220);"
+        "  color: #fff8e7;"
+        "  font-size: 15px;"
+        "  font-weight: bold;"
+        "  letter-spacing: 3px;"
+        "  border: 2px solid #8a2020;"
+        "  border-radius: 8px;"
+        "  padding: 14px;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: rgba(160,40,30,240);"
+        "}"
+        );
+
+    //================ ASSEMBLE =================//
+
+    layout->addWidget(flames);
+    layout->addWidget(title);
+    layout->addWidget(subtitle);
+    layout->addWidget(hitInfo);
+    layout->addStretch();
+    layout->addWidget(restartBtn);
+    layout->addWidget(exitBtn);
+
+    popup->show();
+
+    //================ RESTART =================//
+
+    connect(restartBtn, &QPushButton::clicked, this, [=]() {
+        dimmer->deleteLater();
+        restartGame();
+    });
+
+    //================ EXIT =================//
+
+    connect(exitBtn, &QPushButton::clicked, this, [=]() {
+        dimmer->deleteLater();
+        exitGame();
+    });
 }
 
 /* ================= PAUSE GAME ================= */
