@@ -73,11 +73,11 @@ private:
     QLabel *amuletText;
     QLabel *timerText;
 
-    int coinCount    = 3;
-    int scrollCount  = 3;
-    int maskCount    = 3;
-    int amuletCount  = 3;
-    int timerCount   = 3;
+    int coinCount    = 2;
+    int scrollCount  = 2;
+    int maskCount    = 2;
+    int amuletCount  = 2;
+    int timerCount   = 2;
 
     //================ HUD =================//
 
