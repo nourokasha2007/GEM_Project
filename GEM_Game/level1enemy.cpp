@@ -1,3 +1,4 @@
+
 #include "level1enemy.h"
 #include "player.h"
 #include <QGraphicsScene>
@@ -164,11 +165,17 @@ void Level1Enemy::shootHomingProjectile() {
         if (distanceToTarget < 10) {
             fireballHitSound->play();
             player->deductScore(10);
+            player->registerFireballHit();
 
             homingTimer->stop();
             currentScene->removeItem(projectile);
             delete projectile;
             homingTimer->deleteLater();
+
+            if (player->isDead()) {
+                emit playerKilled();
+            }
+
             return;
         }
 
