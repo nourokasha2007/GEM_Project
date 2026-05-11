@@ -12,6 +12,7 @@ class Level1Enemy : public Enemy {
     Q_OBJECT
 public:
     Level1Enemy(Player* target, QGraphicsPixmapItem* playerSprite);
+     void setPaused(bool value);
 
 signals:
     void reduceScore(int amount);
@@ -23,7 +24,6 @@ private:
     Player* player;
     QGraphicsPixmapItem* playerSprite;
     bool isChasing;
-
     QPixmap imgIdle;
     QPixmap imgForward;
     QPixmap imgBack;
@@ -31,9 +31,8 @@ private:
     QPixmap imgRight;
     QPixmap imgProjectile;
     QSoundEffect* fireballHitSound;
-
+    bool paused;
     int shootCooldownMs;
-
     void loadAssets();
     void shootHomingProjectile();
 };

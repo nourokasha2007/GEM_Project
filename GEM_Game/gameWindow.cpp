@@ -12,7 +12,7 @@ GameWindow::GameWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     //================ DEFAULT VALUES ================//
-
+    mummy = nullptr;
     seconds = 300;
 
     currentLevel = nullptr;
@@ -873,12 +873,7 @@ void GameWindow::startGame()
         );
 
     //================ ENEMY =================//
-
-    Level1Enemy* mummy =
-        new Level1Enemy(
-            &game.getPlayer(),
-            playerSprite
-            );
+   mummy =new Level1Enemy(&game.getPlayer(),playerSprite);
 
     mummy->setPos(800, 500);
 
@@ -1174,15 +1169,234 @@ void GameWindow::keyPressEvent(
     }
 }
 
-/* ================= PAUSE ================= */
+/* ================= PAUSE GAME ================= */
 
 void GameWindow::pauseGame()
 {
     game.pauseGame();
+    if(mummy)
+    {
+        mummy->setPaused(true);
+    }
 
     timer->stop();
-}
 
+    //================ DIM BACKGROUND =================//
+
+    QWidget *dimmer =
+        new QWidget(this);
+
+    dimmer->setGeometry(
+        0,
+        0,
+        width(),
+        height()
+        );
+
+    dimmer->setStyleSheet(
+        "background-color: rgba(0,0,0,170);"
+        );
+
+    dimmer->show();
+
+    dimmer->raise();
+
+    //================ POPUP CARD =================//
+
+    QWidget *popup =
+        new QWidget(dimmer);
+
+    popup->setFixedSize(
+        520,
+        360
+        );
+
+    popup->move(
+        (width()  - popup->width())  / 2,
+        (height() - popup->height()) / 2
+        );
+
+    popup->setStyleSheet(
+        "background-color: rgba(8,4,0,235);"
+        "border: 2px solid rgba(200,160,60,200);"
+        "border-radius: 14px;"
+        );
+
+    //================ LAYOUT =================//
+
+    QVBoxLayout *layout =
+        new QVBoxLayout(popup);
+
+    layout->setContentsMargins(
+        40,
+        35,
+        40,
+        35
+        );
+
+    layout->setSpacing(20);
+
+    //================ TITLE =================//
+
+    QLabel *title =
+        new QLabel("GAME PAUSED");
+
+    title->setAlignment(
+        Qt::AlignCenter
+        );
+
+    title->setStyleSheet(
+        "font-size: 28px;"
+        "font-weight: bold;"
+        "letter-spacing: 6px;"
+        "color: #f5d060;"
+        "background: transparent;"
+        "border: none;"
+        );
+
+    //================ MESSAGE =================//
+
+    QLabel *message =
+        new QLabel(
+            "The museum remains in silence...\n"
+            "Press continue when you're ready."
+            );
+
+    message->setAlignment(
+        Qt::AlignCenter
+        );
+
+    message->setWordWrap(true);
+
+    message->setStyleSheet(
+        "font-size: 15px;"
+        "color: #e8d5a8;"
+        "background: transparent;"
+        "border: none;"
+        "line-height: 1.5;"
+        );
+
+    //================ BUTTON STYLE =================//
+
+    QString buttonStyle =
+        "QPushButton {"
+        " background-color: rgba(180,130,40,220);"
+        " color: #fff8e7;"
+        " font-size: 15px;"
+        " font-weight: bold;"
+        " letter-spacing: 3px;"
+        " border: 2px solid #c8a84b;"
+        " border-radius: 8px;"
+        " padding: 14px;"
+        "}"
+        "QPushButton:hover {"
+        " background-color: rgba(220,170,60,240);"
+        " border: 2px solid #ffffff;"
+        " color: #ffffff;"
+        "}"
+        "QPushButton:pressed {"
+        " background-color: rgba(130,90,20,255);"
+        "}";
+
+    //================ CONTINUE BUTTON =================//
+
+    QPushButton *continueBtn =
+        new QPushButton(
+            "▶   CONTINUE"
+            );
+
+    continueBtn->setCursor(
+        Qt::PointingHandCursor
+        );
+    if(mummy)
+    {
+        mummy->setPaused(false);
+    }
+
+    continueBtn->setFixedHeight(55);
+
+    continueBtn->setStyleSheet(
+        buttonStyle
+        );
+
+    //================ EXIT BUTTON =================//
+
+    QPushButton *exitBtn =
+        new QPushButton(
+            "✕   EXIT GAME"
+            );
+
+    exitBtn->setCursor(
+        Qt::PointingHandCursor
+        );
+
+    exitBtn->setFixedHeight(55);
+
+    exitBtn->setStyleSheet(
+        "QPushButton {"
+        " background-color: rgba(100,30,20,220);"
+        " color: #fff8e7;"
+        " font-size: 15px;"
+        " font-weight: bold;"
+        " letter-spacing: 3px;"
+        " border: 2px solid #8a2020;"
+        " border-radius: 8px;"
+        " padding: 14px;"
+        "}"
+        "QPushButton:hover {"
+        " background-color: rgba(160,40,30,240);"
+        "}");
+
+    //================ ADD WIDGETS =================//
+
+    layout->addWidget(title);
+
+    layout->addWidget(message);
+
+    layout->addStretch();
+
+    layout->addWidget(continueBtn);
+
+    layout->addWidget(exitBtn);
+
+    popup->show();
+
+    //================ CONTINUE =================//
+
+    connect(
+        continueBtn,
+        &QPushButton::clicked,
+        this,
+        [=]()
+        {
+            dimmer->deleteLater();
+
+            game.resumeGame();
+
+            timer->start(1000);
+
+            stack->setCurrentWidget(
+                gameScreen
+                );
+
+            this->setFocus();
+        }
+        );
+
+    //================ EXIT =================//
+
+    connect(
+        exitBtn,
+        &QPushButton::clicked,
+        this,
+        [=]()
+        {
+            dimmer->deleteLater();
+
+            exitGame();
+        }
+        );
+}
 /* ================= RESTART ================= */
 
 void GameWindow::restartGame()
