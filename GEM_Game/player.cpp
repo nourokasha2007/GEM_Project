@@ -1,3 +1,4 @@
+
 #include "player.h"
 
 /* ================= CONSTRUCTOR ================= */
@@ -14,6 +15,9 @@ Player::Player(QString name, int startX, int startY)
         0;
 
     hintsUsed =
+        0;
+
+    fireballHits =
         0;
 
     currentLocation =
@@ -113,6 +117,23 @@ void Player::useHint()
     hintsUsed++;
 }
 
+/* ================= FIREBALL HITS ================= */
+
+void Player::registerFireballHit()
+{
+    fireballHits++;
+}
+
+int Player::getFireballHits() const
+{
+    return fireballHits;
+}
+
+bool Player::isDead() const
+{
+    return fireballHits >= 5;
+}
+
 /* ================= GAME ================= */
 
 bool Player::isWinner() const
@@ -130,6 +151,9 @@ void Player::reset()
         0;
 
     hintsUsed =
+        0;
+
+    fireballHits =
         0;
 
     foundItems.clear();
