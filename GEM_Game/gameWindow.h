@@ -65,14 +65,26 @@ private:
     QWidget* gameScreen;
 
     QWidget* gameOverScreen;
+    QLabel *coinText;
+    QLabel *scrollText;
+    QLabel *maskText;
+    QLabel *amuletText;
+    QLabel *timerText;
+
+    int coinCount=3;
+    int scrollCount = 3;
+    int maskCount = 3;
+    int amuletCount = 3;
+    int timerCount = 3;
 
     //================ HUD =================//
 
     QLabel* clockLabel;
 
     QLabel* scoreLabel;
-
     QLabel* statusLabel;
+    void saveGame();
+    void loadGame();
 
     QLabel* bgOverlay;
 

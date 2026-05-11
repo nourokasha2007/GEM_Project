@@ -2,35 +2,28 @@
 #include <QDebug>
 #include <QPixmap>
 #include "level1enemy.h"
+#include <QFile>
+#include <QTextStream>
+
+/* ================= CONSTRUCTOR ================= */
 
 GameWindow::GameWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     seconds = 300;
-
     currentLevel = nullptr;
-
     stack = new QStackedWidget(this);
-
     setCentralWidget(stack);
-
     setupStartScreen();
-
     setupGameScreen();
-
     setupGameOverScreen();
+    setFocusPolicy(Qt::StrongFocus);
+
+    /* ================= TIMER ================= */
 
     timer = new QTimer(this);
-
-    connect(
-        timer,
-        &QTimer::timeout,
-        this,
-        &GameWindow::updateGame
-        );
-
+    connect(timer,&QTimer::timeout,this,&GameWindow::updateGame);
     stack->setCurrentWidget(startScreen);
-
     showMaximized();
 
     // adding fireball boom sound
@@ -42,6 +35,7 @@ GameWindow::GameWindow(QWidget *parent)
 }
 
 /* ================= START SCREEN ================= */
+
 void GameWindow::setupStartScreen()
 {
     startScreen = new QWidget();
@@ -66,33 +60,21 @@ void GameWindow::setupStartScreen()
         "background-color: rgba(0,0,0,110);"
         );
 
-    bgOverlay->setGeometry(
-        0,
-        0,
-        9999,
-        9999
-        );
+    bgOverlay->setGeometry(0, 0,9999,9999);
 
     // --- Main vertical layout ---
 
-    QVBoxLayout *layout =
-        new QVBoxLayout(startScreen);
+    QVBoxLayout *layout =new QVBoxLayout(startScreen);
 
-    layout->setAlignment(
-        Qt::AlignCenter
-        );
+    layout->setAlignment(Qt::AlignCenter);
 
     layout->setSpacing(12);
 
     //================ CARD =================//
 
-    QWidget *card =
-        new QWidget();
+    QWidget *card =new QWidget();
 
-    card->setFixedSize(
-        380,
-        220
-        );
+    card->setFixedSize(380,220);
 
     card->setStyleSheet(
         "background-color: rgba(10, 5, 0, 185);"
@@ -100,26 +82,15 @@ void GameWindow::setupStartScreen()
         "border-radius: 10px;"
         );
 
-    QVBoxLayout *cardLayout =
-        new QVBoxLayout(card);
+    QVBoxLayout *cardLayout = new QVBoxLayout(card);
 
     cardLayout->setSpacing(12);
 
-    cardLayout->setContentsMargins(
-        30,
-        24,
-        30,
-        24
-        );
+    cardLayout->setContentsMargins(30,24,30,24);
 
-    QLabel *cardTitle =
-        new QLabel(
-            "ENTER THE MUSEUM"
-            );
+    QLabel *cardTitle =new QLabel( "ENTER THE MUSEUM");
 
-    cardTitle->setAlignment(
-        Qt::AlignCenter
-        );
+    cardTitle->setAlignment(Qt::AlignCenter);
 
     cardTitle->setStyleSheet(
         "font-size: 14px;"
@@ -132,12 +103,9 @@ void GameWindow::setupStartScreen()
 
     //================ NAME INPUT =================//
 
-    guestNameEdit =
-        new QLineEdit();
+    guestNameEdit =new QLineEdit();
 
-    guestNameEdit->setPlaceholderText(
-        "Your Name"
-        );
+    guestNameEdit->setPlaceholderText("Your Name");
 
     guestNameEdit->setFixedHeight(44);
 
@@ -159,16 +127,11 @@ void GameWindow::setupStartScreen()
 
     //================ BUTTON =================//
 
-    QPushButton *enterBtn =
-        new QPushButton(
-            "▶   PROTECT THE HERITAGE"
-            );
+    QPushButton *enterBtn = new QPushButton( "▶   PROTECT THE HERITAGE");
 
     enterBtn->setFixedHeight(48);
 
-    enterBtn->setCursor(
-        Qt::PointingHandCursor
-        );
+    enterBtn->setCursor(Qt::PointingHandCursor);
 
     enterBtn->setStyleSheet(
         "QPushButton {"
@@ -200,19 +163,13 @@ void GameWindow::setupStartScreen()
 
     cardLayout->addWidget(enterBtn);
 
-    connect(
-        enterBtn,
-        &QPushButton::clicked,
-        this,
-        [=]()
+    connect(enterBtn,&QPushButton::clicked,this, [=]()
         {
-            QString name =
-                guestNameEdit->text().trimmed();
+            QString name =guestNameEdit->text().trimmed();
 
             if(name.isEmpty())
             {
-                name =
-                    "Night Guard";
+                name ="Night Guard";
             }
 
             showBriefingPopup(name);
@@ -220,60 +177,34 @@ void GameWindow::setupStartScreen()
 
     layout->addStretch(3);
 
-    layout->addWidget(
-        card,
-        0,
-        Qt::AlignCenter
-        );
+    layout->addWidget(card,0,Qt::AlignCenter );
 
     layout->addStretch(1);
 
-    startScreen->setMinimumSize(
-        1000,
-        700
-        );
-
+    startScreen->setMinimumSize(1000,700);
     stack->addWidget(startScreen);
 }
 //=================Briefing Popup======================//
-void GameWindow::showBriefingPopup(
-    const QString &playerName
-    )
+
+void GameWindow::showBriefingPopup(const QString &playerName )
 {
     //================ FULLSCREEN DIM OVERLAY ================//
 
-    QWidget *dimmer =
-        new QWidget(this);
+    QWidget *dimmer =new QWidget(this);
 
-    dimmer->setGeometry(
-        0,
-        0,
-        width(),
-        height()
-        );
+    dimmer->setGeometry(0,0,width(),height());
 
-    dimmer->setStyleSheet(
-        "background-color: rgba(0,0,0,180);"
-        );
-
+    dimmer->setStyleSheet( "background-color: rgba(0,0,0,180);");
     dimmer->show();
-
     dimmer->raise();
 
     //================ POPUP CARD ================//
 
-    QWidget *popup =
-        new QWidget(dimmer);
+    QWidget *popup =new QWidget(dimmer);
 
-    popup->setFixedSize(
-        620,
-        480
-        );
+    popup->setFixedSize(620,480);
 
-    popup->move(
-        (dimmer->width() - 620) / 2,
-        (dimmer->height() - 480) / 2
-        );
+    popup->move((dimmer->width() - 620) / 2,(dimmer->height() - 480) / 2);
 
     popup->setStyleSheet(
         "background-color: rgba(8, 4, 0, 230);"
@@ -281,28 +212,17 @@ void GameWindow::showBriefingPopup(
         "border-radius: 12px;"
         );
 
-    QVBoxLayout *pl =
-        new QVBoxLayout(popup);
+    QVBoxLayout *pl =new QVBoxLayout(popup);
 
-    pl->setContentsMargins(
-        40,
-        32,
-        40,
-        28
-        );
+    pl->setContentsMargins(40, 32,40,28);
 
     pl->setSpacing(14);
 
     //================ HEADER ================//
 
-    QLabel *header =
-        new QLabel(
-            "NIGHT SHIFT INITIATED!"
-            );
+    QLabel *header = new QLabel("NIGHT SHIFT INITIATED!");
 
-    header->setAlignment(
-        Qt::AlignCenter
-        );
+    header->setAlignment(Qt::AlignCenter);
 
     header->setStyleSheet(
         "font-size: 22px;"
@@ -333,14 +253,11 @@ void GameWindow::showBriefingPopup(
             "on your shoulders."
             ).arg(playerName);
 
-    QLabel *welcome =
-        new QLabel(welcomeText);
+    QLabel *welcome = new QLabel(welcomeText);
 
     welcome->setWordWrap(true);
 
-    welcome->setAlignment(
-        Qt::AlignCenter
-        );
+    welcome->setAlignment(Qt::AlignCenter );
 
     welcome->setStyleSheet(
         "font-size: 13px;"
@@ -387,15 +304,9 @@ void GameWindow::showBriefingPopup(
 
     //================ WARNING ================//
 
-    QLabel *warning =
-        new QLabel(
-            "The museum opens at 7:00 AM sharp. "
-            "Don't let history stay empty!"
-            );
+    QLabel *warning =new QLabel( "The museum opens at 7:00 AM sharp. ""Don't let history stay empty!");
 
-    warning->setAlignment(
-        Qt::AlignCenter
-        );
+    warning->setAlignment( Qt::AlignCenter );
 
     warning->setWordWrap(true);
 
@@ -409,16 +320,11 @@ void GameWindow::showBriefingPopup(
 
     //================ BUTTON ================//
 
-    QPushButton *beginBtn =
-        new QPushButton(
-            "▶   PROTECT THE HERITAGE"
-            );
+    QPushButton *beginBtn =new QPushButton("▶  PROTECT THE HERITAGE");
 
     beginBtn->setFixedHeight(50);
 
-    beginBtn->setCursor(
-        Qt::PointingHandCursor
-        );
+    beginBtn->setCursor(Qt::PointingHandCursor);
 
     beginBtn->setStyleSheet(
         "QPushButton {"
@@ -454,24 +360,15 @@ void GameWindow::showBriefingPopup(
 
     pl->addStretch(1);
 
-    pl->addWidget(
-        beginBtn,
-        0,
-        Qt::AlignCenter
-        );
+    pl->addWidget(beginBtn,0, Qt::AlignCenter);
 
     popup->show();
 
     //================ START GAME ================//
 
-    connect(
-        beginBtn,
-        &QPushButton::clicked,
-        this,
-        [=]()
+    connect(beginBtn,&QPushButton::clicked,this,[=]()
         {
             dimmer->deleteLater();
-
             startGame();
         });
 }
@@ -483,26 +380,16 @@ void GameWindow::setupGameScreen()
     gameScreen = new QWidget();
     gameScreen->setStyleSheet("background-color: black;");
 
-    QVBoxLayout* mainLayout =
-        new QVBoxLayout(gameScreen);
-
+    QVBoxLayout* mainLayout =new QVBoxLayout(gameScreen);
     setupHUD(mainLayout);
-
     scene =new QGraphicsScene(this);
 
     view = new QGraphicsView(scene);
+    view->setBackgroundBrush( QBrush(Qt::black));
 
-    view->setBackgroundBrush(
-        QBrush(Qt::black)
-        );
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    view->setHorizontalScrollBarPolicy(
-        Qt::ScrollBarAlwaysOff
-        );
-
-    view->setVerticalScrollBarPolicy(
-        Qt::ScrollBarAlwaysOff
-        );
+    view->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff);
 
     view->setFocusPolicy(Qt::NoFocus);
 
@@ -510,8 +397,7 @@ void GameWindow::setupGameScreen()
 
     view->scale(0.7, 0.7);
 
-    QHBoxLayout* gameLayout =
-        new QHBoxLayout();
+    QHBoxLayout* gameLayout =new QHBoxLayout();
 
     setupInventoryUI(gameLayout);
 
@@ -530,29 +416,18 @@ void GameWindow::setupGameOverScreen()
 {
     gameOverScreen = new QWidget();
 
-    QVBoxLayout* layout =
-        new QVBoxLayout(gameOverScreen);
+    QVBoxLayout* layout =new QVBoxLayout(gameOverScreen);
 
-    QLabel* over =
-        new QLabel("GAME OVER");
+    QLabel* over =new QLabel("GAME OVER");
 
     over->setAlignment(Qt::AlignCenter);
 
-    QPushButton* restartBtn =
-        new QPushButton("RESTART");
+    QPushButton* restartBtn = new QPushButton("RESTART");
+    QPushButton* exitBtn =new QPushButton("EXIT");
 
-    QPushButton* exitBtn =
-        new QPushButton("EXIT");
+    connect(restartBtn, &QPushButton::clicked,this, &GameWindow::restartGame);
 
-    connect(restartBtn,
-            &QPushButton::clicked,
-            this,
-            &GameWindow::restartGame);
-
-    connect(exitBtn,
-            &QPushButton::clicked,
-            this,
-            &GameWindow::exitGame);
+    connect(exitBtn,&QPushButton::clicked,this, &GameWindow::exitGame);
 
     layout->addWidget(over);
 
@@ -567,17 +442,13 @@ void GameWindow::setupGameOverScreen()
 
 void GameWindow::setupHUD(QVBoxLayout* mainLayout)
 {
-    QHBoxLayout* hud =
-        new QHBoxLayout();
+    QHBoxLayout* hud =new QHBoxLayout();
 
-    clockLabel =
-        new QLabel("00:00:00");
+    clockLabel = new QLabel("00:00:00");
 
-    scoreLabel =
-        new QLabel("Score: 0");
+    scoreLabel =new QLabel("Score: 0");
 
-    statusLabel =
-        new QLabel("ALIVE");
+    statusLabel =new QLabel("ALIVE");
 
     hud->addWidget(clockLabel);
 
@@ -592,8 +463,7 @@ void GameWindow::setupHUD(QVBoxLayout* mainLayout)
 
 void GameWindow::setupInventoryUI(QHBoxLayout* gameLayout)
 {
-    QVBoxLayout* inventoryLayout =
-        new QVBoxLayout();
+    QVBoxLayout* inventoryLayout = new QVBoxLayout();
 
     inventoryLayout->setSpacing(20);
 
@@ -652,40 +522,44 @@ void GameWindow::setupInventoryUI(QHBoxLayout* gameLayout)
 
 void GameWindow::setupButtons(QVBoxLayout* mainLayout)
 {
-    QHBoxLayout* buttons =
-        new QHBoxLayout();
+    QHBoxLayout* buttons =new QHBoxLayout();
 
-    QPushButton* pauseBtn =
-        new QPushButton("PAUSE");
+    QPushButton* pauseBtn =new QPushButton("PAUSE");
 
-    QPushButton* restartBtn =
-        new QPushButton("RESTART");
+    QPushButton* restartBtn =new QPushButton("RESTART");
 
-    QPushButton* exitBtn =
-        new QPushButton("EXIT");
+    QPushButton* exitBtn =new QPushButton("EXIT");
 
-    connect(pauseBtn,
-            &QPushButton::clicked,
-            this,
-            &GameWindow::pauseGame);
+    QPushButton* saveBtn = new QPushButton("SAVE");
 
-    connect(restartBtn,
-            &QPushButton::clicked,
-            this,
-            &GameWindow::restartGame);
+    QPushButton* loadBtn =new QPushButton("LOAD");
 
-    connect(exitBtn,
-            &QPushButton::clicked,
-            this,
-            &GameWindow::exitGame);
+    //================ CONNECTS ================//
+
+    connect(pauseBtn,&QPushButton::clicked, this,&GameWindow::pauseGame);
+
+    connect( restartBtn, &QPushButton::clicked,this, &GameWindow::restartGame);
+
+    connect( exitBtn, &QPushButton::clicked,this,&GameWindow::exitGame);
+
+    connect(saveBtn, &QPushButton::clicked,this,&GameWindow::saveGame );
+
+    connect(loadBtn, &QPushButton::clicked,this, &GameWindow::loadGame);
+
+    //================ ADD TO LAYOUT ================//
 
     buttons->addWidget(pauseBtn);
+
     buttons->addWidget(restartBtn);
+
     buttons->addWidget(exitBtn);
+
+    buttons->addWidget(saveBtn);
+
+    buttons->addWidget(loadBtn);
 
     mainLayout->addLayout(buttons);
 }
-
 /* ================= START GAME ================= */
 
 void GameWindow::startGame()
@@ -698,25 +572,18 @@ void GameWindow::startGame()
 
     scene->clear();
 
-    collisionMask =
-        QImage(":/new/prefix1/images/level1 BW.png");
+    collisionMask =QImage(":/new/prefix1/images/level1 BW.png");
 
     currentLevel =
         game.getCurrentLevel();
 
     currentLevel->loadScene(scene);
 
-    playerSprite =
-        scene->addPixmap(
-            QPixmap(":/new/prefix1/images/ChatGPT Image Apr 28, 2026, 05_48_57 PM.png")
-            );
+    playerSprite =scene->addPixmap( QPixmap(":/new/prefix1/images/ChatGPT Image Apr 28, 2026, 05_48_57 PM.png") );
 
     playerSprite->setScale(0.08);
 
-    playerSprite->setPos(
-        game.getPlayer().getX(),
-        game.getPlayer().getY()
-        );
+    playerSprite->setPos(game.getPlayer().getX(),game.getPlayer().getY());
 
     stack->setCurrentWidget(gameScreen);
 
@@ -733,15 +600,14 @@ void GameWindow::startGame()
 
     stack->setCurrentWidget(gameScreen);
 
-    setFocus();
+    this->setFocus();
 }
 
 /* ================= MOVEMENT ================= */
 
 void GameWindow::movePlayer(int dx, int dy)
 {
-    QPointF newPos =
-        playerSprite->pos();
+    QPointF newPos =playerSprite->pos();
 
     newPos.setX(newPos.x() + dx);
 
@@ -751,10 +617,7 @@ void GameWindow::movePlayer(int dx, int dy)
     {
         playerSprite->setPos(newPos);
 
-        game.getPlayer().moveTo(
-            newPos.x(),
-            newPos.y()
-            );
+        game.getPlayer().moveTo( newPos.x(), newPos.y());
 
         checkArtifactCollisions();
     }
@@ -764,25 +627,17 @@ void GameWindow::movePlayer(int dx, int dy)
 
 bool GameWindow::isWalkable(QPointF newPos)
 {
-    QRectF rect =
-        playerSprite->sceneBoundingRect();
+    QRectF rect = playerSprite->sceneBoundingRect();
 
-    QPointF scenePos(
-        newPos.x() + rect.width() / 2,
-        newPos.y() + rect.height() - 5
-        );
+    QPointF scenePos(newPos.x() + rect.width() / 2,newPos.y() + rect.height() - 5);
 
-    QRectF sceneRect =
-        scene->sceneRect();
+    QRectF sceneRect =scene->sceneRect();
 
-    int maskX =
-        (scenePos.x() / sceneRect.width()) * collisionMask.width();
+    int maskX =(scenePos.x() / sceneRect.width()) * collisionMask.width();
 
-    int maskY =
-        (scenePos.y() / sceneRect.height()) * collisionMask.height();
+    int maskY =(scenePos.y() / sceneRect.height()) * collisionMask.height();
 
-    QColor color =
-        collisionMask.pixelColor(maskX, maskY);
+    QColor color =collisionMask.pixelColor(maskX, maskY);
 
     return !(color.red() < 20 &&
              color.green() < 20 &&
@@ -793,18 +648,13 @@ bool GameWindow::isWalkable(QPointF newPos)
 
 void GameWindow::checkArtifactCollisions()
 {
-    QGraphicsItem* artifact =
-        currentLevel->checkArtifactCollision(playerSprite);
+    QGraphicsItem* artifact =currentLevel->checkArtifactCollision(playerSprite);
 
     if(artifact)
     {
-        QString type =
-            artifact->data(0).toString();
+        QString type = artifact->data(0).toString();
 
-        currentLevel->removeArtifact(
-            artifact,
-            scene
-            );
+        currentLevel->removeArtifact( artifact, scene);
 
         game.collectArtifact(type);
 
@@ -836,47 +686,21 @@ void GameWindow::updateHUD()
             .arg(s, 2, 10, QChar('0'))
         );
 
-    scoreLabel->setText(
-        "Score: " +
-        QString::number(
-            game.getPlayer().getScore()
-            )
-        );
+    scoreLabel->setText("Score: " + QString::number(game.getPlayer().getScore()));
 }
 
 /* ================= UPDATE INVENTORY ================= */
 
 void GameWindow::updateInventoryUI()
 {
-    coinCounter->setText(
-        "x" + QString::number(
-            game.getArtifactCount("coin")
-            )
-        );
+    coinCounter->setText("x" + QString::number(game.getArtifactCount("coin")));
+    scrollCounter->setText("x" + QString::number(game.getArtifactCount("scroll")));
 
-    scrollCounter->setText(
-        "x" + QString::number(
-            game.getArtifactCount("scroll")
-            )
-        );
+    maskCounter->setText("x" + QString::number(game.getArtifactCount("mask")));
 
-    maskCounter->setText(
-        "x" + QString::number(
-            game.getArtifactCount("mask")
-            )
-        );
+    amuletCounter->setText("x" + QString::number(game.getArtifactCount("amulet")));
 
-    amuletCounter->setText(
-        "x" + QString::number(
-            game.getArtifactCount("amulet")
-            )
-        );
-
-    timerCounter->setText(
-        "x" + QString::number(
-            game.getArtifactCount("timer")
-            )
-        );
+    timerCounter->setText( "x" + QString::number( game.getArtifactCount("timer") ));
 }
 
 /* ================= UPDATE GAME ================= */
@@ -889,8 +713,7 @@ void GameWindow::updateGame()
 
     game.update(1.0f);
 
-    if(seconds <= 0 ||
-        game.getstate() == Gamestate::gameOver)
+    if(seconds <= 0 ||game.getstate() == Gamestate::gameOver)
     {
         timer->stop();
 
@@ -937,12 +760,50 @@ void GameWindow::pauseGame()
 }
 
 /* ================= RESTART ================= */
-
 void GameWindow::restartGame()
 {
+    timer->stop();
+
+    //================ CLEAR SCENE ================//
+
+    scene->clear();
+
+    //================ RESET GAME LOGIC ================//
+
     game.restartGame();
 
-    startGame();
+    //================ RELOAD LEVEL ================//
+
+    game.loadLevel( game.getLevelIndex());
+
+    currentLevel =game.getCurrentLevel();
+
+    currentLevel->loadScene(scene);
+
+    //================ RECREATE PLAYER ================//
+
+    playerSprite =
+        scene->addPixmap(QPixmap(":/new/prefix1/images/ChatGPT Image Apr 28, 2026, 05_48_57 PM.png"));
+
+    playerSprite->setScale(0.08);
+
+    playerSprite->setPos(game.getPlayer().getX(),game.getPlayer().getY());
+
+    //================ RESET TIMER ================//
+
+    seconds = 300;
+
+    timer->start(1000);
+
+    //================ UPDATE UI ================//
+
+    updateInventoryUI();
+
+    updateHUD();
+
+    stack->setCurrentWidget(gameScreen);
+
+    this->setFocus();
 }
 
 /* ================= EXIT ================= */
@@ -955,6 +816,80 @@ void GameWindow::exitGame()
 }
 
 /* ================= RESIZE ================= */
+/* ================= SAVE AND LOAD FILES ================= */
+
+void GameWindow::saveGame()
+{
+    QFile file("savegame.txt");
+
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream out(&file);
+
+        out << game.getPlayer().getX() << "\n";
+        out << game.getPlayer().getY() << "\n";
+
+        out << game.getPlayer().getScore() << "\n";
+
+        out << seconds << "\n";
+
+        out << coinCount << "\n";
+        out << scrollCount << "\n";
+        out << maskCount << "\n";
+        out << amuletCount << "\n";
+        out << timerCount << "\n";
+
+        file.close();
+    }
+}
+
+
+void GameWindow::loadGame()
+{
+    QFile file("savegame.txt");
+
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QTextStream in(&file);
+
+        int x;
+        int y;
+        int score;
+
+        in >> x;
+        in >> y;
+        in >> score;
+
+        in >> seconds;
+
+        in >> coinCount;
+        in >> scrollCount;
+        in >> maskCount;
+        in >> amuletCount;
+        in >> timerCount;
+
+        file.close();
+
+        game.getPlayer().moveTo(x, y);
+
+        if (playerSprite != nullptr)
+        {
+            playerSprite->setPos(x, y);
+        }
+
+        coinCounter->setText("x" + QString::number(coinCount));
+
+        scrollCounter->setText( "x" + QString::number(scrollCount));
+
+        maskCounter->setText("x" + QString::number(maskCount));
+
+        amuletCounter->setText("x" + QString::number(amuletCount));
+
+        timerCounter->setText( "x" + QString::number(timerCount));
+    }
+}
+
+/* ================= RESIZE EVENT ================= */
 
 void GameWindow::resizeEvent(QResizeEvent *event)
 {
