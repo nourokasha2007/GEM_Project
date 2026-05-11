@@ -25,6 +25,7 @@ class GameWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    void showLevel2BriefingPopup();
     explicit GameWindow(QWidget *parent = nullptr);
 
 protected:
@@ -52,7 +53,7 @@ private:
     Game game;
 
     Level* currentLevel;
-
+    QString playerName;
     QTimer* timer;
 
     int seconds;
@@ -153,6 +154,7 @@ private:
     bool isWalkable(QPointF newPos);
 
     void checkArtifactCollisions();
+    void showHieroglyphScreen();
 
 };
 

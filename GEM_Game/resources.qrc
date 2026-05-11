@@ -1,59 +1,35 @@
 <RCC>
     <qresource prefix="/new/prefix1">
-
         <file>images/ChatGPT Image Apr 28, 2026, 05_48_57 PM.png</file>
         <file>images/PHOTO-2026-04-29-21-07-06.jpg</file>
-
         <file>images/level1 (1).png</file>
         <file>images/level1 BW.png</file>
-
         <file>images/level3.png</file>
         <file>images/level3 BW.png</file>
-
         <file>images/nose.png</file>
-
         <file>images/scroll2.png</file>
         <file>images/mask2.png</file>
         <file>images/timer.png</file>
-
         <file>images/masktrial.png</file>
-
         <file>images/ChatGPT Image May 8, 2026, 09_48_17 PM.png</file>
-
-        <!-- ================= PLAYER ================= -->
-
         <file>images/player back.png</file>
         <file>images/player front.png</file>
         <file>images/player left.png</file>
         <file>images/player right.png</file>
-
-        <!-- ================= SPIRIT ================= -->
-
         <file>images/spirit back.png</file>
         <file>images/spirit front.png</file>
         <file>images/spirit idle.png</file>
         <file>images/spirit left.png</file>
         <file>images/spirit right.png</file>
-
-        <!-- ================= EFFECTS ================= -->
-
         <file>images/fireball.png</file>
-
-        <!-- ================= SOUNDS ================= -->
-
         <file>sounds/desert sounds.wav</file>
         <file>sounds/fireball boom.wav</file>
-
-        <!-- ================= INVENTORY ================= -->
-
         <file>images/amulett.png</file>
         <file>images/coint.png</file>
         <file>images/maskt.png</file>
         <file>images/scrollt.png</file>
         <file>images/timert.png</file>
-
+        <file>images/Level2.jpeg</file>
     </qresource>
-
     <qresource prefix="/"/>
-
 </RCC>

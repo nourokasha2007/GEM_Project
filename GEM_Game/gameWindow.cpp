@@ -1,4 +1,3 @@
-
 #include "gameWindow.h"
 #include <QDebug>
 #include <QPixmap>
@@ -7,6 +6,7 @@
 #include <QMessageBox>
 #include <QDir>
 #include "level1enemy.h"
+#include "Level2.h"
 
 /* ================= CONSTRUCTOR ================= */
 
@@ -271,9 +271,9 @@ void GameWindow::setupStartScreen()
     stack->addWidget(startScreen);
 }
 /* ================= BRIEFING POPUP ================= */
-
 void GameWindow::showBriefingPopup(const QString &playerName)
 {
+    this->playerName = playerName;
     QWidget *dimmer =
         new QWidget(this);
 
@@ -1003,6 +1003,8 @@ void GameWindow::checkArtifactCollisions()
 
         game.collectArtifact(type);
 
+        //================ TIMER BONUS =================//
+
         if(type == "timer")
         {
             seconds += 30;
@@ -1011,9 +1013,38 @@ void GameWindow::checkArtifactCollisions()
         updateInventoryUI();
 
         updateHUD();
+
+        //================ LEVEL COMPLETE =================//
+
+        if(currentLevel->getArtifactCount() == 0)
+        {
+            timer->stop();
+
+            //================ STOP ENEMY =================//
+
+            if(mummy)
+            {
+                mummy->setPaused(true);
+            }
+
+            //================ LEVEL 1 =================//
+
+            if(game.getLevelIndex() == 1)
+            {
+                showLevel2BriefingPopup();
+            }
+
+            //================ LEVEL 2 =================//
+
+           /* else if(game.getLevelIndex() == 2)
+            {
+                showHieroglyphScreen();
+            }*/
+
+            return;
+        }
     }
 }
-
 /* ================= UPDATE HUD ================= */
 
 void GameWindow::updateHUD()
@@ -1083,6 +1114,14 @@ void GameWindow::updateGame()
     updateHUD();
 
     game.update(1.0f);
+
+    Level2* level2 =
+        dynamic_cast<Level2*>(currentLevel);
+
+    if(level2)
+    {
+        level2->updatePlayerGlow(playerSprite);
+    }
 
     if(
         seconds <= 0 ||game.getstate() == Gamestate::gameOver)
@@ -1544,6 +1583,282 @@ void GameWindow::pauseGame()
         }
         );
 }
+
+void GameWindow::showLevel2BriefingPopup()
+{
+    //================ STOP GAME ONLY =================//
+
+    timer->stop();
+
+    if(mummy)
+    {
+        mummy->setPaused(true);
+    }
+
+    //================ DIMMER =================//
+
+    QWidget* dimmer =
+        new QWidget(this);
+
+    dimmer->setGeometry(
+        0,
+        0,
+        width(),
+        height()
+        );
+
+    dimmer->setStyleSheet(
+        "background-color:rgba(0,0,0,200);"
+        );
+
+    dimmer->show();
+
+    dimmer->raise();
+
+    //================ POPUP =================//
+
+    QWidget* popup =
+        new QWidget(dimmer);
+
+    popup->setFixedSize(760,620);
+
+    popup->move(
+        (dimmer->width()-760)/2,
+        (dimmer->height()-620)/2
+        );
+
+    popup->setStyleSheet(
+        "background-color:rgba(5,3,0,240);"
+        "border:2px solid rgba(200,160,60,220);"
+        "border-radius:14px;"
+        );
+
+    //================ LAYOUT =================//
+
+    QVBoxLayout* pl =
+        new QVBoxLayout(popup);
+
+    pl->setContentsMargins(
+        44,
+        36,
+        44,
+        32
+        );
+
+    pl->setSpacing(18);
+
+    //================ TITLE =================//
+
+    QLabel* title =
+        new QLabel(
+            "WING II — THE HIEROGLYPH VAULT"
+            );
+
+    title->setAlignment(
+        Qt::AlignCenter
+        );
+
+    title->setStyleSheet(
+        "font-size:24px;"
+        "font-weight:bold;"
+        "color:#f5d060;"
+        "letter-spacing:4px;"
+        "background:transparent;"
+        "border:none;"
+        );
+
+    //================ STORY =================//
+
+    QString storyText =
+        QString(
+            "You secured the first hall — well done, <b>%1</b>.<br><br>"
+
+            "You now enter the sacred Room of Tutankhamun.<br><br>"
+
+            "But the east wing has gone dark. "
+            "Something ancient has awakened in the deepest vault "
+            "of the museum... and it is not alone."
+            ).arg(playerName);
+
+    QLabel* story =
+        new QLabel(storyText);
+
+    story->setWordWrap(true);
+
+    story->setAlignment(
+        Qt::AlignCenter
+        );
+
+    story->setStyleSheet(
+        "font-size:15px;"
+        "color:#e8d5a8;"
+        "background:transparent;"
+        "border:none;"
+        "line-height:1.7;"
+        );
+
+    //================ OBJECTIVES =================//
+
+    QLabel* objective =
+        new QLabel(
+            "<span style='color:#c8a84b; font-weight:bold; font-size:15px;'>NEW OBJECTIVE</span><br><br>"
+
+            "The vault contains <b>3 Sacred Stones</b>, each carved "
+            "with an ancient hieroglyph — a symbol whose meaning "
+            "has been lost to time.<br><br>"
+
+            "The stones have been scattered across the chamber. "
+            "<b>Collect all three</b> to reveal their secret.<br><br>"
+
+            "<span style='color:#f5d060;'>&#9656;</span> "
+            "The room is <b>pitch black</b> — trust your torch.<br><br>"
+
+            "<span style='color:#f5d060;'>&#9656;</span> "
+            "A dark spirit roams the chamber. Avoid it or lose score.<br><br>"
+
+            "<span style='color:#f5d060;'>&#9656;</span> "
+            "Collect all three stones to unlock the ancient secret."
+            );
+
+    objective->setWordWrap(true);
+
+    objective->setStyleSheet(
+        "font-size:13px;"
+        "color:#d4c090;"
+        "background:transparent;"
+        "border:none;"
+        "line-height:1.8;"
+        );
+
+    //================ WARNING =================//
+
+    QLabel* warning =
+        new QLabel(
+            "The hieroglyphs whisper in the dark..."
+            );
+
+    warning->setAlignment(
+        Qt::AlignCenter
+        );
+
+    warning->setStyleSheet(
+        "font-size:13px;"
+        "color:rgba(200,160,60,180);"
+        "font-style:italic;"
+        "background:transparent;"
+        "border:none;"
+        );
+
+    //================ BUTTON =================//
+
+    QPushButton* enterBtn =
+        new QPushButton(
+            "▶   ENTER THE ROOM OF TUTANKHAMUN"
+            );
+
+    enterBtn->setFixedHeight(58);
+
+    enterBtn->setCursor(
+        Qt::PointingHandCursor
+        );
+
+    enterBtn->setStyleSheet(
+        "QPushButton {"
+        " background-color:rgba(180,130,40,220);"
+        " color:#fff8e7;"
+        " font-size:16px;"
+        " font-weight:bold;"
+        " letter-spacing:3px;"
+        " border:2px solid #c8a84b;"
+        " border-radius:8px;"
+        "}"
+        "QPushButton:hover {"
+        " background-color:rgba(220,170,60,240);"
+        " border:2px solid #fff;"
+        "}"
+        "QPushButton:pressed {"
+        " background-color:rgba(130,90,20,255);"
+        "}"
+        );
+
+    //================ ADD =================//
+
+    pl->addWidget(title);
+
+    pl->addWidget(story);
+
+    pl->addWidget(objective);
+
+    pl->addWidget(warning);
+
+    pl->addStretch();
+
+    pl->addWidget(
+        enterBtn,
+        0,
+        Qt::AlignCenter
+        );
+
+    popup->show();
+
+    //================ ENTER LEVEL 2 =================//
+
+    connect(
+        enterBtn,
+        &QPushButton::clicked,
+        this,
+        [=]()
+        {
+            dimmer->deleteLater();
+
+            //================ LOAD LEVEL 2 =================//
+
+            game.loadLevel(2);
+
+            currentLevel =
+                game.getCurrentLevel();
+
+            scene->clear();
+
+            currentLevel->loadScene(scene);
+
+            //================ COLLISION MASK =================//
+
+            collisionMask =
+                QImage(":/new/prefix1/images/level2 BW.png");
+
+            //================ PLAYER =================//
+
+            playerSprite =
+                scene->addPixmap(spriteFront);
+
+            playerSprite->setScale(0.12);
+
+            playerSprite->setPos(120,620);
+
+            game.getPlayer().moveTo(120,620);
+
+            //================ TIMER =================//
+
+            seconds = 300;
+
+            timer->start(1000);
+
+            //================ RESUME ENEMY SYSTEM =================//
+
+            if(mummy)
+            {
+                mummy->setPaused(false);
+            }
+
+            //================ SCREEN =================//
+
+            stack->setCurrentWidget(gameScreen);
+
+            this->setFocus();
+        }
+        );
+}
 /* ================= RESTART ================= */
 
 void GameWindow::restartGame()
@@ -1558,38 +1873,39 @@ void GameWindow::restartGame()
 
     game.restartGame();
 
-    game.loadLevel(
-        game.getLevelIndex()
-        );
+    game.loadLevel( game.getLevelIndex());
 
     currentLevel = game.getCurrentLevel();
 
     currentLevel->loadScene(scene);
     //================ RECREATE ENEMY =================//
 
-    mummy =
-        new Level1Enemy(
-            &game.getPlayer(),
-            playerSprite
+    if(game.getLevelIndex() == 1)
+    {
+        mummy =
+            new Level1Enemy(
+                &game.getPlayer(),
+                playerSprite
+                );
+
+        mummy->setPos(800, 500);
+
+        mummy->setZValue(999);
+
+        scene->addItem(mummy);
+
+        connect(
+            mummy,
+            &Level1Enemy::reduceScore,
+            this,
+            [=]()
+            {
+                game.getPlayer().deductScore(10);
+
+                updateHUD();
+            }
             );
-
-    mummy->setPos(800, 500);
-
-    mummy->setZValue(999);
-
-    scene->addItem(mummy);
-
-    connect(
-        mummy,
-        &Level1Enemy::reduceScore,
-        this,
-        [=]()
-        {
-            game.getPlayer().deductScore(10);
-
-            updateHUD();
-        }
-        );
+    }
 
     //================ RELOAD SPRITES ================//
 
