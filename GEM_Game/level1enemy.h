@@ -15,6 +15,7 @@ public:
      void setPaused(bool value);
 
 signals:
+     void playerKilled();
     void reduceScore(int amount);
 
 public slots:

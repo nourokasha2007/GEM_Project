@@ -48,7 +48,7 @@ private slots:
 private:
 
     //================ GAME =================//
-
+    void showFireballGameOver();
     Game game;
 
     Level* currentLevel;
