@@ -6,15 +6,13 @@
 #include <cmath>
 #include <QElapsedTimer>
 
-
 Level1Enemy::Level1Enemy(Player* target, QGraphicsPixmapItem* pSprite)
     : Enemy(100, 10, 1.2) {
 
     player = target;
     playerSprite = pSprite;
     isChasing = false;
-    // Fireballs spawn every 8 seconds while chasing
-    shootCooldownMs = 8000;
+    shootCooldownMs = 9000;
 
     loadAssets();
     setPixmap(imgIdle);
@@ -39,38 +37,41 @@ void Level1Enemy::loadAssets() {
 }
 
 void Level1Enemy::updateAI() {
-    if (!player) return;
+    if (player == nullptr) {
+        return;
+    }
 
-    double dx = player->getX() - this->x();
-    double dy = player->getY() - this->y();
-    double distance = std::sqrt(dx * dx + dy * dy);
+    double differenceX = player->getX() - this->x();
+    double differenceY = player->getY() - this->y();
+    double distanceToPlayer = std::sqrt((differenceX * differenceX) + (differenceY * differenceY));
 
-    if (distance < 700) {
+    if (distanceToPlayer < 700) {
         isChasing = true;
     }
 
-    if (isChasing) {
-        shootCooldownMs -= 33;
+    if (isChasing == true) {
+        shootCooldownMs = shootCooldownMs - 33;
+
         if (shootCooldownMs <= 0) {
             shootCooldownMs = 6000;
             shootHomingProjectile();
         }
 
-        if (distance > speed) {
-            double moveX = (dx / distance) * speed;
-            double moveY = (dy / distance) * speed;
+        if (distanceToPlayer > speed) {
+            double moveX = (differenceX / distanceToPlayer) * speed;
+            double moveY = (differenceY / distanceToPlayer) * speed;
 
             setPos(x() + moveX, y() + moveY);
         }
 
-        if (std::abs(dx) > std::abs(dy)) {
-            if (dx > 0) {
+        if (std::abs(differenceX) > std::abs(differenceY)) {
+            if (differenceX > 0) {
                 setPixmap(imgRight);
             } else {
                 setPixmap(imgLeft);
             }
         } else {
-            if (dy > 0) {
+            if (differenceY > 0) {
                 setPixmap(imgForward);
             } else {
                 setPixmap(imgBack);
@@ -78,66 +79,71 @@ void Level1Enemy::updateAI() {
         }
     }
 }
-void Level1Enemy::shootHomingProjectile() {
-    QGraphicsScene* scn = scene();
-    if (!scn) return;
 
-    QGraphicsPixmapItem* proj = scn->addPixmap(imgProjectile);
-    proj->setScale(0.2);
-    proj->setPos(this->x(), this->y());
-    proj->setZValue(999);
+void Level1Enemy::shootHomingProjectile() {
+    QGraphicsScene* currentScene = scene();
+
+    if (currentScene == nullptr) {
+        return;
+    }
+
+    QGraphicsPixmapItem* projectile = currentScene->addPixmap(imgProjectile);
+    projectile->setScale(0.15);
+    projectile->setPos(this->x(), this->y());
+    projectile->setZValue(999);
 
     QTimer* homingTimer = new QTimer();
     homingTimer->setParent(this);
 
-    // Despawn after 5 seconds
-    const int lifetimeMs = 9000;
+    int lifetimeMs = 9000;
     QElapsedTimer lifetime;
     lifetime.start();
 
     connect(homingTimer, &QTimer::timeout, this, [=]() mutable {
-        if (!player) {
+        if (player == nullptr) {
             homingTimer->stop();
-            scn->removeItem(proj);
-            delete proj;
+            currentScene->removeItem(projectile);
+            delete projectile;
             homingTimer->deleteLater();
             return;
         }
 
         if (lifetime.elapsed() >= lifetimeMs) {
             homingTimer->stop();
-            scn->removeItem(proj);
-            delete proj;
+            currentScene->removeItem(projectile);
+            delete projectile;
             homingTimer->deleteLater();
             return;
         }
 
+        double playerX = player->getX();
+        double playerY = player->getY();
+        double projectileX = projectile->x();
+        double projectileY = projectile->y();
 
-        double px = player->getX();
-        double py = player->getY();
-        double bx = proj->x();
-        double by = proj->y();
+        double distanceX = playerX - projectileX;
+        double distanceY = playerY - projectileY;
+        double distanceToTarget = std::sqrt((distanceX * distanceX) + (distanceY * distanceY));
 
-        double vx = px - bx;
-        double vy = py - by;
-        double dist = std::sqrt(vx * vx + vy * vy);
-
-        if (dist < 10) {
+        if (distanceToTarget < 10) {
             fireballHitSound->play();
             player->deductScore(10);
+
             homingTimer->stop();
-            scn->removeItem(proj);
-            delete proj;
+            currentScene->removeItem(projectile);
+            delete projectile;
             homingTimer->deleteLater();
             return;
         }
 
-        if (dist < 0.001) dist = 0.001;
+        if (distanceToTarget < 0.001) {
+            distanceToTarget = 0.001;
+        }
 
-        double nx = vx / dist;
-        double ny = vy / dist;
+        double normalX = distanceX / distanceToTarget;
+        double normalY = distanceY / distanceToTarget;
 
-        proj->setPos(bx + nx * 4.0, by + ny * 4.0);
+        projectile->setPos(projectileX + (normalX * 3.5), projectileY + (normalY * 3.5));
     });
 
     homingTimer->start(50);
