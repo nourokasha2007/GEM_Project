@@ -9,7 +9,7 @@
 
 Level1Enemy::Level1Enemy(Player* target, QGraphicsPixmapItem* pSprite)
     : Enemy(100, 10, 1.2) {
-
+    paused = false;
     player = target;
     playerSprite = pSprite;
     isChasing = false;
@@ -28,6 +28,10 @@ Level1Enemy::Level1Enemy(Player* target, QGraphicsPixmapItem* pSprite)
     connect(timer, &QTimer::timeout, this, &Level1Enemy::updateAI);
     timer->start(33);
 }
+void Level1Enemy::setPaused(bool value)
+{
+    paused = value;
+}
 
 void Level1Enemy::loadAssets() {
     imgIdle.load(":/new/prefix1/images/spirit front.png");
@@ -40,7 +44,10 @@ void Level1Enemy::loadAssets() {
 
 void Level1Enemy::updateAI() {
     if (!player) return;
-
+    if(paused)
+    {
+        return;
+    }
     double dx = player->getX() - this->x();
     double dy = player->getY() - this->y();
     double distance = std::sqrt(dx * dx + dy * dy);
@@ -79,6 +86,10 @@ void Level1Enemy::updateAI() {
     }
 }
 void Level1Enemy::shootHomingProjectile() {
+    if(paused)
+    {
+        return;
+    }
     QGraphicsScene* scn = scene();
     if (!scn) return;
 
@@ -95,8 +106,14 @@ void Level1Enemy::shootHomingProjectile() {
     QElapsedTimer lifetime;
     lifetime.start();
 
-    connect(homingTimer, &QTimer::timeout, this, [=]() mutable {
-        if (!player) {
+   connect(homingTimer, &QTimer::timeout, this, [=]() mutable {
+
+    if(paused)
+    {
+        return;
+    }
+
+    if (!player) {
             homingTimer->stop();
             scn->removeItem(proj);
             delete proj;
