@@ -1088,9 +1088,7 @@ void GameWindow::updateGame()
     game.update(1.0f);
 
     if(
-        seconds <= 0 ||
-        game.getstate() == Gamestate::gameOver
-        )
+        seconds <= 0 ||game.getstate() == Gamestate::gameOver)
     {
         timer->stop();
 
@@ -1154,17 +1152,7 @@ void GameWindow::keyPressEvent(
 
         break;
 
-    case Qt::Key_Escape:
-
-        pauseGame();
-
-        stack->setCurrentWidget(
-            startScreen
-            );
-
-        break;
-
-    default:
+    case Qt::Key_Escape:pauseGame();
         break;
     }
 }
@@ -1308,10 +1296,6 @@ void GameWindow::pauseGame()
     continueBtn->setCursor(
         Qt::PointingHandCursor
         );
-    if(mummy)
-    {
-        mummy->setPaused(false);
-    }
 
     continueBtn->setFixedHeight(55);
 
@@ -1373,6 +1357,11 @@ void GameWindow::pauseGame()
 
             game.resumeGame();
 
+            if(mummy)
+            {
+                mummy->setPaused(false);
+            }
+
             timer->start(1000);
 
             stack->setCurrentWidget(
@@ -1382,7 +1371,6 @@ void GameWindow::pauseGame()
             this->setFocus();
         }
         );
-
     //================ EXIT =================//
 
     connect(
