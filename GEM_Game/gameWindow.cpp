@@ -1216,7 +1216,7 @@ void GameWindow::showFireballGameOver()
 
     //================ SUBTITLE =================//
 
-    QLabel* subtitle = new QLabel("You were consumed by the spirit's flames!");
+    QLabel* subtitle = new QLabel("You were consumed by the RA's flames!");
     subtitle->setAlignment(Qt::AlignCenter);
     subtitle->setWordWrap(true);
     subtitle->setStyleSheet(
@@ -1562,10 +1562,34 @@ void GameWindow::restartGame()
         game.getLevelIndex()
         );
 
-    currentLevel =
-        game.getCurrentLevel();
+    currentLevel = game.getCurrentLevel();
 
     currentLevel->loadScene(scene);
+    //================ RECREATE ENEMY =================//
+
+    mummy =
+        new Level1Enemy(
+            &game.getPlayer(),
+            playerSprite
+            );
+
+    mummy->setPos(800, 500);
+
+    mummy->setZValue(999);
+
+    scene->addItem(mummy);
+
+    connect(
+        mummy,
+        &Level1Enemy::reduceScore,
+        this,
+        [=]()
+        {
+            game.getPlayer().deductScore(10);
+
+            updateHUD();
+        }
+        );
 
     //================ RELOAD SPRITES ================//
 
