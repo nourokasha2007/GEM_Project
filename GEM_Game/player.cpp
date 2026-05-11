@@ -122,9 +122,9 @@ bool Player::isWinner() const
 
 void Player::reset()
 {
-    x =100;
+    x =650;
 
-    y =600;
+    y =810;
 
     score =
         0;

@@ -20,7 +20,7 @@ TreasurePopup::TreasurePopup(QWidget *parent)
 
     gifLabel->setMovie(movie);
 
-    move->start();
+    movie->start();
 
     // WIN IMAGE
     winImage = new QLabel(this);
