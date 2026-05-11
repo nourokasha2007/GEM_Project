@@ -27,7 +27,7 @@ void Level1::loadScene(QGraphicsScene *scene)
         bg.rect()
         );
 
-    double s = 0.025;
+    double s = 0.04;
 
     //================ COINS ================//
 

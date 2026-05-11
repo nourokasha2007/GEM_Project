@@ -25,17 +25,17 @@ Game::Game()
 
     //================ COUNTS ================//
 
-    coinCount = 3;
+    coinCount = 2;
 
-    scrollCount =3;
+    scrollCount =2;
 
-    maskCount =  3;
+    maskCount = 2;
 
     amuletCount =
-        3;
+        2;
 
     timerCount =
-        3;
+        2;
 }
 
 /* ================= DESTRUCTOR ================= */
@@ -96,19 +96,19 @@ void Game::restartGame()
     //================ RESET COUNTS ================//
 
     coinCount =
-        3;
+        2;
 
     scrollCount =
-        3;
+        2;
 
     maskCount =
-        3;
+        2;
 
     amuletCount =
-        3;
+        2;
 
     timerCount =
-        3;
+        2;
 }
 
 /* ================= EXIT ================= */
