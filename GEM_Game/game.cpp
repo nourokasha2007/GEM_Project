@@ -9,7 +9,7 @@ using namespace std;
 /* ================= CONSTRUCTOR ================= */
 
 Game::Game()
-    : player("Player", 100, 600)
+    : player("Player", 650, 810)
 {
     state = Gamestate::paused;
 
@@ -27,15 +27,13 @@ Game::Game()
 
     coinCount = 2;
 
-    scrollCount =2;
+    scrollCount=2;
 
     maskCount = 2;
 
-    amuletCount =
-        2;
+    amuletCount =2;
 
-    timerCount =
-        2;
+    timerCount =2;
 }
 
 /* ================= DESTRUCTOR ================= */

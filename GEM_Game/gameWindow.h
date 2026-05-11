@@ -18,6 +18,7 @@
 #include <QSoundEffect>
 #include <QUrl>
 #include "game.h"
+#include "level1enemy.h"
 
 class GameWindow : public QMainWindow
 {
@@ -113,7 +114,7 @@ private:
     QGraphicsScene* scene;
 
     QGraphicsView* view;
-
+    Level1Enemy* mummy;
     QGraphicsPixmapItem* playerSprite;
 
     QImage collisionMask;
