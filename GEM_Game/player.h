@@ -24,7 +24,7 @@ private:
     QString currentLocation;
 
     std::vector<QString> foundItems;
-
+    int fireballHits;
 public:
 
     //================ CONSTRUCTOR =================//
@@ -83,7 +83,9 @@ public:
     //================ GAME =================//
 
     bool isWinner() const;
-
+    void registerFireballHit();
+    int getFireballHits() const;
+    bool isDead() const;
     void reset();
 };
 
