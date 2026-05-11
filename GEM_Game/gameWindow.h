@@ -65,25 +65,29 @@ private:
     QWidget* gameScreen;
 
     QWidget* gameOverScreen;
+
     QLabel *coinText;
     QLabel *scrollText;
     QLabel *maskText;
     QLabel *amuletText;
     QLabel *timerText;
 
-    int coinCount=3;
-    int scrollCount = 3;
-    int maskCount = 3;
-    int amuletCount = 3;
-    int timerCount = 3;
+    int coinCount    = 3;
+    int scrollCount  = 3;
+    int maskCount    = 3;
+    int amuletCount  = 3;
+    int timerCount   = 3;
 
     //================ HUD =================//
 
     QLabel* clockLabel;
 
     QLabel* scoreLabel;
+
     QLabel* statusLabel;
+
     void saveGame();
+
     void loadGame();
 
     QLabel* bgOverlay;
@@ -114,7 +118,14 @@ private:
 
     QImage collisionMask;
 
-    //================ Sound ====================//
+    //================ DIRECTIONAL SPRITES =================//
+
+    QPixmap spriteFront;   // player front.png  — down arrow
+    QPixmap spriteBack;    // player back.png   — up arrow
+    QPixmap spriteLeft;    // player left.png   — left arrow
+    QPixmap spriteRight;   // player right.png  — right arrow
+
+    //================ SOUND =================//
 
     QSoundEffect* startMusic;
 
@@ -136,7 +147,7 @@ private:
 
     void updateInventoryUI();
 
-    void movePlayer(int dx, int dy);
+    void movePlayer(int dx, int dy, const QPixmap& sprite);
 
     bool isWalkable(QPointF newPos);
 
