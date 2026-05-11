@@ -153,6 +153,7 @@ private:
     bool isWalkable(QPointF newPos);
 
     void checkArtifactCollisions();
+
 };
 
 #endif

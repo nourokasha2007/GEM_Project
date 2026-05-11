@@ -3,7 +3,8 @@
 #include <QPixmap>
 #include <QFile>
 #include <QTextStream>
-
+#include <QMessageBox>
+#include <QDir>
 #include "level1enemy.h"
 
 /* ================= CONSTRUCTOR ================= */
@@ -765,9 +766,6 @@ void GameWindow::setupButtons(QVBoxLayout* mainLayout)
     QPushButton* saveBtn =
         new QPushButton("SAVE");
 
-    QPushButton* loadBtn =
-        new QPushButton("LOAD");
-
     //================ CONNECTS ================//
 
     connect(
@@ -798,13 +796,6 @@ void GameWindow::setupButtons(QVBoxLayout* mainLayout)
         &GameWindow::saveGame
         );
 
-    connect(
-        loadBtn,
-        &QPushButton::clicked,
-        this,
-        &GameWindow::loadGame
-        );
-
     //================ ADD TO LAYOUT ================//
 
     buttons->addWidget(pauseBtn);
@@ -814,8 +805,6 @@ void GameWindow::setupButtons(QVBoxLayout* mainLayout)
     buttons->addWidget(exitBtn);
 
     buttons->addWidget(saveBtn);
-
-    buttons->addWidget(loadBtn);
 
     mainLayout->addLayout(buttons);
 }
@@ -1462,103 +1451,38 @@ void GameWindow::exitGame()
     close();
 }
 
-/* ================= SAVE GAME ================= */
-
+//=================SAVE=====================//
 void GameWindow::saveGame()
 {
     QFile file("savegame.txt");
 
-    if(
-        file.open(
-            QIODevice::WriteOnly |
-            QIODevice::Text
-            )
-        )
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
+        qDebug() << QDir::currentPath();
+
         QTextStream out(&file);
 
-        out << game.getPlayer().getX()     << "\n";
-        out << game.getPlayer().getY()     << "\n";
-        out << game.getPlayer().getScore() << "\n";
+        out << "PlayerX: " << game.getPlayer().getX() << "\n";
+        out << "PlayerY: " << game.getPlayer().getY() << "\n";
 
-        out << seconds << "\n";
+        out << "Score: " << game.getPlayer().getScore() << "\n";
 
-        out << coinCount   << "\n";
-        out << scrollCount << "\n";
-        out << maskCount   << "\n";
-        out << amuletCount << "\n";
-        out << timerCount  << "\n";
+        out << "Seconds: " << seconds << "\n";
 
-        file.close();
-    }
-}
-
-/* ================= LOAD GAME ================= */
-
-void GameWindow::loadGame()
-{
-    QFile file("savegame.txt");
-
-    if(
-        file.open(
-            QIODevice::ReadOnly |
-            QIODevice::Text
-            )
-        )
-    {
-        QTextStream in(&file);
-
-        int x;
-        int y;
-        int score;
-
-        in >> x;
-        in >> y;
-        in >> score;
-
-        in >> seconds;
-
-        in >> coinCount;
-        in >> scrollCount;
-        in >> maskCount;
-        in >> amuletCount;
-        in >> timerCount;
+        out << "Coins: " << coinCount << "\n";
+        out << "Scrolls: " << scrollCount << "\n";
+        out << "Masks: " << maskCount << "\n";
+        out << "Amulets: " << amuletCount << "\n";
+        out << "Timers: " << timerCount << "\n";
 
         file.close();
-
-        //================ PLAYER =================//
-
-        game.getPlayer().moveTo(x, y);
-
-        if(playerSprite != nullptr)
-        {
-            playerSprite->setPos(x, y);
-        }
-
-        //================ INVENTORY =================//
-
-        coinCounter->setText(
-            "x" + QString::number(coinCount)
-            );
-
-        scrollCounter->setText(
-            "x" + QString::number(scrollCount)
-            );
-
-        maskCounter->setText(
-            "x" + QString::number(maskCount)
-            );
-
-        amuletCounter->setText(
-            "x" + QString::number(amuletCount)
-            );
-
-        timerCounter->setText(
-            "x" + QString::number(timerCount)
+        QMessageBox::information(
+            this,
+            "Saved",
+            "Game saved successfully!"
             );
     }
 }
-
 /* ================= RESIZE ================= */
 
 void GameWindow::resizeEvent(
