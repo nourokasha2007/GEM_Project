@@ -64,3 +64,6 @@ RESOURCES += \
     resources.qrc
 CONFIG += resources_big
 
+DISTFILES += \
+    images/Level2.jpeg
+
