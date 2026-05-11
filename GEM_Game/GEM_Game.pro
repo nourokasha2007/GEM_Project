@@ -13,6 +13,9 @@ QMAKE_CFLAGS += -Wno-error=implicit-function-declaration
 
 SOURCES += \
     Level1.cpp \
+    Level2.cpp \
+    Level3.cpp \
+    TreasurePopUp.cpp \
     artifact.cpp \
     character.cpp \
     enemy.cpp \
@@ -31,6 +34,9 @@ SOURCES += \
 
 HEADERS += \
     Level1.h \
+    Level2.h \
+    Level3.h \
+    TreasurePopUp.h \
     artifact.h \
     character.h \
     enemy.h \
@@ -56,4 +62,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resources.qrc
-        artifacts&tools.qrc
+
