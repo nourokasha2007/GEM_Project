@@ -34,6 +34,7 @@
         <file>images/rock_A-3.png</file>
         <file>images/rock_M.png</file>
         <file>images/rock_N.png</file>
+        <file>images/hieroglyph_chart-2.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

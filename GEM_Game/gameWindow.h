@@ -55,7 +55,6 @@ private:
     Level* currentLevel;
     QString playerName;
     QTimer* timer;
-
     int seconds;
 
     //================ STACK =================//
@@ -67,6 +66,10 @@ private:
     QWidget* gameScreen;
 
     QWidget* gameOverScreen;
+
+    QWidget* hieroglyphScreen;
+
+    QWidget* winScreen;
 
     QLabel *coinText;
     QLabel *scrollText;
@@ -166,6 +169,7 @@ private:
     void setupLevel2HUD();
 
     void updateLevel2HUD();
+    void setupHieroglyphScreen();
 
 };
 
