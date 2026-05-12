@@ -118,8 +118,6 @@ private:
     Level1Enemy* mummy;
     QGraphicsPixmapItem* playerSprite;
 
-    QImage collisionMask;
-
     //================ DIRECTIONAL SPRITES =================//
 
     QPixmap spriteFront;   // player front.png  — down arrow
@@ -150,9 +148,6 @@ private:
     void updateInventoryUI();
 
     void movePlayer(int dx, int dy, const QPixmap& sprite);
-
-    bool isWalkable(QPointF newPos);
-
     void checkArtifactCollisions();
     void showHieroglyphScreen();
 

@@ -1,17 +1,21 @@
 #ifndef LEVEL1_H
 #define LEVEL1_H
-#include "level.h"
+
+#include "Level.h"
 
 class Level1 : public Level
 {
 public:
+
     Level1();
 
-    void loadScene(QGraphicsScene* scene) override;
+    //================ LOAD LEVEL =================//
 
-private:
+    void loadScene(
+        QGraphicsScene* scene
+        ) override;
 
-    //================ HELPERS ================//
+    //================ ADD ARTIFACT =================//
 
     void addArtifact(
         QGraphicsScene* scene,
@@ -21,7 +25,6 @@ private:
         int y,
         double scale
         );
-
 };
 
-#endif
+#endif // LEVEL1_H

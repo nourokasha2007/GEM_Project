@@ -30,6 +30,7 @@
         <file>images/scrollt.png</file>
         <file>images/timert.png</file>
         <file>images/Level2.jpeg</file>
+        <file>images/Level2 - BW.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

@@ -1,45 +1,68 @@
 #ifndef LEVEL_H
 #define LEVEL_H
+
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
-#include <QGraphicsRectItem>
-#include <vector>
+#include <QImage>
+#include <QVector>
+#include <QPointF>
 
 class Level
 {
 protected:
+
+    //================ BACKGROUND ================//
+
     QGraphicsPixmapItem* background;
+
+    //================ COLLISION MASK ================//
+
+    QImage collisionMask;
+
+    //================ ARTIFACTS ================//
+
+    QVector<QGraphicsPixmapItem*> artifacts;
 
 public:
 
-    //================ OBJECTS ================//
+    Level();
 
-    std::vector<QGraphicsRectItem*> obstacles;
+    virtual ~Level();
 
-    std::vector<QGraphicsPixmapItem*> artifacts;
+    //================ LOAD SCENE ================//
 
-    //================ CORE =================//
+    virtual void loadScene(
+        QGraphicsScene* scene
+        ) = 0;
 
-    virtual void loadScene(QGraphicsScene* scene) = 0;
+    //================ GET COLLISION MASK ================//
 
-    virtual ~Level() = default;
+    QImage getCollisionMask() const;
 
-    //================ ARTIFACTS =================//
+    //================ WALKABLE =================//
+
+    bool isWalkable(
+        QPointF newPos,
+        QRectF playerRect,
+        QRectF sceneRect
+        );
+
+    //================ ARTIFACT COLLISION =================//
 
     QGraphicsItem* checkArtifactCollision(
         QGraphicsPixmapItem* player
         );
+
+    //================ REMOVE ARTIFACT =================//
 
     void removeArtifact(
         QGraphicsItem* artifact,
         QGraphicsScene* scene
         );
 
+    //================ ARTIFACT COUNT =================//
+
     int getArtifactCount() const;
-
-    //================ HELPERS =================//
-
-    void clearLevel(QGraphicsScene* scene);
 };
 
-#endif
+#endif // LEVEL_H
