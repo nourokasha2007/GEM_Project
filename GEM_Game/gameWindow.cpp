@@ -1074,6 +1074,73 @@ void GameWindow::updateHUD()
 
 void GameWindow::updateInventoryUI()
 {
+    //================ LEVEL 2 =================//
+
+    if(game.getLevelIndex() == 2)
+    {
+        //================ ICONS =================//
+
+        coinIcon->setPixmap(
+            QPixmap(":/new/prefix1/images/rock_M.png")
+                .scaled(40,40)
+            );
+
+        scrollIcon->clear();
+
+        maskIcon->clear();
+
+        amuletIcon->clear();
+
+        timerIcon->clear();
+
+        //================ COUNTERS =================//
+
+        coinCounter->setText(
+            "x" + QString::number(
+                game.getArtifactCount("rock")
+                )
+            );
+
+        scrollCounter->setText("");
+
+        maskCounter->setText("");
+
+        amuletCounter->setText("");
+
+        timerCounter->setText("");
+
+        return;
+    }
+
+    //================ LEVEL 1 ICONS =================//
+
+    coinIcon->setPixmap(
+        QPixmap(":/new/prefix1/images/coin2.png")
+            .scaled(40,40)
+        );
+
+    scrollIcon->setPixmap(
+        QPixmap(":/new/prefix1/images/scroll2.png")
+            .scaled(40,40)
+        );
+
+    maskIcon->setPixmap(
+        QPixmap(":/new/prefix1/images/mask2.png")
+            .scaled(40,40)
+        );
+
+    amuletIcon->setPixmap(
+        QPixmap(":/new/prefix1/images/amulet2.png")
+            .scaled(40,40)
+        );
+
+    timerIcon->setPixmap(
+        QPixmap(":/new/prefix1/images/timer.png")
+            .scaled(40,40)
+        );
+
+    //================ COUNTERS =================//
+
     coinCounter->setText(
         "x" + QString::number(
             game.getArtifactCount("coin")
@@ -1845,11 +1912,17 @@ void GameWindow::showLevel2BriefingPopup()
             timer->start(1000);
 
             //================ RESUME ENEMY SYSTEM =================//
+            mummy =
+                new Level1Enemy(
+                    &game.getPlayer(),
+                    playerSprite
+                    );
 
-            if(mummy)
-            {
-                mummy->setPaused(false);
-            }
+            mummy->setPos(900, 400);
+
+            mummy->setZValue(999);
+
+            scene->addItem(mummy);
 
             //================ SCREEN =================//
 
