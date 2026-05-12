@@ -7,6 +7,7 @@
 #include <QDir>
 #include "level1enemy.h"
 #include "Level2.h"
+#include "Level3.h"
 
 /* ================= CONSTRUCTOR ================= */
 
@@ -37,6 +38,8 @@ GameWindow::GameWindow(QWidget *parent)
     setupGameScreen();
 
     setupGameOverScreen();
+
+    setupVictoryScreen();
 
     //================ INPUT =================//
 
@@ -1530,13 +1533,62 @@ void GameWindow::showHieroglyphScreen()
             this,
             [=]()
             {
+                //================ CLOSE POPUP =================//
+
                 dimmer->deleteLater();
 
-                QMessageBox::information(
-                    this,
-                    "To Be Continued",
-                    "The next chamber will require the password."
+                //================ LOAD LEVEL 3 =================//
+
+                game.loadLevel(3);
+
+                currentLevel = game.getCurrentLevel();
+
+                //================ CLEAR OLD SCENE =================//
+
+                scene->clear();
+
+                //================ LOAD NEW LEVEL =================//
+
+                currentLevel->loadScene(scene);
+
+                //================ LEVEL 3 COLLISION =================//
+
+                collisionMask = QImage( ":/new/prefix1/images/level3 BW.png");
+
+                //================ CREATE PLAYER =================//
+
+                playerSprite =
+                    scene->addPixmap(spriteFront);
+
+                playerSprite->setScale(0.12);
+
+                playerSprite->setPos(150,650);
+
+                game.getPlayer().moveTo(
+                    150,
+                    650
                     );
+
+
+                //================ TIMER =================//
+
+                seconds = 300;
+
+                timer->start(1000);
+
+                //================ UPDATE UI =================//
+
+                updateHUD();
+
+                updateInventoryUI();
+
+                //================ SHOW GAME SCREEN =================//
+
+                stack->setCurrentWidget(
+                    gameScreen
+                    );
+
+                this->setFocus();
             }
             );
 }
@@ -2444,4 +2496,332 @@ void GameWindow::resizeEvent(
     )
 {
     QMainWindow::resizeEvent(event);
+}
+//===============Treasure==================//
+void GameWindow::showTreasureRecoveredPopup()
+{
+    timer->stop();
+
+    QWidget* dimmer =
+        new QWidget(this);
+
+    dimmer->setGeometry(
+        0,
+        0,
+        width(),
+        height()
+        );
+
+    dimmer->setStyleSheet(
+        "background-color:rgba(0,0,0,220);"
+        );
+
+    dimmer->show();
+
+    dimmer->raise();
+
+    //================ POPUP =================//
+
+    QWidget* popup =
+        new QWidget(dimmer);
+
+    popup->setFixedSize(760,560);
+
+    popup->move(
+        (dimmer->width()-760)/2,
+        (dimmer->height()-560)/2
+        );
+
+    popup->setStyleSheet(
+        "background-color:rgba(5,3,0,245);"
+        "border:2px solid rgba(200,160,60,220);"
+        "border-radius:16px;"
+        );
+
+    //================ LAYOUT =================//
+
+    QVBoxLayout* layout =
+        new QVBoxLayout(popup);
+
+    layout->setContentsMargins(
+        40,
+        30,
+        40,
+        30
+        );
+
+    layout->setSpacing(18);
+
+    //================ TITLE =================//
+
+    QLabel* title =
+        new QLabel(
+            "THE FINAL VAULT HAS BEEN OPENED"
+            );
+
+    title->setAlignment(Qt::AlignCenter);
+
+    title->setStyleSheet(
+        "font-size:24px;"
+        "font-weight:bold;"
+        "letter-spacing:4px;"
+        "color:#f5d060;"
+        "background:transparent;"
+        "border:none;"
+        );
+
+    //================ IMAGE =================//
+
+    QLabel* image =
+        new QLabel();
+
+    image->setPixmap(
+        QPixmap(
+            ":/new/prefix1/images/opened_treasure.png"
+            ).scaled(
+                420,
+                320,
+                Qt::KeepAspectRatio,
+                Qt::SmoothTransformation
+                )
+        );
+
+    image->setAlignment(Qt::AlignCenter);
+
+    image->setStyleSheet(
+        "background:transparent;"
+        "border:none;"
+        );
+
+    //================ TEXT =================//
+
+    QLabel* text =
+        new QLabel(
+            "The sacred relic of Tutankhamun has finally been recovered.<br><br>"
+
+            "For centuries it remained hidden beneath the sands of time.<br><br>"
+
+            "Tonight, history survives because of you."
+            );
+
+    text->setWordWrap(true);
+
+    text->setAlignment(Qt::AlignCenter);
+
+    text->setStyleSheet(
+        "font-size:14px;"
+        "color:#e8d5a8;"
+        "background:transparent;"
+        "border:none;"
+        "line-height:1.7;"
+        );
+
+    //================ BUTTON =================//
+
+    QPushButton* continueBtn =
+        new QPushButton(
+            "▶   CONTINUE"
+            );
+
+    continueBtn->setFixedHeight(54);
+
+    continueBtn->setCursor(Qt::PointingHandCursor);
+
+    continueBtn->setStyleSheet(
+        "QPushButton {"
+        " background-color:rgba(180,130,40,220);"
+        " color:#fff8e7;"
+        " font-size:15px;"
+        " font-weight:bold;"
+        " letter-spacing:3px;"
+        " border:2px solid #c8a84b;"
+        " border-radius:8px;"
+        "}"
+        "QPushButton:hover {"
+        " background-color:rgba(220,170,60,240);"
+        " border:2px solid #fff;"
+        "}"
+        );
+
+    //================ ADD =================//
+
+    layout->addWidget(title);
+
+    layout->addWidget(image);
+
+    layout->addWidget(text);
+
+    layout->addStretch();
+
+    layout->addWidget(
+        continueBtn,
+        0,
+        Qt::AlignCenter
+        );
+
+    popup->show();
+
+    //================ CONTINUE =================//
+
+    connect(
+        continueBtn,
+        &QPushButton::clicked,
+        this,
+        [=]()
+        {
+            dimmer->deleteLater();
+
+            showVictoryScreen();
+        }
+        );
+}
+
+void GameWindow::setupVictoryScreen()
+{
+    victoryScreen =
+        new QWidget();
+
+    victoryScreen->setStyleSheet(
+        "background-image:url(:/new/prefix1/images/victory_background.png);"
+        "background-position:center;"
+        "background-repeat:no-repeat;"
+        "background-color:black;"
+        );
+
+    QVBoxLayout* layout =
+        new QVBoxLayout(victoryScreen);
+
+    layout->setAlignment(Qt::AlignCenter);
+
+    layout->setSpacing(18);
+
+    //================ TITLE =================//
+
+    QLabel* title =
+        new QLabel(
+            "HERITAGE PROTECTED"
+            );
+
+    title->setAlignment(Qt::AlignCenter);
+
+    title->setStyleSheet(
+        "font-size:38px;"
+        "font-weight:bold;"
+        "letter-spacing:6px;"
+        "color:#f5d060;"
+        "background:transparent;"
+        );
+
+    //================ SUBTITLE =================//
+
+    QLabel* subtitle =
+        new QLabel(
+            "The museum is safe once more."
+            );
+
+    subtitle->setAlignment(Qt::AlignCenter);
+
+    subtitle->setStyleSheet(
+        "font-size:16px;"
+        "color:#f5d8a0;"
+        "background:transparent;"
+        );
+
+    //================ SCORE =================//
+
+    QLabel* score =
+        new QLabel(
+            "Final Score: "
+            + QString::number(
+                game.getPlayer().getScore()
+                )
+            );
+
+    score->setAlignment(Qt::AlignCenter);
+
+    score->setStyleSheet(
+        "font-size:20px;"
+        "font-weight:bold;"
+        "color:white;"
+        "background:transparent;"
+        );
+
+    //================ BUTTON STYLE =================//
+
+    QString buttonStyle =
+        "QPushButton {"
+        " background-color:rgba(180,130,40,220);"
+        " color:#fff8e7;"
+        " font-size:16px;"
+        " font-weight:bold;"
+        " letter-spacing:3px;"
+        " border:2px solid #c8a84b;"
+        " border-radius:8px;"
+        " padding:14px 30px;"
+        "}"
+        "QPushButton:hover {"
+        " background-color:rgba(220,170,60,240);"
+        " border:2px solid white;"
+        "}";
+
+    //================ BUTTONS =================//
+
+    QPushButton* replayBtn =
+        new QPushButton(
+            "▶   PLAY AGAIN"
+            );
+
+    QPushButton* exitBtn =
+        new QPushButton(
+            "✕   EXIT"
+            );
+
+    replayBtn->setStyleSheet(buttonStyle);
+
+    exitBtn->setStyleSheet(buttonStyle);
+
+    replayBtn->setFixedSize(260,58);
+
+    exitBtn->setFixedSize(260,58);
+
+    connect(
+        replayBtn,
+        &QPushButton::clicked,
+        this,
+        &GameWindow::restartGame
+        );
+
+    connect(
+        exitBtn,
+        &QPushButton::clicked,
+        this,
+        &GameWindow::exitGame
+        );
+
+    //================ ADD =================//
+
+    layout->addStretch();
+
+    layout->addWidget(title);
+
+    layout->addWidget(subtitle);
+
+    layout->addSpacing(14);
+
+    layout->addWidget(score);
+
+    layout->addSpacing(30);
+
+    layout->addWidget(replayBtn,0,Qt::AlignCenter);
+
+    layout->addWidget(exitBtn,0,Qt::AlignCenter);
+
+    layout->addStretch();
+
+    stack->addWidget(victoryScreen);
+}
+
+void GameWindow::showVictoryScreen()
+{
+    stack->setCurrentWidget(victoryScreen);
 }

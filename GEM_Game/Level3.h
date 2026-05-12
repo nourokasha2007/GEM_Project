@@ -1,69 +1,49 @@
-// Level3.h
-
 #ifndef LEVEL3_H
 #define LEVEL3_H
 
-#include <QWidget>
-#include <QPainter>
-#include <QTimer>
-#include <QKeyEvent>
-#include <QPixmap>
-#include <QImage>
-#include <QPoint>
+#include "level.h"
 
-#include "TreasurePopup.h"
+#include <QGraphicsPixmapItem>
+#include <QGraphicsScene>
+#include <QMessageBox>
+#include <QInputDialog>
+#include <QVBoxLayout>
+#include <QPushButton>
+#include <QLabel>
 
-class Level3 : public QWidget
+class Level3 : public Level
 {
-    Q_OBJECT
-
 public:
-    explicit Level3(QWidget *parent = nullptr);
 
-protected:
-    void paintEvent(QPaintEvent *event) override;
+    Level3();
 
-    void keyPressEvent(QKeyEvent *event) override;
+    void loadScene(
+        QGraphicsScene* scene
+        ) override;
 
-    void keyReleaseEvent(QKeyEvent *event) override;
-
-private slots:
-    void updateGame();
+    void checkTreasureCollision(
+        QGraphicsPixmapItem* playerSprite
+        );
 
 private:
 
-    // PLAYER
-    int playerX;
-    int playerY;
+    QGraphicsPixmapItem* treasure;
 
-    int playerSpeed;
-
-    bool moveUp;
-    bool moveDown;
-    bool moveLeft;
-    bool moveRight;
-
-    // IMAGES
-    QPixmap background;
-    QPixmap playerImage;
-
-    // COLLISION MASK
-    QImage collisionMask;
-
-    // TIMER
-    QTimer *gameTimer;
-
-    // TREASURE
     bool treasureOpened;
 
-    QPoint treasurePosition;
+    bool passwordSolved;
 
-    // FUNCTIONS
-    void movePlayer();
+    QPixmap closedTreasure;
 
-    bool isBlocked(int x, int y);
+    QPixmap openTreasure;
 
-    void checkTreasureCollision();
+    QRect treasureRect;
+
+    void showPasswordPopup();
+
+    void showTreasurePopup();
+
+    void showVictoryPopup();
 };
 
-#endif // LEVEL3_H
+#endif

@@ -1,187 +1,376 @@
-// Level3.cpp
-
 #include "Level3.h"
 
-#include <cmath>
+#include <QBrush>
+#include <QColor>
+#include <QPen>
+#include <QPixmap>
+#include <QInputDialog>
+#include <QMessageBox>
+#include <QApplication>
 
-Level3::Level3(QWidget *parent)
-    : QWidget(parent)
+/* ================================================================
+   CONSTRUCTOR
+   ================================================================ */
+
+Level3::Level3()
 {
-    setFixedSize(1600, 900);
+    treasure = nullptr;
 
-    setFocusPolicy(Qt::StrongFocus);
-
-    // PLAYER START POSITION
-    playerX = 200;
-    playerY = 700;
-
-    playerSpeed = 6;
-
-    // MOVEMENT
-    moveUp = false;
-    moveDown = false;
-    moveLeft = false;
-    moveRight = false;
-
-    // LOAD MAP
-    background.load(":/new/prefix1/images/level3.png");
-
-    // LOAD PLAYER
-    playerImage.load(":/new/prefix1/images/ChatGPT Image Apr 28, 2026, 05_48_57 PM.png");
-
-    // LOAD COLLISION MASK
-    collisionMask.load(":/new/prefix1/images/level3 BW.png");
-
-    // TREASURE POSITION
     treasureOpened = false;
 
-    treasurePosition = QPoint(1350, 180);
+    passwordSolved = false;
 
-    // TIMER
-    gameTimer = new QTimer(this);
+    closedTreasure.load(
+        ":/new/prefix1/images/Treasureclosed.png"
+        );
 
-    connect(gameTimer,
-            &QTimer::timeout,
-            this,
-            &Level3::updateGame);
+    openTreasure.load(
+        ":/new/prefix1/images/Treasureopened.png"
+        );
 
-    gameTimer->start(16);
+    treasureRect =
+        QRect(
+            1280,
+            120,
+            140,
+            140
+            );
 }
 
-void Level3::paintEvent(QPaintEvent *event)
+/* ================================================================
+   LOAD SCENE
+   ================================================================ */
+
+void Level3::loadScene(
+    QGraphicsScene* scene
+    )
 {
-    Q_UNUSED(event);
+    //================ BACKGROUND =================//
 
-    QPainter painter(this);
+    QPixmap bg(
+        ":/new/prefix1/images/level3.png"
+        );
 
-    // DRAW BACKGROUND
-    painter.drawPixmap(rect(), background);
+    background =
+        scene->addPixmap(bg);
 
-    // DRAW PLAYER
-    painter.drawPixmap(playerX,
-                       playerY,
-                       80,
-                       80,
-                       playerImage);
+    scene->setSceneRect(
+        bg.rect()
+        );
+
+    //================ TREASURE =================//
+
+    treasure =
+        scene->addPixmap(
+            closedTreasure
+            );
+
+    treasure->setPos(
+        treasureRect.x(),
+        treasureRect.y()
+        );
+
+    treasure->setScale(0.22);
+
+    treasure->setZValue(900);
 }
 
-void Level3::keyPressEvent(QKeyEvent *event)
+/* ================================================================
+   TREASURE COLLISION
+   ================================================================ */
+
+void Level3::checkTreasureCollision(
+    QGraphicsPixmapItem* playerSprite
+    )
 {
-    if(event->key() == Qt::Key_W)
-        moveUp = true;
-
-
-    if(event->key() == Qt::Key_S)
-        moveDown = true;
-
-    if(event->key() == Qt::Key_A)
-        moveLeft = true;
-
-    if(event->key() == Qt::Key_D)
-        moveRight = true;
-}
-
-void Level3::keyReleaseEvent(QKeyEvent *event)
-{
-    if(event->key() == Qt::Key_W)
-        moveUp = false;
-
-    if(event->key() == Qt::Key_S)
-        moveDown = false;
-
-    if(event->key() == Qt::Key_A)
-        moveLeft = false;
-
-    if(event->key() == Qt::Key_D)
-        moveRight = false;
-}
-
-bool Level3::isBlocked(int x, int y)
-{
-    if(x < 0 || y < 0 ||
-        x >= collisionMask.width() ||
-        y >= collisionMask.height())
+    if(passwordSolved)
     {
-        return true;
-    }
-
-    QColor color = collisionMask.pixelColor(x, y);
-
-    // BLACK = BLOCKED
-    return (color.red() == 0 &&
-            color.green() == 0 &&
-            color.blue() == 0);
-}
-
-void Level3::movePlayer()
-{
-    int newX = playerX;
-    int newY = playerY;
-
-    if(moveUp)
-        newY -= playerSpeed;
-
-    if(moveDown)
-        newY += playerSpeed;
-
-    if(moveLeft)
-        newX -= playerSpeed;
-
-    if(moveRight)
-        newX += playerSpeed;
-
-    // PLAYER COLLISION POINTS
-    int left = newX;
-    int right = newX + 79;
-
-    int top = newY;
-    int bottom = newY + 79;
-
-    bool blocked =
-        isBlocked(left, top) ||
-        isBlocked(right, top) ||
-        isBlocked(left, bottom) ||
-        isBlocked(right, bottom);
-
-    if(!blocked)
-    {
-        playerX = newX;
-        playerY = newY;
-    }
-}
-
-void Level3::checkTreasureCollision()
-{
-    if(treasureOpened)
         return;
+    }
 
-    int playerCenterX = playerX + 40;
-    int playerCenterY = playerY + 40;
-
-    int distanceX =
-        abs(playerCenterX - treasurePosition.x());
-
-    int distanceY =
-        abs(playerCenterY - treasurePosition.y());
-
-    if(distanceX < 100 &&
-        distanceY < 100)
+    if(!playerSprite || !treasure)
     {
-        treasureOpened = true;
+        return;
+    }
 
-        gameTimer->stop();
+    QRectF playerRect =
+        playerSprite->sceneBoundingRect();
 
-        TreasurePopup popup(this);
+    QRectF treasureArea =
+        treasure->sceneBoundingRect();
 
-        popup.exec();
+    if(playerRect.intersects(treasureArea))
+    {
+        showPasswordPopup();
     }
 }
 
-void Level3::updateGame()
+/* ================================================================
+   PASSWORD POPUP
+   ================================================================ */
+
+void Level3::showPasswordPopup()
 {
-    movePlayer();
+    bool ok;
 
-    checkTreasureCollision();
+    QString text =
+        QInputDialog::getText(
+            nullptr,
+            "Ancient Password",
+            "Enter the 3-letter password:",
+            QLineEdit::Normal,
+            "",
+            &ok
+            );
 
-    update();
+    if(ok)
+    {
+        if(text.toUpper() == "MAN")
+        {
+            passwordSolved = true;
+
+            treasureOpened = true;
+
+            if(treasure)
+            {
+                treasure->setPixmap(
+                    openTreasure
+                    );
+            }
+
+            showTreasurePopup();
+        }
+
+        else
+        {
+            QMessageBox::warning(
+                nullptr,
+                "Wrong Password",
+                "The treasure remains sealed."
+                );
+        }
+    }
+}
+
+/* ================================================================
+   TREASURE RECOVERED POPUP
+   ================================================================ */
+
+void Level3::showTreasurePopup()
+{
+    QMessageBox msg;
+
+    msg.setWindowTitle(
+        "Artifact Recovered"
+        );
+
+    msg.setText(
+        "You recovered the legendary artifact!"
+        );
+
+    msg.setInformativeText(
+        "The museum's greatest treasure has finally been found."
+        );
+
+    msg.setIconPixmap(
+        QPixmap(
+            ":/new/prefix1/images/opened_treasure.png"
+            ).scaled(
+                220,
+                220,
+                Qt::KeepAspectRatio,
+                Qt::SmoothTransformation
+                )
+        );
+
+    msg.exec();
+
+    showVictoryPopup();
+}
+
+/* ================================================================
+   FINAL VICTORY POPUP
+   ================================================================ */
+
+void Level3::showVictoryPopup()
+{
+    QWidget* overlay =
+        new QWidget();
+
+    overlay->setGeometry(
+        300,
+        100,
+        900,
+        700
+        );
+
+    overlay->setStyleSheet(
+        "background-color:rgba(0,0,0,220);"
+        );
+
+    overlay->show();
+
+    //================ CARD =================//
+
+    QWidget* card =
+        new QWidget(overlay);
+
+    card->setFixedSize(700,500);
+
+    card->move(100,100);
+
+    card->setStyleSheet(
+        "background-color:rgba(8,4,0,240);"
+        "border:2px solid #c8a84b;"
+        "border-radius:14px;"
+        );
+
+    //================ LAYOUT =================//
+
+    QVBoxLayout* layout =
+        new QVBoxLayout(card);
+
+    layout->setContentsMargins(
+        40,
+        30,
+        40,
+        30
+        );
+
+    layout->setSpacing(20);
+
+    //================ TITLE =================//
+
+    QLabel* title =
+        new QLabel(
+            "HERITAGE PROTECTED"
+            );
+
+    title->setAlignment(
+        Qt::AlignCenter
+        );
+
+    title->setStyleSheet(
+        "font-size:34px;"
+        "font-weight:bold;"
+        "color:#f5d060;"
+        "letter-spacing:6px;"
+        "background:transparent;"
+        "border:none;"
+        );
+
+    //================ IMAGE =================//
+
+    QLabel* img =
+        new QLabel();
+
+    img->setPixmap(
+        QPixmap(
+            ":/new/prefix1/images/opened_treasure.png"
+            ).scaled(
+                320,
+                320,
+                Qt::KeepAspectRatio,
+                Qt::SmoothTransformation
+                )
+        );
+
+    img->setAlignment(
+        Qt::AlignCenter
+        );
+
+    //================ TEXT =================//
+
+    QLabel* text =
+        new QLabel(
+            "The sacred relic of Tutankhamun\n"
+            "has finally been recovered.\n\n"
+
+            "Tonight, history survives because of you."
+            );
+
+    text->setAlignment(
+        Qt::AlignCenter
+        );
+
+    text->setStyleSheet(
+        "font-size:17px;"
+        "color:#e8d5a8;"
+        "background:transparent;"
+        "border:none;"
+        );
+
+    //================ BUTTONS =================//
+
+    QPushButton* playAgain =
+        new QPushButton(
+            "▶   PLAY AGAIN"
+            );
+
+    QPushButton* exitBtn =
+        new QPushButton(
+            "✕   EXIT"
+            );
+
+    playAgain->setFixedHeight(54);
+
+    exitBtn->setFixedHeight(54);
+
+    QString style =
+        "QPushButton {"
+        "background-color:rgba(180,130,40,220);"
+        "color:white;"
+        "font-size:16px;"
+        "font-weight:bold;"
+        "letter-spacing:3px;"
+        "border-radius:8px;"
+        "border:2px solid #c8a84b;"
+        "}"
+
+        "QPushButton:hover {"
+        "background-color:rgba(220,170,60,240);"
+        "border:2px solid white;"
+        "}";
+
+    playAgain->setStyleSheet(style);
+
+    exitBtn->setStyleSheet(style);
+
+    //================ ADD =================//
+
+    layout->addWidget(title);
+
+    layout->addWidget(img);
+
+    layout->addWidget(text);
+
+    layout->addStretch();
+
+    layout->addWidget(playAgain);
+
+    layout->addWidget(exitBtn);
+
+    card->show();
+
+    //================ PLAY AGAIN =================//
+
+    QBoxLayout::connect(
+        playAgain,
+        &QPushButton::clicked,
+        [=]()
+        {
+            QApplication::quit();
+        }
+        );
+
+    //================ EXIT =================//
+
+    QBoxLayout::connect(
+        exitBtn,
+        &QPushButton::clicked,
+        [=]()
+        {
+            QApplication::quit();
+        }
+        );
 }
