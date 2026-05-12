@@ -47,16 +47,16 @@ void Level2::loadScene(
     addRock(
         scene,
         ":/new/prefix1/images/rock_A-3.png",
-        1000,
-        580,
+        850,
+        600,
         0.18
         );
 
     addRock(
         scene,
         ":/new/prefix1/images/rock_N.png",
-        650,
-        250,
+        300,
+        700,
         0.18
         );
 
@@ -119,7 +119,7 @@ void Level2::addRock(
 
     rock->setScale(scale);
 
-    rock->setZValue(900);
+    rock->setZValue(200);
 
     //================ TYPE =================//
 
