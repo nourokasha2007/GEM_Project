@@ -15,7 +15,6 @@ SOURCES += \
     Level1.cpp \
     Level2.cpp \
     Level3.cpp \
-    TreasurePopUp.cpp \
     artifact.cpp \
     character.cpp \
     enemy.cpp \
@@ -36,7 +35,6 @@ HEADERS += \
     Level1.h \
     Level2.h \
     Level3.h \
-    TreasurePopUp.h \
     artifact.h \
     character.h \
     enemy.h \

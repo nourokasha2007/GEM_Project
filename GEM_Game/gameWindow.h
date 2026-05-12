@@ -70,6 +70,7 @@ private:
     QWidget* hieroglyphScreen;
 
     QWidget* winScreen;
+    QWidget* victoryScreen;
 
     QLabel *coinText;
     QLabel *scrollText;
@@ -129,7 +130,6 @@ private:
     //================ GRAPHICS =================//
 
     QGraphicsScene* scene;
-
     QGraphicsView* view;
     Level1Enemy* mummy;
     QGraphicsPixmapItem* playerSprite;
@@ -140,7 +140,7 @@ private:
     QPixmap spriteBack;    // player back.png   — up arrow
     QPixmap spriteLeft;    // player left.png   — left arrow
     QPixmap spriteRight;   // player right.png  — right arrow
-
+      QImage collisionMask;
     //================ SOUND =================//
 
     QSoundEffect* startMusic;
@@ -170,6 +170,9 @@ private:
 
     void updateLevel2HUD();
     void setupHieroglyphScreen();
+    void setupVictoryScreen();
+    void showTreasureRecoveredPopup();
+    void showVictoryScreen();
 
 };
 

@@ -159,7 +159,11 @@ void Game::loadLevel(int levelindex)
     {
         currentLevel =
             new Level2();
+    }    else if(levelindex == 3)
+    {
+        currentLevel = new Level3();
     }
+
 
     //================ DEFAULT =================//
 
