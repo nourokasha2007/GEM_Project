@@ -1115,27 +1115,27 @@ void GameWindow::updateInventoryUI()
     //================ LEVEL 1 ICONS =================//
 
     coinIcon->setPixmap(
-        QPixmap(":/new/prefix1/images/coin2.png")
+        QPixmap(":/new/prefix1/images/coint.png")
             .scaled(40,40)
         );
 
     scrollIcon->setPixmap(
-        QPixmap(":/new/prefix1/images/scroll2.png")
+        QPixmap(":/new/prefix1/images/scrollt.png")
             .scaled(40,40)
         );
 
     maskIcon->setPixmap(
-        QPixmap(":/new/prefix1/images/mask2.png")
+        QPixmap(":/new/prefix1/images/maskt.png")
             .scaled(40,40)
         );
 
     amuletIcon->setPixmap(
-        QPixmap(":/new/prefix1/images/amulet2.png")
+        QPixmap(":/new/prefix1/images/amulett.png")
             .scaled(40,40)
         );
 
     timerIcon->setPixmap(
-        QPixmap(":/new/prefix1/images/timer.png")
+        QPixmap(":/new/prefix1/images/timert.png")
             .scaled(40,40)
         );
 
