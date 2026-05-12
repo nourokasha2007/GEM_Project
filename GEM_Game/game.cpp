@@ -1,6 +1,8 @@
 #include "game.h"
 
 #include "Level1.h"
+#include "Level2.h"
+#include "Level3.h"
 
 #include <iostream>
 
@@ -143,11 +145,23 @@ void Game::loadLevel(int levelindex)
 
     delete currentLevel;
 
+    //================ LEVEL 1 =================//
+
     if(levelindex == 1)
     {
         currentLevel =
             new Level1();
     }
+
+    //================ LEVEL 2 =================//
+
+    else if(levelindex == 2)
+    {
+        currentLevel =
+            new Level2();
+    }
+
+    //================ DEFAULT =================//
 
     else
     {
