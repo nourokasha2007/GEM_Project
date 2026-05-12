@@ -4,16 +4,20 @@
 #include <QPen>
 #include <QPixmap>
 
+/* ================= CONSTRUCTOR ================= */
+
 Level2::Level2()
 {
     overlay = nullptr;
 
     playerGlow = nullptr;
+
+ //================ LOAD COLLISION MASK =================//
+
+    collisionMask.load( ":/new/prefix1/images/Level2 - BW.png" );
 }
 
-/* ================================================================
-   LOAD LEVEL 2
-   ================================================================ */
+/* ================= LOAD LEVEL ================= */
 
 void Level2::loadScene(
     QGraphicsScene* scene
@@ -96,9 +100,7 @@ void Level2::loadScene(
     overlay->setZValue(799);
 }
 
-/* ================================================================
-   ADD ROCK
-   ================================================================ */
+/* ================= ADD ROCK ================= */
 
 void Level2::addRock(
     QGraphicsScene* scene,
@@ -119,15 +121,14 @@ void Level2::addRock(
 
     rock->setZValue(900);
 
-    // IMPORTANT
+    //================ TYPE =================//
+
     rock->setData(0, "rock");
 
     artifacts.push_back(rock);
 }
 
-/* ================================================================
-   UPDATE PLAYER LIGHT
-   ================================================================ */
+/* ================= UPDATE PLAYER LIGHT ================= */
 
 void Level2::updatePlayerGlow(
     QGraphicsPixmapItem* playerSprite

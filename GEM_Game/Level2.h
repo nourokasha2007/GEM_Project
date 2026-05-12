@@ -1,35 +1,32 @@
 #ifndef LEVEL2_H
 #define LEVEL2_H
-#include "level.h"
+#include "Level.h"
 #include <QGraphicsEllipseItem>
 #include <QGraphicsRectItem>
-#include <QGraphicsPixmapItem>
 
 class Level2 : public Level
 {
+private:
+
+    //================ DARKNESS =================//
+
+    QGraphicsRectItem* overlay;
+
+    //================ PLAYER LIGHT =================//
+
+    QGraphicsEllipseItem* playerGlow;
+
 public:
 
     Level2();
+
+    //================ LOAD LEVEL =================//
 
     void loadScene(
         QGraphicsScene* scene
         ) override;
 
-    //================ DARKNESS =================//
-
-    void updatePlayerGlow(
-        QGraphicsPixmapItem* playerSprite
-        );
-
-private:
-
-    //================ LIGHTING =================//
-
-    QGraphicsRectItem* overlay;
-
-    QGraphicsEllipseItem* playerGlow;
-
-    //================ HELPERS =================//
+    //================ ADD ROCK =================//
 
     void addRock(
         QGraphicsScene* scene,
@@ -38,6 +35,12 @@ private:
         int y,
         double scale
         );
+
+    //================ UPDATE LIGHT =================//
+
+    void updatePlayerGlow(
+        QGraphicsPixmapItem* playerSprite
+        );
 };
 
-#endif
+#endif // LEVEL2_H

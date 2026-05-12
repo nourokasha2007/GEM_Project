@@ -809,7 +809,6 @@ void GameWindow::setupButtons(QVBoxLayout* mainLayout)
 
     mainLayout->addLayout(buttons);
 }
-
 /* ================= START GAME ================= */
 
 void GameWindow::startGame()
@@ -822,8 +821,6 @@ void GameWindow::startGame()
 
     scene->clear();
 
-    //================ COLLISION MASK ================//
-    collisionMask =QImage(":/new/prefix1/images/level1 BW.png");
     //================ LOAD DIRECTIONAL SPRITES =================//
 
     spriteFront =
@@ -838,10 +835,7 @@ void GameWindow::startGame()
     spriteRight =
         QPixmap(":/new/prefix1/images/player right.png");
 
-    //================ COLLISION MASK ================//
-
-    collisionMask =
-        QImage(":/new/prefix1/images/level1 BW.png");
+    //================ LOAD LEVEL =================//
 
     currentLevel =
         game.getCurrentLevel();
@@ -849,21 +843,35 @@ void GameWindow::startGame()
     currentLevel->loadScene(scene);
 
     //================ PLAYER SPRITE =================//
-    // Starts facing front
 
     playerSprite =
         scene->addPixmap(spriteFront);
 
     playerSprite->setScale(0.12);
 
-    // Use player coordinates from Game/Player
     playerSprite->setPos(
         game.getPlayer().getX(),
         game.getPlayer().getY()
         );
 
+    //================ REMOVE OLD ENEMY =================//
+
+    if(mummy)
+    {
+        scene->removeItem(mummy);
+
+        delete mummy;
+
+        mummy = nullptr;
+    }
+
     //================ ENEMY =================//
-    mummy =new Level1Enemy(&game.getPlayer(),playerSprite);
+
+    mummy =
+        new Level1Enemy(
+            &game.getPlayer(),
+            playerSprite
+            );
 
     mummy->setPos(800, 500);
 
@@ -890,11 +898,18 @@ void GameWindow::startGame()
         &GameWindow::showFireballGameOver
         );
 
+    //================ UPDATE UI =================//
+
+    updateInventoryUI();
+
+    updateHUD();
+
+    //================ SHOW SCREEN =================//
+
     stack->setCurrentWidget(gameScreen);
 
     this->setFocus();
 }
-
 /* ================= MOVEMENT ================= */
 // Swaps directional sprite before moving
 
@@ -919,7 +934,10 @@ void GameWindow::movePlayer(
         newPos.y() + dy
         );
 
-    if(isWalkable(newPos))
+    if(currentLevel->isWalkable(
+            newPos,
+            playerSprite->sceneBoundingRect(),
+            scene->sceneRect()))
     {
         playerSprite->setPos(newPos);
 
@@ -930,56 +948,6 @@ void GameWindow::movePlayer(
 
         checkArtifactCollisions();
     }
-}
-/* ================= WALKABLE ================= */
-
-bool GameWindow::isWalkable(QPointF newPos)
-{
-    QRectF rect =
-        playerSprite->sceneBoundingRect();
-
-    QPointF scenePos(
-        newPos.x() + rect.width()  / 2,
-        newPos.y() + rect.height() - 5
-        );
-
-    QRectF sceneRect =
-        scene->sceneRect();
-
-    int maskX =
-        (scenePos.x() / sceneRect.width())
-        * collisionMask.width();
-
-    int maskY =
-        (scenePos.y() / sceneRect.height())
-        * collisionMask.height();
-
-    //================ PREVENT CRASH =================//
-    // Prevent out-of-bounds access at edges
-
-    maskX = qBound(
-        0,
-        maskX,
-        collisionMask.width() - 1
-        );
-
-    maskY = qBound(
-        0,
-        maskY,
-        collisionMask.height() - 1
-        );
-
-    QColor color =
-        collisionMask.pixelColor(
-            maskX,
-            maskY
-            );
-
-    return !(
-        color.red()   < 20 &&
-        color.green() < 20 &&
-        color.blue()  < 20
-        );
 }
 
 /* ================= COLLISIONS ================= */
@@ -1889,11 +1857,6 @@ void GameWindow::showLevel2BriefingPopup()
 
             currentLevel->loadScene(scene);
 
-            //================ COLLISION MASK =================//
-
-            collisionMask =
-                QImage(":/new/prefix1/images/level2 BW.png");
-
             //================ PLAYER =================//
 
             playerSprite =
@@ -1901,7 +1864,7 @@ void GameWindow::showLevel2BriefingPopup()
 
             playerSprite->setScale(0.12);
 
-            playerSprite->setPos(120,620);
+            playerSprite->setPos(230,620);
 
             game.getPlayer().moveTo(120,620);
 

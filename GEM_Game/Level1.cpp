@@ -1,18 +1,24 @@
 #include "Level1.h"
-
 #include <QBrush>
-#include <QDebug>
-#include <QPen>
 #include <QPixmap>
+#include <QPen>
+
+/* ================= CONSTRUCTOR ================= */
 
 Level1::Level1()
 {
+    //================ LOAD COLLISION MASK ================//
 
+    collisionMask.load(
+        ":/new/prefix1/images/level1 BW.png"
+        );
 }
 
 /* ================= LOAD SCENE ================= */
 
-void Level1::loadScene(QGraphicsScene *scene)
+void Level1::loadScene(
+    QGraphicsScene *scene
+    )
 {
     //================ BACKGROUND ================//
 
@@ -39,10 +45,18 @@ void Level1::loadScene(QGraphicsScene *scene)
         500,
         s
         );
-    addArtifact(scene,":/new/prefix1/images/coint.png", "coin",520, 620, s );
 
+    addArtifact(
+        scene,
+        ":/new/prefix1/images/coint.png",
+        "coin",
+        520,
+        620,
+        s
+        );
 
     //================ SCROLLS ================//
+
     addArtifact(
         scene,
         ":/new/prefix1/images/scrollt.png",
@@ -62,6 +76,7 @@ void Level1::loadScene(QGraphicsScene *scene)
         );
 
     //================ MASKS ================//
+
     addArtifact(
         scene,
         ":/new/prefix1/images/maskt.png",
@@ -79,29 +94,6 @@ void Level1::loadScene(QGraphicsScene *scene)
         850,
         s
         );
-
-    QGraphicsPixmapItem* scroll2 = scene->addPixmap(QPixmap(":/new/prefix1/images/scrollt.png"));
-    scroll2->setPos(720, 760);
-    scroll2->setScale(s);
-    scroll2->setZValue(999);
-    artifacts.push_back(scroll2);
-
-
-    // ===== MASKS (3) =====
-
-
-    QGraphicsPixmapItem* mask1 = scene->addPixmap(QPixmap(":/new/prefix1/images/maskt.png"));
-    mask1->setPos(960, 400);
-    mask1->setScale(s);
-    mask1->setZValue(999);
-    artifacts.push_back(mask1);
-
-    QGraphicsPixmapItem* mask2 = scene->addPixmap(QPixmap(":/new/prefix1/images/maskt.png"));
-    mask2->setPos(900,850);
-    mask2->setScale(s);
-    mask2->setZValue(999);
-    artifacts.push_back(mask2);
-
 
     //================ AMULETS ================//
 
@@ -133,6 +125,7 @@ void Level1::loadScene(QGraphicsScene *scene)
         410,
         s
         );
+
     addArtifact(
         scene,
         ":/new/prefix1/images/timert.png",
@@ -141,13 +134,19 @@ void Level1::loadScene(QGraphicsScene *scene)
         540,
         s
         );
-
 }
 
 /* ================= ADD ARTIFACT ================= */
 
-void Level1::addArtifact(QGraphicsScene* scene, QString imagePath,QString type,int x,int y,double scale)
- {
+void Level1::addArtifact(
+    QGraphicsScene* scene,
+    QString imagePath,
+    QString type,
+    int x,
+    int y,
+    double scale
+    )
+{
     QGraphicsPixmapItem* item =
         scene->addPixmap(
             QPixmap(imagePath)
@@ -162,5 +161,4 @@ void Level1::addArtifact(QGraphicsScene* scene, QString imagePath,QString type,i
     item->setData(0, type);
 
     artifacts.push_back(item);
-
 }

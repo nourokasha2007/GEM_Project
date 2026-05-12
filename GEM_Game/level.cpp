@@ -1,35 +1,98 @@
-#include "level.h"
+#include "Level.h"
 
-QGraphicsItem* Level::checkArtifactCollision( QGraphicsPixmapItem* player )
+#include <QColor>
+
+/* ================= CONSTRUCTOR ================= */
+
+Level::Level()
 {
-    for(size_t i = 0; i < artifacts.size(); i++)
+    background = nullptr;
+}
+
+/* ================= DESTRUCTOR ================= */
+
+Level::~Level()
+{
+
+}
+
+/* ================= GET COLLISION MASK ================= */
+
+QImage Level::getCollisionMask() const
+{
+    return collisionMask;
+}
+
+/* ================= WALKABLE ================= */
+
+bool Level::isWalkable(
+    QPointF newPos,
+    QRectF playerRect,
+    QRectF sceneRect
+    )
+{
+    QPointF scenePos(
+        newPos.x() + playerRect.width() / 2,
+        newPos.y() + playerRect.height() - 5
+        );
+
+    int maskX =
+        (scenePos.x() / sceneRect.width())
+        * collisionMask.width();
+
+    int maskY =
+        (scenePos.y() / sceneRect.height())
+        * collisionMask.height();
+
+    //================ SAFE BOUNDS =================//
+
+    maskX = qBound(
+        0,
+        maskX,
+        collisionMask.width() - 1
+        );
+
+    maskY = qBound(
+        0,
+        maskY,
+        collisionMask.height() - 1
+        );
+
+    QColor color =
+        collisionMask.pixelColor(
+            maskX,
+            maskY
+            );
+    qDebug() << color;
+    //================ BLACK = BLOCKED =================//
+
+    return !(
+        color.red()   < 20 &&
+        color.green() < 20 &&
+        color.blue()  < 20
+        );
+}
+
+/* ================= CHECK ARTIFACT COLLISION ================= */
+
+QGraphicsItem* Level::checkArtifactCollision(
+    QGraphicsPixmapItem* player
+    )
+{
+    for(QGraphicsPixmapItem* artifact : artifacts)
     {
-        if(player->collidesWithItem(artifacts[i]))
+        if(
+            artifact &&
+            player->collidesWithItem(artifact)
+            )
         {
-            return artifacts[i];
+            return artifact;
         }
     }
 
     return nullptr;
 }
-int Level::getArtifactCount() const
-{
-    return artifacts.size();
-}
-void Level::clearLevel(QGraphicsScene* scene)
-{
-    for(size_t i = 0; i < artifacts.size(); i++)
-    {
-        scene->removeItem(artifacts[i]);
-    }
 
-    for(size_t i = 0; i < obstacles.size(); i++)
-    {
-        scene->removeItem(obstacles[i]);
-    }
-
-    artifacts.clear();
-}
 /* ================= REMOVE ARTIFACT ================= */
 
 void Level::removeArtifact(
@@ -37,17 +100,18 @@ void Level::removeArtifact(
     QGraphicsScene* scene
     )
 {
+    artifacts.removeOne(
+        static_cast<QGraphicsPixmapItem*>(artifact)
+        );
+
     scene->removeItem(artifact);
 
-    for(size_t i = 0; i < artifacts.size(); i++)
-    {
-        if(artifacts[i] == artifact)
-        {
-            artifacts.erase(
-                artifacts.begin() + i
-                );
+    delete artifact;
+}
 
-            break;
-        }
-    }
+/* ================= GET ARTIFACT COUNT ================= */
+
+int Level::getArtifactCount() const
+{
+    return artifacts.size();
 }
