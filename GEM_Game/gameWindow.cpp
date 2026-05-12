@@ -325,6 +325,7 @@ void GameWindow::showBriefingPopup(const QString &playerName)
 
     pl->setSpacing(14);
 
+
     //================ HEADER =================//
 
     QLabel *header =
@@ -511,6 +512,8 @@ void GameWindow::setupGameScreen()
         new QVBoxLayout(gameScreen);
 
     setupHUD(mainLayout);
+
+    setupLevel2HUD();
 
     scene =
         new QGraphicsScene(this);
@@ -1108,6 +1111,13 @@ void GameWindow::checkArtifactCollisions()
 
         game.collectArtifact(type);
 
+        if(type.contains("rock"))
+        {
+            rocksCollected++;
+
+            updateLevel2HUD();
+        }
+
         //================ TIMER BONUS =================//
 
         if(type == "timer")
@@ -1141,10 +1151,10 @@ void GameWindow::checkArtifactCollisions()
 
             //================ LEVEL 2 =================//
 
-           /* else if(game.getLevelIndex() == 2)
+            else if(rocksCollected == 3)
             {
                 showHieroglyphScreen();
-            }*/
+            }
 
             return;
         }
@@ -1202,7 +1212,7 @@ void GameWindow::updateInventoryUI()
 
         coinCounter->setText(
             "x" + QString::number(
-                game.getArtifactCount("rock")
+                rocksCollected
                 )
             );
 
@@ -1276,24 +1286,285 @@ void GameWindow::updateInventoryUI()
             )
         );
 }
+/* ================= LEVEL 2 HUD UPDATE ================= */
 
+void GameWindow::updateLevel2HUD()
+{
+    if(!level2HUD)
+    {
+        return;
+    }
+
+    //================ TIMER =================//
+
+    int m = seconds / 60;
+
+    int s = seconds % 60;
+
+    level2TimerLabel->setText(
+        QString("%1:%2")
+            .arg(m,2,10,QChar('0'))
+            .arg(s,2,10,QChar('0'))
+        );
+
+    //================ SCORE =================//
+
+    level2ScoreLabel->setText(
+        "SCORE "
+        + QString::number(
+            game.getPlayer().getScore()
+            )
+        );
+
+    //================ WARNING =================//
+
+    if(seconds <= 60)
+    {
+        dangerLabel->show();
+    }
+    else
+    {
+        dangerLabel->hide();
+    }
+
+    //================ ROCK 1 =================//
+
+    if(rocksCollected >= 1)
+    {
+        rock1Slot->setPixmap(
+            QPixmap(":/new/prefix1/images/rock_M.png")
+                .scaled(
+                    28,
+                    28,
+                    Qt::KeepAspectRatio,
+                    Qt::SmoothTransformation
+                    )
+            );
+    }
+
+    //================ ROCK 2 =================//
+
+    if(rocksCollected >= 2)
+    {
+        rock2Slot->setPixmap(
+            QPixmap(":/new/prefix1/images/rock_A-3.png")
+                .scaled(
+                    28,
+                    28,
+                    Qt::KeepAspectRatio,
+                    Qt::SmoothTransformation
+                    )
+            );
+    }
+
+    //================ ROCK 3 =================//
+
+    if(rocksCollected >= 3)
+    {
+        rock3Slot->setPixmap(
+            QPixmap(":/new/prefix1/images/rock_N.png")
+                .scaled(
+                    28,
+                    28,
+                    Qt::KeepAspectRatio,
+                    Qt::SmoothTransformation
+                    )
+            );
+    }
+}
+/* ================= HIEROGLYPH SCREEN ================= */
+
+void GameWindow::showHieroglyphScreen()
+{
+        timer->stop();
+
+        QWidget* dimmer =
+            new QWidget(this);
+
+        dimmer->setGeometry(
+            0,
+            0,
+            width(),
+            height()
+            );
+
+        dimmer->setStyleSheet(
+            "background-color:rgba(0,0,0,220);"
+            );
+
+        dimmer->show();
+
+        dimmer->raise();
+
+        //================ SCREEN =================//
+
+        QWidget* popup =
+            new QWidget(dimmer);
+
+        popup->setFixedSize(900,650);
+
+        popup->move(
+            (width()-900)/2,
+            (height()-650)/2
+            );
+
+        popup->setStyleSheet(
+            "background-color:rgba(8,4,0,240);"
+            "border:2px solid rgba(200,160,60,220);"
+            "border-radius:14px;"
+            );
+
+        //================ LAYOUT =================//
+
+        QVBoxLayout* layout =
+            new QVBoxLayout(popup);
+
+        layout->setContentsMargins(
+            30,
+            20,
+            30,
+            20
+            );
+
+        layout->setSpacing(16);
+
+        //================ TITLE =================//
+
+        QLabel* title =
+            new QLabel(
+                "THE SACRED STONES REVEAL A WORD"
+                );
+
+        title->setAlignment(Qt::AlignCenter);
+
+        title->setStyleSheet(
+            "font-size:22px;"
+            "font-weight:bold;"
+            "color:#f5d060;"
+            "letter-spacing:4px;"
+            );
+
+        //================ IMAGE =================//
+
+        QLabel* image =
+            new QLabel();
+
+        image->setPixmap(
+            QPixmap(":/new/prefix1/images/hieroglyph_chart-2.png")
+                .scaled(
+                    760,
+                    430,
+                    Qt::KeepAspectRatio,
+                    Qt::SmoothTransformation
+                    )
+            );
+
+        image->setAlignment(Qt::AlignCenter);
+
+        //================ PASSWORD =================//
+
+        QLabel* password =
+            new QLabel(
+                "The symbols translate to:\n\n"
+                "M   •   A   •   N\n\n"
+                "Memorize the ancient password."
+                );
+
+        password->setAlignment(Qt::AlignCenter);
+
+        password->setStyleSheet(
+            "font-size:18px;"
+            "font-weight:bold;"
+            "color:#f5d060;"
+            "line-height:1.8;"
+            );
+
+        //================ BUTTON =================//
+
+        QPushButton* continueBtn =
+            new QPushButton(
+                "▶ CONTINUE"
+                );
+
+        continueBtn->setFixedHeight(50);
+
+        continueBtn->setStyleSheet(
+            "QPushButton {"
+            "background-color:rgba(180,130,40,220);"
+            "color:white;"
+            "font-size:15px;"
+            "font-weight:bold;"
+            "border-radius:8px;"
+            "border:2px solid #c8a84b;"
+            "padding:10px;"
+            "}"
+
+            "QPushButton:hover {"
+            "background-color:rgba(220,170,60,240);"
+            "}"
+            );
+
+        //================ ADD =================//
+
+        layout->addWidget(title);
+
+        layout->addWidget(image);
+
+        layout->addWidget(password);
+
+        layout->addStretch();
+
+        layout->addWidget(
+            continueBtn,
+            0,
+            Qt::AlignCenter
+            );
+
+        popup->show();
+
+        //================ CONTINUE =================//
+
+        connect(
+            continueBtn,
+            &QPushButton::clicked,
+            this,
+            [=]()
+            {
+                dimmer->deleteLater();
+
+                QMessageBox::information(
+                    this,
+                    "To Be Continued",
+                    "The next chamber will require the password."
+                    );
+            }
+            );
+}
 /* ================= UPDATE GAME ================= */
 
 void GameWindow::updateGame()
 {
-    seconds--;
+        seconds--;
 
-    updateHUD();
+        updateHUD();
 
-    game.update(1.0f);
+        //================ LEVEL 2 HUD =================//
 
-    Level2* level2 =
-        dynamic_cast<Level2*>(currentLevel);
+        updateLevel2HUD();
 
-    if(level2)
-    {
-        level2->updatePlayerGlow(playerSprite);
-    }
+        //================ GAME LOGIC =================//
+
+        game.update(1.0f);
+
+        //================ LEVEL 2 LIGHT =================//
+
+        Level2* level2 =
+            dynamic_cast<Level2*>(currentLevel);
+
+        if(level2)
+        {
+            level2->updatePlayerGlow(playerSprite);
+        }
 
     if(
         seconds <= 0 ||game.getstate() == Gamestate::gameOver)
