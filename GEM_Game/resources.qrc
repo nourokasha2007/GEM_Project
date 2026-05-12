@@ -31,6 +31,9 @@
         <file>images/timert.png</file>
         <file>images/Level2.jpeg</file>
         <file>images/Level2 - BW.png</file>
+        <file>images/rock_A-3.png</file>
+        <file>images/rock_M.png</file>
+        <file>images/rock_N.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

@@ -65,5 +65,8 @@ RESOURCES += \
 CONFIG += resources_big
 
 DISTFILES += \
-    images/Level2.jpeg
+    images/Level2.jpeg \
+    images/rock_A-3.png \
+    images/rock_M.png \
+    images/rock_N.png
 

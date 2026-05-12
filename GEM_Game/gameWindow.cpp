@@ -623,7 +623,144 @@ void GameWindow::setupHUD(QVBoxLayout* mainLayout)
 
     mainLayout->addLayout(hud);
 }
+void GameWindow::setupLevel2HUD()
+{
+    level2HUD = new QWidget(gameScreen);
 
+    level2HUD->setFixedHeight(80);
+
+    level2HUD->setStyleSheet(
+        "background: rgba(8,4,0,240);"
+        "border-bottom: 2px solid #8a6020;"
+        );
+
+    level2HUD->hide();
+
+    QHBoxLayout* lay =
+        new QHBoxLayout(level2HUD);
+
+    lay->setContentsMargins(16,6,16,6);
+
+    lay->setSpacing(20);
+
+    //================ LEFT SIDE =================//
+
+    QVBoxLayout* leftCol =
+        new QVBoxLayout();
+
+    QLabel* levelTitle =
+        new QLabel("WING II");
+
+    levelTitle->setStyleSheet(
+        "color:#c8a84b;"
+        "font-size:12px;"
+        "font-weight:bold;"
+        "letter-spacing:4px;"
+        );
+
+    dangerLabel =
+        new QLabel("⚠ WRAITH NEARBY");
+
+    dangerLabel->setStyleSheet(
+        "color:#ff3030;"
+        "font-size:11px;"
+        "font-weight:bold;"
+        );
+
+    dangerLabel->hide();
+
+    leftCol->addWidget(levelTitle);
+
+    leftCol->addWidget(dangerLabel);
+
+    //================ SCORE =================//
+
+    level2ScoreLabel =
+        new QLabel("SCORE 0");
+
+    level2ScoreLabel->setStyleSheet(
+        "color:#f5d060;"
+        "font-size:20px;"
+        "font-weight:bold;"
+        );
+
+    //================ ROCK SLOTS =================//
+
+    //================ ROCK SLOTS =================//
+
+    QString slotStyle =
+        "border:2px solid #c8a84b;"
+        "border-radius:8px;"
+        "background:rgba(30,18,4,200);";
+
+    //================ ROCK 1 =================//
+
+    rock1Slot = new QLabel();
+
+    rock1Slot->setFixedSize(55,55);
+
+    rock1Slot->setAlignment(Qt::AlignCenter);
+
+    rock1Slot->setStyleSheet(slotStyle);
+
+    //================ ROCK 2 =================//
+
+    rock2Slot = new QLabel();
+
+    rock2Slot->setFixedSize(55,55);
+
+    rock2Slot->setAlignment(Qt::AlignCenter);
+
+    rock2Slot->setStyleSheet(slotStyle);
+
+    //================ ROCK 3 =================//
+
+    rock3Slot = new QLabel();
+
+    rock3Slot->setFixedSize(55,55);
+
+    rock3Slot->setAlignment(Qt::AlignCenter);
+
+    rock3Slot->setStyleSheet(slotStyle);
+
+    //================ ROCK ROW =================//
+
+    QHBoxLayout* rockRow =
+        new QHBoxLayout();
+
+    rockRow->addWidget(rock1Slot);
+
+    rockRow->addWidget(rock2Slot);
+
+    rockRow->addWidget(rock3Slot);
+    //================ TIMER =================//
+
+    level2TimerLabel =
+        new QLabel("03:00");
+
+    level2TimerLabel->setStyleSheet(
+        "color:#f5d060;"
+        "font-size:28px;"
+        "font-weight:bold;"
+        "font-family:monospace;"
+        );
+
+    //================ ADD TO LAYOUT =================//
+
+    lay->addLayout(leftCol);
+
+    lay->addStretch();
+
+    lay->addWidget(level2ScoreLabel);
+
+    lay->addStretch();
+
+    lay->addLayout(rockRow);
+
+    lay->addStretch();
+
+    lay->addWidget(level2TimerLabel);
+}
 /* ================= INVENTORY ================= */
 
 void GameWindow::setupInventoryUI(
@@ -1864,7 +2001,7 @@ void GameWindow::showLevel2BriefingPopup()
 
             playerSprite->setScale(0.12);
 
-            playerSprite->setPos(230,620);
+            playerSprite->setPos(500,720);
 
             game.getPlayer().moveTo(120,620);
 

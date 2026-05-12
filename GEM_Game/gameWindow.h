@@ -95,6 +95,19 @@ private:
     QLabel* bgOverlay;
 
     QLineEdit* guestNameEdit;
+    QWidget* level2HUD;
+
+    QLabel* level2ScoreLabel;
+
+    QLabel* level2TimerLabel;
+
+    QLabel* dangerLabel;
+
+    QLabel* rock1Slot;
+    QLabel* rock2Slot;
+    QLabel* rock3Slot;
+
+    int rocksCollected = 0;
 
     //================ INVENTORY =================//
 
@@ -150,6 +163,9 @@ private:
     void movePlayer(int dx, int dy, const QPixmap& sprite);
     void checkArtifactCollisions();
     void showHieroglyphScreen();
+    void setupLevel2HUD();
+
+    void updateLevel2HUD();
 
 };
 
