@@ -506,9 +506,13 @@ void GameWindow::showBriefingPopup(const QString &playerName)
         this,
         [=]()
         {
-            dimmer->deleteLater();
+            // dimmer->deleteLater();
 
-            startGame();
+            // startGame();
+
+            dimmer->deleteLater();
+            game.startGame();              // Initialize the engine
+            showLevel2BriefingPopup();     // Skip straight to Level 2
         }
         );
 }
@@ -974,6 +978,8 @@ void GameWindow::startGame()
 
     timer->start(1000);
 
+    playerSpeedStep = 3;
+
     scene->clear();
 
     //================ LOAD DIRECTIONAL SPRITES =================//
@@ -1077,22 +1083,90 @@ void GameWindow::handleGhostStrike()
     }
 }
 
-void GameWindow::performFlash()
+/* ================= GHOST FLASH EFFECT ================= */
+
+void GameWindow::showBlankScreen()
 {
-    flashCount = flashCount + 1;
+    // Each time the ghost screeches, we flash again.
+    // Only after the 3rd screech we go to Game Over.
+    static int screechFlashCount = 0;
+    screechFlashCount++;
 
-    if (flashCount % 2 == 0) {
-        flashWidget->setStyleSheet("background-color: black;");
-    } else {
-        flashWidget->setStyleSheet("background-color: white;");
-    }
+    bool finalHit = (screechFlashCount >= 3);
 
-    if (flashCount > 15) {
-        flashTimer->stop();
-        flashWidget->hide();
-        stack->setCurrentWidget(gameOverScreen);
-    }
+    // Stop the game timer and pause everything.
+    // (Gameplay will resume only after 1st/2nd hits.)
+    timer->stop();
+    game.pauseGame();
+
+    if (ghost) ghost->setPaused(true);
+
+    // Silence background horror music during the flash.
+    if (horrorMusic) horrorMusic->setVolume(0.0);
+
+    // Flash overlay
+    QWidget* flash = new QWidget(this);
+    flash->setGeometry(0, 0, width(), height());
+    flash->show();
+    flash->raise();
+
+    // Longer flash on the 3rd screech
+    int whiteMs = finalHit ? 250 : 120;
+    int blackMs = finalHit ? 200 : 100;
+    int white2Ms = finalHit ? 250 : 120;
+    int redMs = finalHit ? 700 : 250;
+
+    flash->setStyleSheet("background-color: white;");
+
+    QTimer::singleShot(whiteMs, this, [=]() {
+        flash->setStyleSheet("background-color: black;");
+
+        QTimer::singleShot(blackMs, this, [=]() {
+            flash->setStyleSheet("background-color: white;");
+
+            QTimer::singleShot(white2Ms, this, [=]() {
+                flash->setStyleSheet("background-color: #8a2020;");
+
+                QTimer::singleShot(redMs, this, [=]() {
+                    flash->deleteLater();
+
+                    // Teleport the ghost away from the player after the flash finishes.
+                    if (ghost) {
+                        const double px = game.getPlayer().getX();
+                        const double py = game.getPlayer().getY();
+
+                        // Offset keeps it far enough in most cases.
+                        double tx = px + 600;
+                        double ty = py + 300;
+
+                        // Clamp into the visible scene rect if available.
+                        const QRectF r = scene ? scene->sceneRect() : QRectF();
+                        if (r.isValid()) {
+                            tx = std::max(r.left(), std::min(tx, r.right()  - ghost->boundingRect().width()));
+                            ty = std::max(r.top(),  std::min(ty, r.bottom() - ghost->boundingRect().height()));
+                        }
+
+                        ghost->setPos(tx, ty);
+                    }
+
+                    if (finalHit)
+                    {
+                        stack->setCurrentWidget(gameOverScreen);
+                    }
+                    else
+                    {
+                        // Resume play after 1st/2nd screech.
+                        game.resumeGame();
+                        if (ghost) ghost->setPaused(false);
+                        timer->start(1000);
+                    }
+                });
+            });
+        });
+    });
 }
+
+
 
 /* ================= MOVEMENT ================= */
 // Swaps directional sprite before moving
@@ -2320,71 +2394,58 @@ void GameWindow::showLevel2BriefingPopup()
 
     //================ ENTER LEVEL 2 =================//
 
-    connect(
-        enterBtn,
-        &QPushButton::clicked,
-        this,
-        [=]()
-        {
-            dimmer->deleteLater();
-
-            //================ LOAD LEVEL 2 =================//
-
-            game.loadLevel(2);
-
-            currentLevel =
-                game.getCurrentLevel();
-
-            scene->clear();
-
-            currentLevel->loadScene(scene);
-
-            //================ PLAYER =================//
-
-            playerSprite =
-                scene->addPixmap(spriteFront);
-
-            playerSprite->setScale(0.12);
-
-            playerSprite->setPos(500,720);
-
-            game.getPlayer().moveTo(120,620);
-
-            //================ TIMER =================//
-
-            seconds = 300;
-
-            timer->start(1000);
-
-            //================ START LEVEL 2 ENEMY =================//
-            ghost = new Level2Enemy(&game.getPlayer(), playerSprite);
-            ghost->setPos(900, 400);
-            ghost->setZValue(999);
-            scene->addItem(ghost);
-
-            connect(ghost, &Level2Enemy::reduceSpeed, this, &GameWindow::handleGhostStrike);
-            connect(ghost, &Level2Enemy::ghostScreech, this, &GameWindow::performFlash);
-
-            startMusic->stop();
-
-            QTimer::singleShot(5000, this, [=]()
+    connect(enterBtn, &QPushButton::clicked, this, [=]()
             {
+                dimmer->deleteLater();
+                game.loadLevel(2);
+                currentLevel = game.getCurrentLevel();
+                scene->clear();
+                currentLevel->loadScene(scene);
+
+                spriteFront = QPixmap(":/new/prefix1/images/player front.png");
+                spriteBack = QPixmap(":/new/prefix1/images/player back.png");
+                spriteLeft = QPixmap(":/new/prefix1/images/player left.png");
+                spriteRight = QPixmap(":/new/prefix1/images/player right.png");
+
+                playerSprite = scene->addPixmap(spriteFront);
+                playerSprite->setScale(0.12);
+                playerSprite->setPos(200, 400);
+                game.getPlayer().moveTo(200, 400);
+
+                playerSpeedStep = 3;
+                seconds = 300;
+                timer->start(1000);
+
+                // Create the ghost ONCE when Level 2 actually starts
+                ghost = new Level2Enemy(&game.getPlayer(), playerSprite);
+                ghost->setPos(700, 400);
+                ghost->setZValue(999);
+                scene->addItem(ghost);
+
+                connect(ghost, &Level2Enemy::reduceSpeed, this, &GameWindow::handleGhostStrike);
+                connect(ghost, &Level2Enemy::ghostScreech, this, &GameWindow::showBlankScreen);
+
+                startMusic->stop();
                 horrorMusic->play();
+
+                stack->setCurrentWidget(gameScreen);
+                this->setFocus();
             });
-
-            //================ SCREEN =================//
-
-            stack->setCurrentWidget(gameScreen);
-
-            this->setFocus();
-        }
-        );
 }
+
 /* ================= RESTART ================= */
 
 void GameWindow::restartGame()
 {
     timer->stop();
+
+  //================ RESTART MUSIC ================//
+    if (horrorMusic) {
+        horrorMusic->stop();
+        horrorMusic->setVolume(0.5);
+    }
+
+    startMusic->play();
 
     //================ CLEAR SCENE ================//
 
@@ -2435,8 +2496,10 @@ void GameWindow::restartGame()
         scene->addItem(ghost);
 
         connect(ghost, &Level2Enemy::reduceSpeed, this, &GameWindow::handleGhostStrike);
-        connect(ghost, &Level2Enemy::ghostScreech, this, &GameWindow::performFlash);
+        connect(ghost, &Level2Enemy::ghostScreech, this, &GameWindow::showBlankScreen);
+
     }
+
 
     //================ RELOAD SPRITES ================//
 

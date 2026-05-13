@@ -18,7 +18,7 @@ Level2Enemy::Level2Enemy(Player* target, QGraphicsPixmapItem* pSprite)
 
     loadAssets();
     setPixmap(imgIdle);
-    setScale(0.05);
+    setScale(0.1);
 
     screechSound = new QSoundEffect(this);
     screechSound->setSource(QUrl("qrc:/new/prefix1/sounds/ghost sound.wav"));
