@@ -2,23 +2,15 @@ QT += widgets multimedia
 
 CONFIG += c++17
 
-
 QMAKE_CXXFLAGS += -Wno-error=implicit-function-declaration
-QMAKE_CFLAGS += -Wno-error=implicit-function-declaration
-
-
-# You can make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+QMAKE_CFLAGS   += -Wno-error=implicit-function-declaration
 
 SOURCES += \
     Level1.cpp \
     Level2.cpp \
-<<<<<<< HEAD
     Level2enemy.cpp \
-=======
     Level3.cpp \
->>>>>>> 2d648edcaf07e7c600827024964acbff54c7d870
+    TreasurePopUp.cpp \
     artifact.cpp \
     character.cpp \
     enemy.cpp \
@@ -38,11 +30,9 @@ SOURCES += \
 HEADERS += \
     Level1.h \
     Level2.h \
-<<<<<<< HEAD
     Level2enemy.h \
-=======
     Level3.h \
->>>>>>> 2d648edcaf07e7c600827024964acbff54c7d870
+    TreasurePopUp.h \
     artifact.h \
     character.h \
     enemy.h \
@@ -61,31 +51,18 @@ HEADERS += \
 FORMS += \
     gameWindow.ui
 
-# Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
     resources.qrc
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> 2d648edcaf07e7c600827024964acbff54c7d870
+
 CONFIG += resources_big
 
 DISTFILES += \
     images/Level2.jpeg \
-<<<<<<< HEAD
     images/hieroglyph_chart-2.png \
     images/rock_A-3.png \
     images/rock_M.png \
     images/rock_N.png
->>>>>>> Stashed changes
-=======
-    images/rock_A-3.png \
-    images/rock_M.png \
-    images/rock_N.png
->>>>>>> 2d648edcaf07e7c600827024964acbff54c7d870
-

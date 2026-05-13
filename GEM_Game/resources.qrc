@@ -1,3 +1,4 @@
+cat > /Users/mcbookair2020/GEM_Project/GEM_Game/resources.qrc << 'EOF'
 <RCC>
     <qresource prefix="/new/prefix1">
         <file>images/ChatGPT Image Apr 28, 2026, 05_48_57 PM.png</file>
@@ -12,8 +13,6 @@
         <file>images/timer.png</file>
         <file>images/masktrial.png</file>
         <file>images/ChatGPT Image May 8, 2026, 09_48_17 PM.png</file>
-<<<<<<< HEAD
-=======
         <file>images/player back.png</file>
         <file>images/player front.png</file>
         <file>images/player left.png</file>
@@ -23,7 +22,6 @@
         <file>images/spirit idle.png</file>
         <file>images/spirit left.png</file>
         <file>images/spirit right.png</file>
->>>>>>> 2d648edcaf07e7c600827024964acbff54c7d870
         <file>images/fireball.png</file>
         <file>sounds/desert sounds.wav</file>
         <file>sounds/fireball boom.wav</file>
@@ -32,29 +30,17 @@
         <file>images/maskt.png</file>
         <file>images/scrollt.png</file>
         <file>images/timert.png</file>
-<<<<<<< HEAD
-<<<<<<< Updated upstream
         <file>images/hieroglyph_chart-2.png</file>
-        <file>images/rock_A-3.png</file>
-        <file>images/rock_M.png</file>
-        <file>images/rock_N.png</file>
-=======
-        <file>images/Level2.jpeg</file>
-        <file>images/rock_M.png</file>
-        <file>images/rock_A-3.png</file>
-        <file>images/rock_N.png</file>
-        <file>images/hieroglyph_chart-2.png</file>
->>>>>>> Stashed changes
-=======
         <file>images/Level2.jpeg</file>
         <file>images/Level2 - BW.png</file>
         <file>images/rock_A-3.png</file>
         <file>images/rock_M.png</file>
         <file>images/rock_N.png</file>
-        <file>images/hieroglyph_chart-2.png</file>
         <file>images/Treasureclosed.png</file>
         <file>images/Treasureopened.png</file>
->>>>>>> 2d648edcaf07e7c600827024964acbff54c7d870
+        <file>images/opened_treasure.png</file>
+        <file>images/victory_background.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
+EOF
