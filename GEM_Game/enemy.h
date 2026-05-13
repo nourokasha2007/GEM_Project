@@ -3,9 +3,8 @@
 
 #include <QGraphicsPixmapItem>
 #include <QObject>
-#include "character.h"
 
-class Enemy : public QObject, public QGraphicsPixmapItem, public character {
+class Enemy : public QObject, public QGraphicsPixmapItem{
     Q_OBJECT
 public:
     Enemy(int hp, int dmg, double spd);

@@ -16,12 +16,9 @@ SOURCES += \
     Level2.cpp \
     Level3.cpp \
     artifact.cpp \
-    character.cpp \
     enemy.cpp \
     game.cpp \
-    gameObject.cpp \
     gameWindow.cpp \
-    hint.cpp \
     inventory.cpp \
     item.cpp \
     level.cpp \
@@ -36,12 +33,9 @@ HEADERS += \
     Level2.h \
     Level3.h \
     artifact.h \
-    character.h \
     enemy.h \
     game.h \
-    gameObject.h \
     gameWindow.h \
-    hint.h \
     inventory.h \
     item.h \
     level.h \

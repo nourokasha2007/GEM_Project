@@ -2340,6 +2340,9 @@ void GameWindow::showLevel2BriefingPopup()
 
             game.getPlayer().moveTo(120,620);
 
+            rocksCollected = 0;
+            updateInventoryUI();
+
             //================ TIMER =================//
 
             seconds = 300;
