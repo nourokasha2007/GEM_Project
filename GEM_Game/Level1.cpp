@@ -1,18 +1,24 @@
 #include "Level1.h"
-
 #include <QBrush>
-#include <QDebug>
-#include <QPen>
 #include <QPixmap>
+#include <QPen>
+
+/* ================= CONSTRUCTOR ================= */
 
 Level1::Level1()
 {
+    //================ LOAD COLLISION MASK ================//
 
+    collisionMask.load(
+        ":/new/prefix1/images/level1 BW.png"
+        );
 }
 
 /* ================= LOAD SCENE ================= */
 
-void Level1::loadScene(QGraphicsScene *scene)
+void Level1::loadScene(
+    QGraphicsScene *scene
+    )
 {
     //================ BACKGROUND ================//
 
@@ -27,7 +33,7 @@ void Level1::loadScene(QGraphicsScene *scene)
         bg.rect()
         );
 
-    double s = 0.025;
+    double s = 0.04;
 
     //================ COINS ================//
 
@@ -49,15 +55,6 @@ void Level1::loadScene(QGraphicsScene *scene)
         s
         );
 
-    addArtifact(
-        scene,
-        ":/new/prefix1/images/coint.png",
-        "coin",
-        950,
-        650,
-        s
-        );
-
     //================ SCROLLS ================//
 
     addArtifact(
@@ -73,30 +70,12 @@ void Level1::loadScene(QGraphicsScene *scene)
         scene,
         ":/new/prefix1/images/scrollt.png",
         "scroll",
-        1030,
-        580,
-        s
-        );
-
-    addArtifact(
-        scene,
-        ":/new/prefix1/images/scrollt.png",
-        "scroll",
         720,
         760,
         s
         );
 
     //================ MASKS ================//
-
-    addArtifact(
-        scene,
-        ":/new/prefix1/images/maskt.png",
-        "mask",
-        300,
-        860,
-        s
-        );
 
     addArtifact(
         scene,
@@ -136,15 +115,6 @@ void Level1::loadScene(QGraphicsScene *scene)
         s
         );
 
-    addArtifact(
-        scene,
-        ":/new/prefix1/images/amulett.png",
-        "amulet",
-        1070,
-        380,
-        s
-        );
-
     //================ TIMERS ================//
 
     addArtifact(
@@ -162,15 +132,6 @@ void Level1::loadScene(QGraphicsScene *scene)
         "timer",
         850,
         540,
-        s
-        );
-
-    addArtifact(
-        scene,
-        ":/new/prefix1/images/timert.png",
-        "timer",
-        1090,
-        500,
         s
         );
 }

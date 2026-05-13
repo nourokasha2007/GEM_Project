@@ -1,24 +1,30 @@
 <RCC>
     <qresource prefix="/new/prefix1">
         <file>images/ChatGPT Image Apr 28, 2026, 05_48_57 PM.png</file>
-        <file>images/Gemini_Generated_Image_ibun6yibun6yibun.png</file>
         <file>images/PHOTO-2026-04-29-21-07-06.jpg</file>
         <file>images/level1 (1).png</file>
         <file>images/level1 BW.png</file>
+        <file>images/level3.png</file>
+        <file>images/level3 BW.png</file>
         <file>images/nose.png</file>
-        <file>images/coin2.png</file>
         <file>images/scroll2.png</file>
         <file>images/mask2.png</file>
-        <file>images/amulet2.png</file>
         <file>images/timer.png</file>
         <file>images/masktrial.png</file>
         <file>images/ChatGPT Image May 8, 2026, 09_48_17 PM.png</file>
+<<<<<<< HEAD
+=======
+        <file>images/player back.png</file>
+        <file>images/player front.png</file>
+        <file>images/player left.png</file>
+        <file>images/player right.png</file>
+        <file>images/spirit back.png</file>
+        <file>images/spirit front.png</file>
+        <file>images/spirit idle.png</file>
+        <file>images/spirit left.png</file>
+        <file>images/spirit right.png</file>
+>>>>>>> 2d648edcaf07e7c600827024964acbff54c7d870
         <file>images/fireball.png</file>
-        <file>images/lvl1 mummy idle(1).png</file>
-        <file>images/lvl1 mummy walking back(1).png</file>
-        <file>images/lvl1 mummy walking forward(1).png</file>
-        <file>images/lvl1 mummy walking right(1).png</file>
-        <file>images/lvl1mummy walking left(1).png</file>
         <file>sounds/desert sounds.wav</file>
         <file>sounds/fireball boom.wav</file>
         <file>images/amulett.png</file>
@@ -26,6 +32,7 @@
         <file>images/maskt.png</file>
         <file>images/scrollt.png</file>
         <file>images/timert.png</file>
+<<<<<<< HEAD
 <<<<<<< Updated upstream
         <file>images/hieroglyph_chart-2.png</file>
         <file>images/rock_A-3.png</file>
@@ -38,6 +45,16 @@
         <file>images/rock_N.png</file>
         <file>images/hieroglyph_chart-2.png</file>
 >>>>>>> Stashed changes
+=======
+        <file>images/Level2.jpeg</file>
+        <file>images/Level2 - BW.png</file>
+        <file>images/rock_A-3.png</file>
+        <file>images/rock_M.png</file>
+        <file>images/rock_N.png</file>
+        <file>images/hieroglyph_chart-2.png</file>
+        <file>images/Treasureclosed.png</file>
+        <file>images/Treasureopened.png</file>
+>>>>>>> 2d648edcaf07e7c600827024964acbff54c7d870
     </qresource>
     <qresource prefix="/"/>
 </RCC>
