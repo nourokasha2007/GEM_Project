@@ -690,7 +690,6 @@ void GameWindow::setupLevel2HUD()
         "font-weight:bold;"
         );
 
-    //================ ROCK SLOTS =================//
 
     //================ ROCK SLOTS =================//
 
@@ -742,7 +741,7 @@ void GameWindow::setupLevel2HUD()
     //================ TIMER =================//
 
     level2TimerLabel =
-        new QLabel("03:00");
+        new QLabel("02:00");
 
     level2TimerLabel->setStyleSheet(
         "color:#f5d060;"
@@ -1053,6 +1052,132 @@ void GameWindow::startGame()
 
     this->setFocus();
 }
+//================ ENEMY LEVEL 2 =================//
+
+void GameWindow::handleGhostStrike()
+{
+    playerSpeedStep = playerSpeedStep - 1;
+    if (playerSpeedStep < 1) {
+        playerSpeedStep = 1;
+    }
+
+    QTimer::singleShot(10000, this, [=]() {
+        playerSpeedStep = playerSpeedStep + 1;
+
+        if (playerSpeedStep > 3) {
+            playerSpeedStep = 3;
+        }
+    });
+}
+/* ================= GHOST FLASH EFFECT ================= */
+
+void GameWindow::showBlankScreen()
+{
+
+    static int screechFlashCount = 0;
+    screechFlashCount++;
+
+    bool finalHit = (screechFlashCount >= 3);
+
+
+    timer->stop();
+    game.pauseGame();
+
+    if (ghost) ghost->setPaused(true);
+
+    if (horrorMusic) horrorMusic->setVolume(0.0);
+
+
+    QWidget* flash = new QWidget(this);
+    flash->setGeometry(0, 0, width(), height());
+    flash->show();
+    flash->raise();
+
+
+    int whiteMs;
+    int blackMs;
+    int white2Ms;
+    int redMs;
+
+    if (finalHit == true) {
+        whiteMs = 250;
+        blackMs = 200;
+        white2Ms = 250;
+        redMs = 700;
+    } else {
+        whiteMs = 120;
+        blackMs = 100;
+        white2Ms = 120;
+        redMs = 250;
+    }
+
+    flash->setStyleSheet("background-color: white;");
+
+    QTimer::singleShot(whiteMs, this, [=]() {
+        flash->setStyleSheet("background-color: black;");
+
+        QTimer::singleShot(blackMs, this, [=]() {
+            flash->setStyleSheet("background-color: white;");
+
+            QTimer::singleShot(white2Ms, this, [=]() {
+                flash->setStyleSheet("background-color: #8a2020;");
+
+                QTimer::singleShot(redMs, this, [=]() {
+                    flash->deleteLater();
+
+
+                    if (ghost) {
+                        const double px = game.getPlayer().getX();
+                        const double py = game.getPlayer().getY();
+
+
+                        double tx = px + 200;
+                        double ty = py + 100;
+
+                        if (scene != nullptr) {
+                            double minX = scene->sceneRect().left();
+                            double maxX = scene->sceneRect().right() - ghost->boundingRect().width();
+                            double minY = scene->sceneRect().top();
+                            double maxY = scene->sceneRect().bottom() - ghost->boundingRect().height();
+
+                            if (tx < minX) {
+                                tx = minX;
+                            }
+
+                            if (tx > maxX) {
+                                tx = maxX;
+                            }
+
+                            if (ty < minY) {
+                                ty = minY;
+                            }
+
+                            if (ty > maxY) {
+                                ty = maxY;
+                            }
+                        }
+                        ghost->setPos(tx, ty);
+                    }
+
+                    if (finalHit)
+                    {
+                        stack->setCurrentWidget(gameOverScreen);
+                    }
+                    else
+                    {
+
+                        game.resumeGame();
+                        if (ghost) ghost->setPaused(false);
+                        timer->start(1000);
+                    }
+                });
+            });
+        });
+    });
+}
+
+
+
 /* ================= MOVEMENT ================= */
 // Swaps directional sprite before moving
 
@@ -2340,13 +2465,15 @@ void GameWindow::showLevel2BriefingPopup()
 
             game.getPlayer().moveTo(120,620);
 
+            //================ Reset Rocks =================//
+
             rocksCollected = 0;
 
             updateInventoryUI();
 
             //================ TIMER =================//
 
-            seconds = 300;
+            seconds = 120;
 
             timer->start(1000);
 

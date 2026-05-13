@@ -20,7 +20,7 @@
 #include "game.h"
 #include "level1enemy.h"
 #include "level2enemy.h"
-#include <QObject>
+
 
 class GameWindow : public QMainWindow
 {
