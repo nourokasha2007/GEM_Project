@@ -1,4 +1,3 @@
-cat > /Users/mcbookair2020/GEM_Project/GEM_Game/resources.qrc << 'EOF'
 <RCC>
     <qresource prefix="/new/prefix1">
         <file>images/ChatGPT Image Apr 28, 2026, 05_48_57 PM.png</file>
@@ -38,9 +37,6 @@ cat > /Users/mcbookair2020/GEM_Project/GEM_Game/resources.qrc << 'EOF'
         <file>images/rock_N.png</file>
         <file>images/Treasureclosed.png</file>
         <file>images/Treasureopened.png</file>
-        <file>images/opened_treasure.png</file>
-        <file>images/victory_background.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
-EOF

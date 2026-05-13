@@ -23,9 +23,10 @@ public:
     Level2Enemy(Player* target, QGraphicsPixmapItem* playerSprite);
     virtual ~Level2Enemy() = default;
 
-    // The glow ellipse must be added to the scene separately
-    // by whoever constructs this enemy (see Level2.cpp).
     QGraphicsEllipseItem* glowItem() const { return glow; }
+
+signals:
+    void wraithHitPlayer();
 
 public slots:
     void updateAI();

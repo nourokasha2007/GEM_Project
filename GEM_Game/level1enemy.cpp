@@ -22,7 +22,7 @@ Level1Enemy::Level1Enemy(Player* target, QGraphicsPixmapItem* pSprite)
 
     loadAssets();
     setPixmap(imgIdle);
-    setScale(3.0);
+    setScale(0.8);
     setZValue(900);
 
     hitSound = new QSoundEffect(this);
@@ -168,7 +168,6 @@ void Level1Enemy::shootHomingProjectile()
         if (distToTarget < 12)
         {
             fireballHitSound->play();
-            player->deductScore(10);
             player->registerFireballHit();
 
             homingTimer->stop();

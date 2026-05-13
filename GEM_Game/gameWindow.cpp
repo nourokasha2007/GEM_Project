@@ -105,7 +105,7 @@ void GameWindow::setupGameScreen()
     scene = new QGraphicsScene(this);
     view  = new QGraphicsView(scene);
     view->setFocusPolicy(Qt::NoFocus);
-    view->setFixedSize(1400, 700);
+    view->setFixedSize(1200, 650);
 
     gameLayout->addWidget(view);
     mainLayout->addLayout(gameLayout);
@@ -820,8 +820,8 @@ void GameWindow::setupHieroglyphScreen()
     hieroglyphScreen->setStyleSheet("background-color: #080400;");
 
     QVBoxLayout* root = new QVBoxLayout(hieroglyphScreen);
-    root->setContentsMargins(30, 16, 30, 20);
-    root->setSpacing(12);
+    root->setContentsMargins(10, 8, 10, 8);
+    root->setSpacing(6);
 
     QLabel* title = new QLabel("THE STONES HAVE SPOKEN");
     title->setAlignment(Qt::AlignCenter);
@@ -845,7 +845,7 @@ void GameWindow::setupHieroglyphScreen()
     QLabel* chart = new QLabel();
     chart->setPixmap(
         QPixmap(":/new/prefix1/images/hieroglyph_chart-2.png")
-            .scaled(1060, 580, Qt::KeepAspectRatio, Qt::SmoothTransformation)
+            .scaled(780, 420, Qt::KeepAspectRatio, Qt::SmoothTransformation)
         );
     chart->setAlignment(Qt::AlignCenter);
 
@@ -1029,6 +1029,7 @@ void GameWindow::startGame()
         updateHUD();
     });
     connect(mummy, &Level1Enemy::playerKilled, this, &GameWindow::showFireballGameOver);
+    connect(mummy, &Level1Enemy::reduceScore, this, [=]() { takeDamage(1); updateHUD(); });
 
     updateInventoryUI();
     updateHUD();
@@ -1084,6 +1085,16 @@ void GameWindow::startLevel2()
         scene->addItem(wraith->glowItem());
     }
     scene->addItem(wraith);
+
+    connect(wraith, &Level2Enemy::wraithHitPlayer, this, [=]() {
+        takeDamage(1);
+        updateHealthDisplay();
+        statusLabel->setText("⚠  THE WRAITH TOUCHED YOU!");
+        statusLabel->setStyleSheet(
+            "color:#ff2020; font-size:14px; font-weight:bold;"
+            "background:rgba(0,0,0,120); padding:4px 10px; border-radius:4px;"
+            );
+    });
 
     if (level2Ptr)
         level2Ptr->updatePlayerGlow(playerSprite);
@@ -1166,7 +1177,7 @@ void GameWindow::movePlayer(int dx, int dy, const QPixmap& sprite)
                 checkDoorCollision();
         }
     }
-},
+}
 
 /* ================================================================
    WALKABLE CHECK
@@ -1582,7 +1593,7 @@ void GameWindow::showBriefingPopup(const QString &playerName)
 
     QString storyText = QString(
                             "Welcome, <b>%1</b>.<br><br>"
-                            "You are the night guard of the Cairo Museum of Antiquities.<br><br>"
+                            "You are the night guard of the Grand Egyptian Museum — the largest archaeological museum in the world.<br><br>"
                             "Priceless artifacts have gone missing from the halls. "
                             "Something ancient has awakened... and it hunts."
                             ).arg(playerName);
@@ -1759,7 +1770,7 @@ void GameWindow::showHieroglyphScreen()
     dimmer->raise();
 
     QWidget* popup = new QWidget(dimmer);
-    popup->setFixedSize(900, 650);
+    popup->setFixedSize(860, 640);
     popup->move((width() - 900) / 2, (height() - 650) / 2);
     popup->setStyleSheet(
         "background-color:rgba(8,4,0,240);"
@@ -1780,7 +1791,7 @@ void GameWindow::showHieroglyphScreen()
     QLabel* image = new QLabel();
     image->setPixmap(
         QPixmap(":/new/prefix1/images/hieroglyph_chart-2.png")
-            .scaled(760, 430, Qt::KeepAspectRatio, Qt::SmoothTransformation)
+            .scaled(700, 400, Qt::KeepAspectRatio, Qt::SmoothTransformation)
         );
     image->setAlignment(Qt::AlignCenter);
 
@@ -1799,7 +1810,6 @@ void GameWindow::showHieroglyphScreen()
 
     layout->addWidget(title);
     layout->addWidget(image);
-    layout->addWidget(password);
     layout->addStretch();
     layout->addWidget(continueBtn, 0, Qt::AlignCenter);
 
