@@ -1,3 +1,4 @@
+
 #include "gameWindow.h"
 #include <QDebug>
 #include <QPixmap>
@@ -1204,6 +1205,36 @@ void GameWindow::updateHUD()
 
 void GameWindow::updateInventoryUI()
 {
+    //================ ENSURE ICONS VISIBLE (reset from L3 hide) =================//
+
+    coinIcon->show();
+    scrollIcon->show();
+    maskIcon->show();
+    amuletIcon->show();
+    timerIcon->show();
+    coinCounter->show();
+    scrollCounter->show();
+    maskCounter->show();
+    amuletCounter->show();
+    timerCounter->show();
+
+    //================ LEVEL 3 — HIDE INVENTORY =================//
+
+    if(game.getLevelIndex() == 3)
+    {
+        coinIcon->hide();
+        scrollIcon->hide();
+        maskIcon->hide();
+        amuletIcon->hide();
+        timerIcon->hide();
+        coinCounter->hide();
+        scrollCounter->hide();
+        maskCounter->hide();
+        amuletCounter->hide();
+        timerCounter->hide();
+        return;
+    }
+
     //================ LEVEL 2 =================//
 
     if(game.getLevelIndex() == 2)
@@ -1391,244 +1422,263 @@ void GameWindow::updateLevel2HUD()
 
 void GameWindow::showHieroglyphScreen()
 {
-        timer->stop();
+    timer->stop();
 
-        QWidget* dimmer =
-            new QWidget(this);
+    QWidget* dimmer =
+        new QWidget(this);
 
-        dimmer->setGeometry(
-            0,
-            0,
-            width(),
-            height()
+    dimmer->setGeometry(
+        0,
+        0,
+        width(),
+        height()
+        );
+
+    dimmer->setStyleSheet(
+        "background-color:rgba(0,0,0,220);"
+        );
+
+    dimmer->show();
+
+    dimmer->raise();
+
+    //================ SCREEN =================//
+
+    QWidget* popup =
+        new QWidget(dimmer);
+
+    popup->setFixedSize(900,650);
+
+    popup->move(
+        (width()-900)/2,
+        (height()-650)/2
+        );
+
+    popup->setStyleSheet(
+        "background-color:rgba(8,4,0,240);"
+        "border:2px solid rgba(200,160,60,220);"
+        "border-radius:14px;"
+        );
+
+    //================ LAYOUT =================//
+
+    QVBoxLayout* layout =
+        new QVBoxLayout(popup);
+
+    layout->setContentsMargins(
+        30,
+        20,
+        30,
+        20
+        );
+
+    layout->setSpacing(16);
+
+    //================ TITLE =================//
+
+    QLabel* title =
+        new QLabel(
+            "THE SACRED STONES REVEAL A WORD"
             );
 
-        dimmer->setStyleSheet(
-            "background-color:rgba(0,0,0,220);"
+    title->setAlignment(Qt::AlignCenter);
+
+    title->setStyleSheet(
+        "font-size:22px;"
+        "font-weight:bold;"
+        "color:#f5d060;"
+        "letter-spacing:4px;"
+        );
+
+    //================ IMAGE =================//
+
+    QLabel* image =
+        new QLabel();
+
+    image->setPixmap(
+        QPixmap(":/new/prefix1/images/hieroglyph_chart-2.png")
+            .scaled(
+                760,
+                430,
+                Qt::KeepAspectRatio,
+                Qt::SmoothTransformation
+                )
+        );
+
+    image->setAlignment(Qt::AlignCenter);
+
+    //================ PASSWORD =================//
+
+    QLabel* password =
+        new QLabel(
+            "The symbols translate to:\n\n"
+            "M   •   A   •   N\n\n"
+            "Memorize the ancient password."
             );
 
-        dimmer->show();
+    password->setAlignment(Qt::AlignCenter);
 
-        dimmer->raise();
+    password->setStyleSheet(
+        "font-size:18px;"
+        "font-weight:bold;"
+        "color:#f5d060;"
+        "line-height:1.8;"
+        );
 
-        //================ SCREEN =================//
+    //================ BUTTON =================//
 
-        QWidget* popup =
-            new QWidget(dimmer);
-
-        popup->setFixedSize(900,650);
-
-        popup->move(
-            (width()-900)/2,
-            (height()-650)/2
+    QPushButton* continueBtn =
+        new QPushButton(
+            "▶ CONTINUE"
             );
 
-        popup->setStyleSheet(
-            "background-color:rgba(8,4,0,240);"
-            "border:2px solid rgba(200,160,60,220);"
-            "border-radius:14px;"
-            );
+    continueBtn->setFixedHeight(50);
 
-        //================ LAYOUT =================//
+    continueBtn->setStyleSheet(
+        "QPushButton {"
+        "background-color:rgba(180,130,40,220);"
+        "color:white;"
+        "font-size:15px;"
+        "font-weight:bold;"
+        "border-radius:8px;"
+        "border:2px solid #c8a84b;"
+        "padding:10px;"
+        "}"
 
-        QVBoxLayout* layout =
-            new QVBoxLayout(popup);
+        "QPushButton:hover {"
+        "background-color:rgba(220,170,60,240);"
+        "}"
+        );
 
-        layout->setContentsMargins(
-            30,
-            20,
-            30,
-            20
-            );
+    //================ ADD =================//
 
-        layout->setSpacing(16);
+    layout->addWidget(title);
 
-        //================ TITLE =================//
+    layout->addWidget(image);
 
-        QLabel* title =
-            new QLabel(
-                "THE SACRED STONES REVEAL A WORD"
-                );
+    layout->addWidget(password);
 
-        title->setAlignment(Qt::AlignCenter);
+    layout->addStretch();
 
-        title->setStyleSheet(
-            "font-size:22px;"
-            "font-weight:bold;"
-            "color:#f5d060;"
-            "letter-spacing:4px;"
-            );
+    layout->addWidget(
+        continueBtn,
+        0,
+        Qt::AlignCenter
+        );
 
-        //================ IMAGE =================//
+    popup->show();
 
-        QLabel* image =
-            new QLabel();
+    //================ CONTINUE =================//
 
-        image->setPixmap(
-            QPixmap(":/new/prefix1/images/hieroglyph_chart-2.png")
-                .scaled(
-                    760,
-                    430,
-                    Qt::KeepAspectRatio,
-                    Qt::SmoothTransformation
-                    )
-            );
+    connect(
+        continueBtn,
+        &QPushButton::clicked,
+        this,
+        [=]()
+        {
+            //================ CLOSE POPUP =================//
 
-        image->setAlignment(Qt::AlignCenter);
+            dimmer->deleteLater();
 
-        //================ PASSWORD =================//
+            //================ LOAD LEVEL 3 =================//
 
-        QLabel* password =
-            new QLabel(
-                "The symbols translate to:\n\n"
-                "M   •   A   •   N\n\n"
-                "Memorize the ancient password."
-                );
+            game.loadLevel(3);
 
-        password->setAlignment(Qt::AlignCenter);
+            currentLevel = game.getCurrentLevel();
 
-        password->setStyleSheet(
-            "font-size:18px;"
-            "font-weight:bold;"
-            "color:#f5d060;"
-            "line-height:1.8;"
-            );
+            //================ CLEAR OLD SCENE =================//
 
-        //================ BUTTON =================//
+            scene->clear();
 
-        QPushButton* continueBtn =
-            new QPushButton(
-                "▶ CONTINUE"
-                );
+            //================ LOAD NEW LEVEL =================//
 
-        continueBtn->setFixedHeight(50);
+            currentLevel->loadScene(scene);
 
-        continueBtn->setStyleSheet(
-            "QPushButton {"
-            "background-color:rgba(180,130,40,220);"
-            "color:white;"
-            "font-size:15px;"
-            "font-weight:bold;"
-            "border-radius:8px;"
-            "border:2px solid #c8a84b;"
-            "padding:10px;"
-            "}"
+            //================ LEVEL 3 COLLISION =================//
 
-            "QPushButton:hover {"
-            "background-color:rgba(220,170,60,240);"
-            "}"
-            );
+            collisionMask = QImage( ":/new/prefix1/images/level3 BW.png");
 
-        //================ ADD =================//
+            //================ SET RESTART CALLBACK =================//
 
-        layout->addWidget(title);
+            Level3* lvl3 =
+                dynamic_cast<Level3*>(currentLevel);
 
-        layout->addWidget(image);
-
-        layout->addWidget(password);
-
-        layout->addStretch();
-
-        layout->addWidget(
-            continueBtn,
-            0,
-            Qt::AlignCenter
-            );
-
-        popup->show();
-
-        //================ CONTINUE =================//
-
-        connect(
-            continueBtn,
-            &QPushButton::clicked,
-            this,
-            [=]()
+            if(lvl3)
             {
-                //================ CLOSE POPUP =================//
-
-                dimmer->deleteLater();
-
-                //================ LOAD LEVEL 3 =================//
-
-                game.loadLevel(3);
-
-                currentLevel = game.getCurrentLevel();
-
-                //================ CLEAR OLD SCENE =================//
-
-                scene->clear();
-
-                //================ LOAD NEW LEVEL =================//
-
-                currentLevel->loadScene(scene);
-
-                //================ LEVEL 3 COLLISION =================//
-
-                collisionMask = QImage( ":/new/prefix1/images/level3 BW.png");
-
-                //================ CREATE PLAYER =================//
-
-                playerSprite =
-                    scene->addPixmap(spriteFront);
-
-                playerSprite->setScale(0.12);
-
-                playerSprite->setPos(150,650);
-
-                game.getPlayer().moveTo(
-                    150,
-                    650
+                lvl3->setRestartCallback(
+                    [=]()
+                    {
+                        // Always restart from Level 1
+                        rocksCollected = 0;
+                        game.loadLevel(1);
+                        restartGame();
+                    }
                     );
-
-
-                //================ TIMER =================//
-
-                seconds = 300;
-
-                timer->start(1000);
-
-                //================ UPDATE UI =================//
-
-                updateHUD();
-
-                updateInventoryUI();
-
-                //================ SHOW GAME SCREEN =================//
-
-                stack->setCurrentWidget(
-                    gameScreen
-                    );
-
-                this->setFocus();
             }
-            );
+
+            //================ CREATE PLAYER =================//
+
+            playerSprite =
+                scene->addPixmap(spriteFront);
+
+            playerSprite->setScale(0.12);
+
+            // Start player at middle-bottom of the Level 3 scene
+            playerSprite->setPos(605, 816);
+
+            game.getPlayer().moveTo(
+                605,
+                810
+                );
+
+
+            //================ TIMER =================//
+
+            seconds = 300;
+
+            timer->start(1000);
+
+            //================ UPDATE UI =================//
+
+            updateHUD();
+
+            updateInventoryUI();
+
+            //================ SHOW GAME SCREEN =================//
+
+            stack->setCurrentWidget(
+                gameScreen
+                );
+
+            this->setFocus();
+        }
+        );
 }
 /* ================= UPDATE GAME ================= */
 
 void GameWindow::updateGame()
 {
-        seconds--;
+    seconds--;
 
-        updateHUD();
+    updateHUD();
 
-        //================ LEVEL 2 HUD =================//
+    //================ LEVEL 2 HUD =================//
 
-        updateLevel2HUD();
+    updateLevel2HUD();
 
-        //================ GAME LOGIC =================//
+    //================ GAME LOGIC =================//
 
-        game.update(1.0f);
+    game.update(1.0f);
 
-        //================ LEVEL 2 LIGHT =================//
+    //================ LEVEL 2 LIGHT =================//
 
-        Level2* level2 =
-            dynamic_cast<Level2*>(currentLevel);
+    Level2* level2 =
+        dynamic_cast<Level2*>(currentLevel);
 
-        if(level2)
-        {
-            level2->updatePlayerGlow(playerSprite);
-        }
+    if(level2)
+    {
+        level2->updatePlayerGlow(playerSprite);
+    }
 
     if(
         seconds <= 0 ||game.getstate() == Gamestate::gameOver)
