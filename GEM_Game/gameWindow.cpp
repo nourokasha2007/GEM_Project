@@ -1175,36 +1175,15 @@ void GameWindow::showBlankScreen()
                     flash->deleteLater();
 
 
+
                     if (ghost) {
                         const double px = game.getPlayer().getX();
                         const double py = game.getPlayer().getY();
 
 
-                        double tx = px + 200;
-                        double ty = py + 100;
+                        double tx = px + 10;
+                        double ty = py + 10;
 
-                        if (scene != nullptr) {
-                            double minX = scene->sceneRect().left();
-                            double maxX = scene->sceneRect().right() - ghost->boundingRect().width();
-                            double minY = scene->sceneRect().top();
-                            double maxY = scene->sceneRect().bottom() - ghost->boundingRect().height();
-
-                            if (tx < minX) {
-                                tx = minX;
-                            }
-
-                            if (tx > maxX) {
-                                tx = maxX;
-                            }
-
-                            if (ty < minY) {
-                                ty = minY;
-                            }
-
-                            if (ty > maxY) {
-                                ty = maxY;
-                            }
-                        }
                         ghost->setPos(tx, ty);
                     }
 
@@ -2525,7 +2504,6 @@ void GameWindow::showLevel2BriefingPopup()
                 seconds = 300;
                 timer->start(1000);
 
-                // Create the ghost ONCE when Level 2 actually starts
                 ghost = new Level2Enemy(&game.getPlayer(), playerSprite);
                 ghost->setPos(700, 400);
                 ghost->setZValue(999);
@@ -2537,12 +2515,11 @@ void GameWindow::showLevel2BriefingPopup()
                 startMusic->stop();
                 horrorMusic->play();
 
-                //================ SCREEN =================//
-
                 stack->setCurrentWidget(gameScreen);
 
-        this->setFocus();
-    }
+                this->setFocus();
+            }
+
             );
 }
 
@@ -2556,6 +2533,11 @@ void GameWindow::restartGame()
     timer->stop();
 
     //================ RESTART MUSIC ================//
+
+    if (startMusic) {
+        startMusic->stop();
+    }
+
     if (horrorMusic) {
         horrorMusic->stop();
         horrorMusic->setVolume(0.5);
@@ -2563,10 +2545,22 @@ void GameWindow::restartGame()
 
     if (level3Music) {
         level3Music->stop();
-         level3Music->setVolume(0.5);
+        level3Music->setVolume(0.5);
     }
 
-    startMusic->play();
+    if (game.getLevelIndex() == 1) {
+        if (startMusic) {
+            startMusic->play();
+        }
+    } else if (game.getLevelIndex() == 2) {
+        if (horrorMusic) {
+            horrorMusic->play();
+        }
+    } else if (game.getLevelIndex() == 3) {
+        if (level3Music) {
+            level3Music->play();
+        }
+    }
 
     //================ CLEAR SCENE ================//
 
@@ -2576,11 +2570,13 @@ void GameWindow::restartGame()
 
     game.restartGame();
 
-    game.loadLevel( game.getLevelIndex());
+    game.loadLevel(game.getLevelIndex());
 
     currentLevel = game.getCurrentLevel();
 
     currentLevel->loadScene(scene);
+
+    //================ RECREATE ENEMY =================//
     //================ RECREATE ENEMY =================//
 
     if(game.getLevelIndex() == 1)
