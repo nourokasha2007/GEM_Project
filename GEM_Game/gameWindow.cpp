@@ -7,7 +7,7 @@
 #include <QDir>
 #include "level1enemy.h"
 #include "Level2.h"
-#include "Level3.h"
+// #include "Level3.h"
 
 /* ================= CONSTRUCTOR ================= */
 
@@ -83,6 +83,18 @@ GameWindow::GameWindow(QWidget *parent)
         );
 
     startMusic->play();
+
+     //================ MUSIC LEVEL 2 =================//
+    startMusic->setLoopCount(
+        QSoundEffect::Infinite
+        );
+
+    startMusic->play();
+
+    horrorMusic = new QSoundEffect(this);
+    horrorMusic->setSource(QUrl("qrc:/new/prefix1/sounds/horror theme.wav"));
+    horrorMusic->setVolume(0.5);
+    horrorMusic->setLoopCount(QSoundEffect::Infinite);
 }
 
 /* ================= START SCREEN ================= */
@@ -1053,6 +1065,35 @@ void GameWindow::startGame()
 
     this->setFocus();
 }
+
+
+//================ ENEMY LEVEL 2 =================//
+
+void GameWindow::handleGhostStrike()
+{
+    playerSpeedStep = playerSpeedStep - 1;
+    if (playerSpeedStep < 1) {
+        playerSpeedStep = 1;
+    }
+}
+
+void GameWindow::performFlash()
+{
+    flashCount = flashCount + 1;
+
+    if (flashCount % 2 == 0) {
+        flashWidget->setStyleSheet("background-color: black;");
+    } else {
+        flashWidget->setStyleSheet("background-color: white;");
+    }
+
+    if (flashCount > 15) {
+        flashTimer->stop();
+        flashWidget->hide();
+        stack->setCurrentWidget(gameOverScreen);
+    }
+}
+
 /* ================= MOVEMENT ================= */
 // Swaps directional sprite before moving
 
@@ -1632,58 +1673,29 @@ void GameWindow::updateGame()
 /* ================= KEY PRESS ================= */
 // Each arrow key uses directional sprites
 
-void GameWindow::keyPressEvent(
-    QKeyEvent *event
-    )
+void GameWindow::keyPressEvent(QKeyEvent *event)
 {
     if(stack->currentWidget() != gameScreen)
         return;
 
-    const int step = 3;
+    int step = playerSpeedStep;
 
     switch(event->key())
     {
     case Qt::Key_Up:
-
-        movePlayer(
-            0,
-            -step,
-            spriteBack
-            );
-
+        movePlayer(0, -step, spriteBack);
         break;
-
     case Qt::Key_Down:
-
-        movePlayer(
-            0,
-            +step,
-            spriteFront
-            );
-
+        movePlayer(0, +step, spriteFront);
         break;
-
     case Qt::Key_Left:
-
-        movePlayer(
-            -step,
-            0,
-            spriteLeft
-            );
-
+        movePlayer(-step, 0, spriteLeft);
         break;
-
     case Qt::Key_Right:
-
-        movePlayer(
-            +step,
-            0,
-            spriteRight
-            );
-
+        movePlayer(+step, 0, spriteRight);
         break;
-
-    case Qt::Key_Escape:pauseGame();
+    case Qt::Key_Escape:
+        pauseGame();
         break;
     }
 }
@@ -1861,6 +1873,11 @@ void GameWindow::pauseGame()
     }
 
     timer->stop();
+
+    if(ghost)
+    {
+        ghost->setPaused(true);
+    }
 
     //================ DIM BACKGROUND =================//
 
@@ -2053,6 +2070,11 @@ void GameWindow::pauseGame()
             if(mummy)
             {
                 mummy->setPaused(false);
+            }
+
+            if(ghost)
+            {
+                ghost->setPaused(false);
             }
 
             timer->start(1000);
@@ -2334,18 +2356,21 @@ void GameWindow::showLevel2BriefingPopup()
 
             timer->start(1000);
 
-            //================ RESUME ENEMY SYSTEM =================//
-            mummy =
-                new Level1Enemy(
-                    &game.getPlayer(),
-                    playerSprite
-                    );
+            //================ START LEVEL 2 ENEMY =================//
+            ghost = new Level2Enemy(&game.getPlayer(), playerSprite);
+            ghost->setPos(900, 400);
+            ghost->setZValue(999);
+            scene->addItem(ghost);
 
-            mummy->setPos(900, 400);
+            connect(ghost, &Level2Enemy::reduceSpeed, this, &GameWindow::handleGhostStrike);
+            connect(ghost, &Level2Enemy::ghostScreech, this, &GameWindow::performFlash);
 
-            mummy->setZValue(999);
+            startMusic->stop();
 
-            scene->addItem(mummy);
+            QTimer::singleShot(5000, this, [=]()
+            {
+                horrorMusic->play();
+            });
 
             //================ SCREEN =================//
 
@@ -2402,6 +2427,16 @@ void GameWindow::restartGame()
             }
             );
     }
+    else if(game.getLevelIndex() == 2)
+    {
+        ghost = new Level2Enemy(&game.getPlayer(), playerSprite);
+        ghost->setPos(900, 400);
+        ghost->setZValue(999);
+        scene->addItem(ghost);
+
+        connect(ghost, &Level2Enemy::reduceSpeed, this, &GameWindow::handleGhostStrike);
+        connect(ghost, &Level2Enemy::ghostScreech, this, &GameWindow::performFlash);
+    }
 
     //================ RELOAD SPRITES ================//
 
@@ -2428,6 +2463,8 @@ void GameWindow::restartGame()
         game.getPlayer().getX(),
         game.getPlayer().getY()
         );
+
+    playerSpeedStep = 3;
 
     //================ RESET TIMER ================//
 
