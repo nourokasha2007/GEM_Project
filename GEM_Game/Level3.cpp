@@ -1,5 +1,4 @@
 #include "Level3.h"
-
 #include <QBrush>
 #include <QColor>
 #include <QPen>
@@ -22,6 +21,10 @@ Level3::Level3()
     passwordSolved = false;
 
     popupShown = false;
+
+    collisionMask.load(
+        ":/new/prefix1/images/level3 BW.png"
+        );
 
     closedTreasure.load(
         ":/new/prefix1/images/Treasureclosed.png"
@@ -60,6 +63,7 @@ void Level3::loadScene(
     scene->setSceneRect(
         bg.rect()
         );
+
 
     //================ TREASURE =================//
 

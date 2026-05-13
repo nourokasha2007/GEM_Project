@@ -1090,6 +1090,18 @@ void GameWindow::movePlayer(
             );
 
         checkArtifactCollisions();
+
+        //================ LEVEL 3 TREASURE =================//
+
+        Level3* level3 =
+            dynamic_cast<Level3*>(currentLevel);
+
+        if(level3)
+        {
+            level3->checkTreasureCollision(
+                playerSprite
+                );
+        }
     }
 }
 
