@@ -7,6 +7,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QApplication>
+#include <QObject>
 
 /* ================================================================
    CONSTRUCTOR
@@ -19,6 +20,8 @@ Level3::Level3()
     treasureOpened = false;
 
     passwordSolved = false;
+
+    popupShown = false;
 
     closedTreasure.load(
         ":/new/prefix1/images/Treasureclosed.png"
@@ -99,8 +102,9 @@ void Level3::checkTreasureCollision(
     QRectF treasureArea =
         treasure->sceneBoundingRect();
 
-    if(playerRect.intersects(treasureArea))
+    if(playerRect.intersects(treasureArea)&& !popupShown)
     {
+        popupShown =true;
         showPasswordPopup();
     }
 }
@@ -354,7 +358,7 @@ void Level3::showVictoryPopup()
 
     //================ PLAY AGAIN =================//
 
-    QBoxLayout::connect(
+    QObject::connect(
         playAgain,
         &QPushButton::clicked,
         [=]()
@@ -365,7 +369,7 @@ void Level3::showVictoryPopup()
 
     //================ EXIT =================//
 
-    QBoxLayout::connect(
+    QObject::connect(
         exitBtn,
         &QPushButton::clicked,
         [=]()
