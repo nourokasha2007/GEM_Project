@@ -114,12 +114,46 @@ void Level1Enemy::updateAI()
         shootHomingProjectile();
     }
 
+<<<<<<< Updated upstream
     // --- Chase movement ---
     if (distance > speed)
     {
         double nx = dx / distance;
         double ny = dy / distance;
         setPos(x() + nx * speed, y() + ny * speed);
+=======
+    if (isChasing == true) {
+        // Handle shooting cooldown
+        shootCooldownMs = shootCooldownMs - 33;
+
+        if (shootCooldownMs <= 0) {
+            shootCooldownMs = 12000;
+            shootHomingProjectile();
+        }
+
+        // Move towards the player if not already touching them
+        if (distanceToPlayer > speed) {
+            double moveX = (differenceX / distanceToPlayer) * speed;
+            double moveY = (differenceY / distanceToPlayer) * speed;
+
+            setPos(x() + moveX, y() + moveY);
+        }
+
+        // Change the sprite based on which direction the enemy is moving the most
+        if (std::abs(differenceX) > std::abs(differenceY)) {
+            if (differenceX > 0) {
+                setPixmap(imgRight);
+            } else {
+                setPixmap(imgLeft);
+            }
+        } else {
+            if (differenceY > 0) {
+                setPixmap(imgForward);
+            } else {
+                setPixmap(imgBack);
+            }
+        }
+>>>>>>> Stashed changes
     }
 
     // --- 8-directional sprite selection ---

@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>
+<<<<<<< Updated upstream
 #include <QRandomGenerator>
 #include <cmath>
 #include <cstdlib>
@@ -21,12 +22,20 @@
    • updateGame()              — calls Level2 glow update, door check
    • movePlayer()              — 6 px in Level 1, 5 px in Level 2
    ================================================================ */
+=======
+#include <QDir>
+#include <QRandomGenerator>
+#include <cmath>
+#include "level1enemy.h"
+#include "Level2.h"
+>>>>>>> Stashed changes
 
 /* ================= CONSTRUCTOR ================= */
 
 GameWindow::GameWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+<<<<<<< Updated upstream
     seconds            = 300;
     currentLevel       = nullptr;
     level2Ptr          = nullptr;
@@ -45,6 +54,21 @@ GameWindow::GameWindow(QWidget *parent)
     maxHealth          = 3;
     isInvincible       = false;
     invincibleFrames   = 0;
+=======
+    //================ DEFAULT VALUES ================//
+    mummy      = nullptr;
+    seconds    = 300;
+    animFrame  = 0;
+
+    currentLevel = nullptr;
+    view         = nullptr;
+    playerSprite = nullptr;
+
+    //================ STACK =================//
+
+    stack =
+        new QStackedWidget(this);
+>>>>>>> Stashed changes
 
     stack = new QStackedWidget(this);
     setCentralWidget(stack);
@@ -57,12 +81,52 @@ GameWindow::GameWindow(QWidget *parent)
     setupWinScreen();
     setupHieroglyphScreen();
 
+<<<<<<< Updated upstream
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &GameWindow::updateGame);
 
     animTimer = new QTimer(this);
     connect(animTimer, &QTimer::timeout, this, &GameWindow::tickTitleAnimation);
     animTimer->start(80);
+=======
+    setupHieroglyphScreen();
+
+    //================ INPUT =================//
+
+    setFocusPolicy(
+        Qt::StrongFocus
+        );
+
+    //================ TIMER =================//
+
+    timer = new QTimer(this);
+
+    connect(
+        timer,
+        &QTimer::timeout,
+        this,
+        &GameWindow::updateGame
+        );
+
+    //================ STAR ANIMATION TIMER =================//
+
+    animTimer = new QTimer(this);
+
+    connect(
+        animTimer,
+        &QTimer::timeout,
+        this,
+        &GameWindow::tickTitleAnimation
+        );
+
+    animTimer->start(80);
+
+    //================ FIRST SCREEN =================//
+
+    stack->setCurrentWidget(
+        startScreen
+        );
+>>>>>>> Stashed changes
 
     stack->setCurrentWidget(startScreen);
     showMaximized();
@@ -87,6 +151,7 @@ GameWindow::GameWindow(QWidget *parent)
     levelWinSound->setVolume(0.6);
 }
 
+<<<<<<< Updated upstream
 /* ================================================================
    LEVEL 2 HUD — full polished stone-tablet style game bar
    ================================================================ */
@@ -405,10 +470,115 @@ void GameWindow::updateTorchFlicker()
 /* ================================================================
    ANIMATED TITLE SCREEN — gold particle drift
    ================================================================ */
+=======
+/* ================= HIEROGLYPH SCREEN ================= */
+
+void GameWindow::setupHieroglyphScreen()
+{
+    hieroglyphScreen = new QWidget();
+
+    hieroglyphScreen->setStyleSheet(
+        "background-color: #080400;"
+        );
+
+    QVBoxLayout* root =
+        new QVBoxLayout(hieroglyphScreen);
+
+    root->setContentsMargins(30, 16, 30, 20);
+    root->setSpacing(14);
+
+    //================ TITLE =================//
+
+    QLabel* title = new QLabel("THE STONES HAVE SPOKEN");
+    title->setAlignment(Qt::AlignCenter);
+    title->setStyleSheet(
+        "font-size: 24px; font-weight: bold; color: #f5d060;"
+        "letter-spacing: 5px; background: transparent;"
+        );
+
+    //================ INSTRUCTION =================//
+
+    QLabel* instruction = new QLabel(
+        "Study the hieroglyph alphabet below carefully.\n"
+        "Each stone carries one symbol — identify what each one means.\n"
+        "Memorize the symbols and their English letters.\n"
+        "You will need this knowledge in Level 3."
+        );
+    instruction->setAlignment(Qt::AlignCenter);
+    instruction->setWordWrap(true);
+    instruction->setStyleSheet(
+        "font-size: 13px; color: #c8a84b; font-style: italic;"
+        "background: transparent; line-height: 1.6;"
+        );
+
+    //================ CHART IMAGE =================//
+
+    QLabel* chart = new QLabel();
+    chart->setPixmap(
+        QPixmap(":/new/prefix1/images/hieroglyph_chart-2.png")
+            .scaled(1060, 580, Qt::KeepAspectRatio, Qt::SmoothTransformation)
+        );
+    chart->setAlignment(Qt::AlignCenter);
+
+    //================ REMINDER =================//
+
+    QLabel* reminder = new QLabel(
+        "⚠   You will be asked to use this knowledge in Level 3. Do not forget."
+        );
+    reminder->setAlignment(Qt::AlignCenter);
+    reminder->setStyleSheet(
+        "font-size: 12px; color: rgba(200,160,60,160);"
+        "background: transparent; letter-spacing: 1px;"
+        );
+
+    //================ BUTTON =================//
+
+    QPushButton* proceedBtn =
+        new QPushButton("✓   I HAVE MEMORIZED THE SYMBOLS");
+
+    proceedBtn->setFixedHeight(52);
+    proceedBtn->setFixedWidth(420);
+    proceedBtn->setCursor(Qt::PointingHandCursor);
+    proceedBtn->setStyleSheet(
+        "QPushButton {"
+        "  background-color: rgba(180,130,40,220); color: #fff8e7;"
+        "  font-size: 14px; font-weight: bold; letter-spacing: 3px;"
+        "  border: 2px solid #c8a84b; border-radius: 8px;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: rgba(220,170,60,240);"
+        "  border-color: #fff8e7;"
+        "}"
+        "QPushButton:pressed { background-color: rgba(130,90,20,255); }"
+        );
+
+    connect(proceedBtn, &QPushButton::clicked, this, [=]() {
+        // Proceed to win screen / Level 3
+        stack->setCurrentWidget(gameOverScreen);
+    });
+
+    root->addWidget(title);
+    root->addWidget(instruction);
+    root->addWidget(chart);
+    root->addWidget(reminder);
+    root->addWidget(proceedBtn, 0, Qt::AlignCenter);
+
+    stack->addWidget(hieroglyphScreen);
+}
+
+void GameWindow::showHieroglyphScreen()
+{
+    timer->stop();
+    stack->setCurrentWidget(hieroglyphScreen);
+}
+
+/* ================= STAR PARTICLE ANIMATION ================= */
+>>>>>>> Stashed changes
 
 void GameWindow::tickTitleAnimation()
 {
     animFrame++;
+<<<<<<< Updated upstream
     // Move each particle upward and reset when off screen
     for (QLabel* p : particles)
     {
@@ -420,10 +590,36 @@ void GameWindow::tickTitleAnimation()
         p->setStyleSheet(
             QString("color: rgba(200,160,60,%1); font-size: 14px; background: transparent;")
                 .arg(int(alpha * 255))
+=======
+
+    for(QLabel* p : particles)
+    {
+        // Float upward
+        int y = p->y() - 1;
+
+        if(y < -20)
+            y = startScreen->height() + 10;
+
+        p->move(p->x(), y);
+
+        // Sine-wave fade in/out
+        double alpha =
+            0.3 + 0.55 * std::abs(
+                      std::sin(animFrame * 0.04 + p->x() * 0.01)
+                      );
+
+        p->setStyleSheet(
+            QString(
+                "color: rgba(200,160,60,%1);"
+                "font-size: 14px;"
+                "background: transparent;"
+                ).arg(int(alpha * 255))
+>>>>>>> Stashed changes
             );
     }
 }
 
+<<<<<<< Updated upstream
 /* ================================================================
    HEALTH SYSTEM
    ================================================================ */
@@ -638,6 +834,9 @@ void GameWindow::updateMiniMap()
 /* ================================================================
    START SCREEN
    ================================================================ */
+=======
+/* ================= START SCREEN ================= */
+>>>>>>> Stashed changes
 
 void GameWindow::setupStartScreen()
 {
@@ -729,7 +928,35 @@ void GameWindow::setupStartScreen()
         particles.append(p);
     }
 
+<<<<<<< Updated upstream
     startScreen->setMinimumSize(1000, 700);
+=======
+    //================ FLOATING STAR PARTICLES =================//
+    // 18 gold ✦ stars at random positions — animated by tickTitleAnimation()
+
+    for(int i = 0; i < 18; i++)
+    {
+        QLabel* star = new QLabel("✦", startScreen);
+
+        star->setStyleSheet(
+            "color: rgba(200,160,60,120);"
+            "font-size: 14px;"
+            "background: transparent;"
+            );
+
+        star->resize(20, 20);
+
+        star->move(
+            50  + QRandomGenerator::global()->bounded(1200),
+            100 + QRandomGenerator::global()->bounded(700)
+            );
+
+        star->show();
+
+        particles.append(star);
+    }
+
+>>>>>>> Stashed changes
     stack->addWidget(startScreen);
 }
 
@@ -1511,9 +1738,20 @@ void GameWindow::movePlayer(int dx, int dy)
 
 bool GameWindow::isWalkable(QPointF newPos)
 {
+<<<<<<< Updated upstream
     if (collisionMask.isNull()) return true;
 
     QRectF rect = playerSprite->sceneBoundingRect();
+=======
+    //================ NO MASK = FREE MOVEMENT =================//
+    // Level 2 clears the collision mask — allow all movement
+
+    if(collisionMask.isNull())
+        return true;
+
+    QRectF rect =
+        playerSprite->sceneBoundingRect();
+>>>>>>> Stashed changes
 
     QPointF scenePos(
         newPos.x() + rect.width()  / 2,
@@ -1582,8 +1820,45 @@ void GameWindow::checkArtifactCollisions()
 
         if (currentLevel->getArtifactCount() == 0 && !level2DoorUnlocked)
         {
+<<<<<<< Updated upstream
             level2DoorUnlocked = true;
             showHieroglyphScreen();
+=======
+            seconds += 30;
+        }
+
+        updateInventoryUI();
+
+        updateHUD();
+
+        //================ LEVEL COMPLETE =================//
+
+        if(currentLevel->getArtifactCount() == 0)
+        {
+            timer->stop();
+
+            //================ STOP ENEMY =================//
+
+            if(mummy)
+            {
+                mummy->setPaused(true);
+            }
+
+            //================ LEVEL 1 =================//
+
+            if(game.getLevelIndex() == 1)
+            {
+                showLevel2BriefingPopup();
+            }
+
+            //================ LEVEL 2 =================//
+
+            else if(game.getLevelIndex() == 2)
+            {
+                showHieroglyphScreen();
+            }
+
+>>>>>>> Stashed changes
             return;
         }
     }
@@ -1741,6 +2016,7 @@ void GameWindow::updateGame()
 
     game.update(1.0f);
 
+<<<<<<< Updated upstream
     if (seconds <= 0)
     {
         timer->stop();
@@ -1765,6 +2041,28 @@ void GameWindow::updateGame()
         QPushButton* restartBtn = msg->addButton("TRY AGAIN", QMessageBox::AcceptRole);
         msg->addButton("EXIT", QMessageBox::RejectRole);
         msg->exec();
+=======
+    // Only call updatePlayerGlow if we are actually in Level 2
+    // AND playerSprite is valid (not deleted by scene->clear)
+    if(playerSprite && currentLevel)
+    {
+        Level2* level2 =
+            dynamic_cast<Level2*>(currentLevel);
+
+        if(level2)
+        {
+            level2->updatePlayerGlow(playerSprite);
+        }
+    }
+
+    if(seconds <= 0)
+    {
+        timer->stop();
+
+        stack->setCurrentWidget(gameOverScreen);
+    }
+}
+>>>>>>> Stashed changes
 
         if (msg->clickedButton() == restartBtn)
             restartGame();
@@ -1787,7 +2085,17 @@ void GameWindow::updateGame()
 
 void GameWindow::keyPressEvent(QKeyEvent *event)
 {
+<<<<<<< Updated upstream
     if (stack->currentWidget() != gameScreen) return;
+=======
+    // Stop the game timer and pause everything
+    timer->stop();
+    game.pauseGame();
+    if(mummy)
+    {
+        mummy->setPaused(true);
+    }
+>>>>>>> Stashed changes
 
     // Base step = 3 (Level1) or 5 (Level2), handled inside movePlayer
     int step = 3;
@@ -1809,9 +2117,312 @@ void GameWindow::pauseGame()
     showPauseMenu();
 }
 
+<<<<<<< Updated upstream
 void GameWindow::restartGame()
 {
     timer->stop();
+=======
+void GameWindow::showLevel2BriefingPopup()
+{
+    //================ STOP GAME ONLY =================//
+
+    timer->stop();
+
+    if(mummy)
+    {
+        mummy->setPaused(true);
+    }
+
+    //================ DIMMER =================//
+
+    QWidget* dimmer =
+        new QWidget(this);
+
+    dimmer->setGeometry(
+        0,
+        0,
+        width(),
+        height()
+        );
+
+    dimmer->setStyleSheet(
+        "background-color:rgba(0,0,0,200);"
+        );
+
+    dimmer->show();
+
+    dimmer->raise();
+
+    //================ POPUP =================//
+
+    QWidget* popup =
+        new QWidget(dimmer);
+
+    popup->setFixedSize(760,620);
+
+    popup->move(
+        (dimmer->width()-760)/2,
+        (dimmer->height()-620)/2
+        );
+
+    popup->setStyleSheet(
+        "background-color:rgba(5,3,0,240);"
+        "border:2px solid rgba(200,160,60,220);"
+        "border-radius:14px;"
+        );
+
+    //================ LAYOUT =================//
+
+    QVBoxLayout* pl =
+        new QVBoxLayout(popup);
+
+    pl->setContentsMargins(
+        44,
+        36,
+        44,
+        32
+        );
+
+    pl->setSpacing(18);
+
+    //================ TITLE =================//
+
+    QLabel* title =
+        new QLabel(
+            "WING II — THE HIEROGLYPH VAULT"
+            );
+
+    title->setAlignment(
+        Qt::AlignCenter
+        );
+
+    title->setStyleSheet(
+        "font-size:24px;"
+        "font-weight:bold;"
+        "color:#f5d060;"
+        "letter-spacing:4px;"
+        "background:transparent;"
+        "border:none;"
+        );
+
+    //================ STORY =================//
+
+    QString storyText =
+        QString(
+            "You secured the first hall — well done, <b>%1</b>.<br><br>"
+
+            "You now enter the sacred Room of Tutankhamun.<br><br>"
+
+            "But the east wing has gone dark. "
+            "Something ancient has awakened in the deepest vault "
+            "of the museum... and it is not alone."
+            ).arg(playerName);
+
+    QLabel* story =
+        new QLabel(storyText);
+
+    story->setWordWrap(true);
+
+    story->setAlignment(
+        Qt::AlignCenter
+        );
+
+    story->setStyleSheet(
+        "font-size:15px;"
+        "color:#e8d5a8;"
+        "background:transparent;"
+        "border:none;"
+        "line-height:1.7;"
+        );
+
+    //================ OBJECTIVES =================//
+
+    QLabel* objective =
+        new QLabel(
+            "<span style='color:#c8a84b; font-weight:bold; font-size:15px;'>NEW OBJECTIVE</span><br><br>"
+
+            "The vault contains <b>3 Sacred Stones</b>, each carved "
+            "with an ancient hieroglyph — a symbol whose meaning "
+            "has been lost to time.<br><br>"
+
+            "The stones have been scattered across the chamber. "
+            "<b>Collect all three</b> to reveal their secret.<br><br>"
+
+            "<span style='color:#f5d060;'>&#9656;</span> "
+            "The room is <b>pitch black</b> — trust your torch.<br><br>"
+
+            "<span style='color:#f5d060;'>&#9656;</span> "
+            "A dark spirit roams the chamber. Avoid it or lose score.<br><br>"
+
+            "<span style='color:#f5d060;'>&#9656;</span> "
+            "Collect all three stones to unlock the ancient secret."
+            );
+
+    objective->setWordWrap(true);
+
+    objective->setStyleSheet(
+        "font-size:13px;"
+        "color:#d4c090;"
+        "background:transparent;"
+        "border:none;"
+        "line-height:1.8;"
+        );
+
+    //================ WARNING =================//
+
+    QLabel* warning =
+        new QLabel(
+            "The hieroglyphs whisper in the dark..."
+            );
+
+    warning->setAlignment(
+        Qt::AlignCenter
+        );
+
+    warning->setStyleSheet(
+        "font-size:13px;"
+        "color:rgba(200,160,60,180);"
+        "font-style:italic;"
+        "background:transparent;"
+        "border:none;"
+        );
+
+    //================ BUTTON =================//
+
+    QPushButton* enterBtn =
+        new QPushButton(
+            "▶   ENTER THE ROOM OF TUTANKHAMUN"
+            );
+
+    enterBtn->setFixedHeight(58);
+
+    enterBtn->setCursor(
+        Qt::PointingHandCursor
+        );
+
+    enterBtn->setStyleSheet(
+        "QPushButton {"
+        " background-color:rgba(180,130,40,220);"
+        " color:#fff8e7;"
+        " font-size:16px;"
+        " font-weight:bold;"
+        " letter-spacing:3px;"
+        " border:2px solid #c8a84b;"
+        " border-radius:8px;"
+        "}"
+        "QPushButton:hover {"
+        " background-color:rgba(220,170,60,240);"
+        " border:2px solid #fff;"
+        "}"
+        "QPushButton:pressed {"
+        " background-color:rgba(130,90,20,255);"
+        "}"
+        );
+
+    //================ ADD =================//
+
+    pl->addWidget(title);
+
+    pl->addWidget(story);
+
+    pl->addWidget(objective);
+
+    pl->addWidget(warning);
+
+    pl->addStretch();
+
+    pl->addWidget(
+        enterBtn,
+        0,
+        Qt::AlignCenter
+        );
+
+    popup->show();
+
+    //================ ENTER LEVEL 2 =================//
+
+    connect(
+        enterBtn,
+        &QPushButton::clicked,
+        this,
+        [=]()
+        {
+            dimmer->deleteLater();
+
+            //================ STOP TIMER & NULL POINTERS FIRST =================//
+            // Critical: stop the timer BEFORE scene->clear() so updateGame()
+            // cannot fire with stale/deleted pointers mid-transition
+
+            timer->stop();
+
+            playerSprite = nullptr;  // mark invalid before scene clear
+
+            if(mummy)
+            {
+                mummy->setPaused(true);
+                mummy = nullptr;
+            }
+
+            //================ LOAD LEVEL 2 =================//
+
+            game.loadLevel(2);
+
+            currentLevel = game.getCurrentLevel();
+
+            scene->clear();   // safe — all pointers nulled above
+
+            currentLevel->loadScene(scene);
+
+            //================ COLLISION MASK =================//
+            // Level 2 uses free movement — clear the BW mask
+
+            collisionMask = QImage();
+
+            //================ PLAYER =================//
+
+            playerSprite = scene->addPixmap(spriteFront);
+
+            playerSprite->setScale(0.12);
+
+            // Z=850 — above dark overlay (795) and player glow (800)
+            playerSprite->setZValue(850);
+
+            playerSprite->setPos(400, 500);
+
+            game.getPlayer().moveTo(400, 500);
+
+            //================ TIMER =================//
+
+            seconds = 180;   // 3-minute limit for Level 2
+
+            timer->start(1000);  // restart AFTER everything is set up
+
+            //================ SCREEN =================//
+
+            stack->setCurrentWidget(gameScreen);
+
+            this->setFocus();
+        }
+        );
+}
+/* ================= RESTART ================= */
+
+void GameWindow::restartGame()
+{
+    timer->stop();
+
+    //================ STOP ENEMY BEFORE CLEAR =================//
+    // Null the pointer first so no timer callback fires after deletion
+
+    if(mummy)
+    {
+        mummy->setPaused(true);
+        mummy = nullptr;
+    }
+
+    //================ CLEAR SCENE ================//
+
+>>>>>>> Stashed changes
     scene->clear();
     inLevel2           = false;
     level2DoorUnlocked = false;

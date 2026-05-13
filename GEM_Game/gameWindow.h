@@ -18,10 +18,16 @@
 #include <QImage>
 #include <QSoundEffect>
 #include <QUrl>
+<<<<<<< Updated upstream
 #include <QPropertyAnimation>
 #include <QGraphicsOpacityEffect>
 
 #include "game.h"
+=======
+#include <QList>
+#include "game.h"
+#include "level1enemy.h"
+>>>>>>> Stashed changes
 #include "Level2.h"
 
 class GameWindow : public QMainWindow
@@ -36,22 +42,30 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
 
 private slots:
-
     void startGame();
+<<<<<<< Updated upstream
     void startLevel2();
     void showHieroglyphScreen();
     void pauseGame();
     void showPauseMenu();          // proper pause overlay
+=======
+    void pauseGame();
+>>>>>>> Stashed changes
     void restartGame();
     void exitGame();
     void updateGame();
     void showBriefingPopup(const QString &playerName);
+<<<<<<< Updated upstream
     void showLevel2BriefingPopup();
     void tickTitleAnimation();     // drives animated start screen particles
+=======
+    void tickTitleAnimation();   // drives floating star particles
+>>>>>>> Stashed changes
 
 private:
 
     //================ GAME =================//
+<<<<<<< Updated upstream
     Game    game;
     Level*  currentLevel;
     Level2* level2Ptr;
@@ -68,14 +82,27 @@ private:
     QLabel* healthLabel;           // ankh row in HUD
     bool    isInvincible;          // brief grace period after hit
     int     invincibleFrames;
+=======
+    void showFireballGameOver();
+    void showHieroglyphScreen();
+    Game game;
+    Level* currentLevel;
+    QString playerName;
+    QTimer* timer;
+    int seconds;
+>>>>>>> Stashed changes
 
     //================ STACK =================//
     QStackedWidget* stack;
     QWidget* startScreen;
     QWidget* gameScreen;
+<<<<<<< Updated upstream
     QWidget* pauseScreen;          // proper pause overlay
     QWidget* gameOverScreen;
     QWidget* winScreen;
+=======
+    QWidget* gameOverScreen;
+>>>>>>> Stashed changes
     QWidget* hieroglyphScreen;
 
     //================ LEVEL 2 HUD =================//
@@ -94,18 +121,34 @@ private:
     int      rockCollectTime;
     bool     wraithWarningShown;
 
+<<<<<<< Updated upstream
     //================ MINI-MAP (Level 2) =================//
     QWidget* miniMap;              // small overlay showing room + rock dots
     QLabel*  miniMapRock1;
     QLabel*  miniMapRock2;
     QLabel*  miniMapRock3;
     QLabel*  miniMapPlayer;
+=======
+    int coinCount   = 2;
+    int scrollCount = 2;
+    int maskCount   = 2;
+    int amuletCount = 2;
+    int timerCount  = 2;
+>>>>>>> Stashed changes
 
     //================ HUD =================//
     QLabel* clockLabel;
     QLabel* scoreLabel;
     QLabel* statusLabel;
+<<<<<<< Updated upstream
     QLabel* bgOverlay;
+=======
+
+    void saveGame();
+    void loadGame();
+
+    QLabel*    bgOverlay;
+>>>>>>> Stashed changes
     QLineEdit* guestNameEdit;
 
     //================ INVENTORY =================//
@@ -120,7 +163,24 @@ private:
     QLabel* amuletCounter;
     QLabel* timerCounter;
 
+<<<<<<< Updated upstream
     //================ SOUNDS =================//
+=======
+    //================ GRAPHICS =================//
+    QGraphicsScene*      scene;
+    QGraphicsView*       view;
+    Level1Enemy*         mummy;
+    QGraphicsPixmapItem* playerSprite;
+    QImage               collisionMask;
+
+    //================ DIRECTIONAL SPRITES =================//
+    QPixmap spriteFront;
+    QPixmap spriteBack;
+    QPixmap spriteLeft;
+    QPixmap spriteRight;
+
+    //================ SOUND =================//
+>>>>>>> Stashed changes
     QSoundEffect* startMusic;
     QSoundEffect* collectSound;    // artifact/rock pickup
     QSoundEffect* hitSound;        // player takes damage
@@ -136,9 +196,15 @@ private:
     QList<QLabel*> particles;      // floating gold particle labels
     int            animFrame;
 
+    //================ STAR PARTICLES (start screen) =================//
+    QTimer*       animTimer;        // 80 ms tick for particle animation
+    QList<QLabel*> particles;       // the floating ✦ star labels
+    int            animFrame;       // counter used for sine-fade
+
     //================ HELPERS =================//
     void setupStartScreen();
     void setupGameScreen();
+<<<<<<< Updated upstream
     void setupPauseScreen();       // proper pause overlay
     void setupGameOverScreen();
     void setupWinScreen();
@@ -148,11 +214,16 @@ private:
     void updateLevel2HUD();
     void updateMiniMap();
     void updateTorchFlicker();
+=======
+    void setupGameOverScreen();
+    void setupHieroglyphScreen();
+>>>>>>> Stashed changes
     void setupHUD(QVBoxLayout* mainLayout);
     void setupInventoryUI(QHBoxLayout* gameLayout);
     void setupButtons(QVBoxLayout* mainLayout);
     void updateHUD();
     void updateInventoryUI();
+<<<<<<< Updated upstream
     void updateHealthDisplay();
     void takeDamage(int amount);   // deduct health, flash, check death
     void movePlayer(int dx, int dy);
@@ -161,6 +232,12 @@ private:
     void checkDoorCollision();
     void saveGame();
     void loadGame();
+=======
+
+    void movePlayer(int dx, int dy, const QPixmap& sprite);
+    bool isWalkable(QPointF newPos);
+    void checkArtifactCollisions();
+>>>>>>> Stashed changes
 };
 
 #endif // GAMEWINDOW_H

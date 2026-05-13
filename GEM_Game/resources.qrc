@@ -26,10 +26,18 @@
         <file>images/maskt.png</file>
         <file>images/scrollt.png</file>
         <file>images/timert.png</file>
+<<<<<<< Updated upstream
         <file>images/hieroglyph_chart-2.png</file>
         <file>images/rock_A-3.png</file>
         <file>images/rock_M.png</file>
         <file>images/rock_N.png</file>
+=======
+        <file>images/Level2.jpeg</file>
+        <file>images/rock_M.png</file>
+        <file>images/rock_A-3.png</file>
+        <file>images/rock_N.png</file>
+        <file>images/hieroglyph_chart-2.png</file>
+>>>>>>> Stashed changes
     </qresource>
     <qresource prefix="/"/>
 </RCC>

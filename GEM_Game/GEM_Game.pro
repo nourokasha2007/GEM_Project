@@ -60,4 +60,15 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resources.qrc
+<<<<<<< Updated upstream
+=======
+CONFIG += resources_big
+
+DISTFILES += \
+    images/Level2.jpeg \
+    images/hieroglyph_chart-2.png \
+    images/rock_A-3.png \
+    images/rock_M.png \
+    images/rock_N.png
+>>>>>>> Stashed changes
 

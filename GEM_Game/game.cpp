@@ -157,10 +157,16 @@ bool Game::hasCollected(QString type) const
 
 void Game::checkWin()
 {
+<<<<<<< Updated upstream
     // Win is now handled by GameWindow (door collision in Level 2),
     // so we only trigger the old score-based check as a fallback.
     if (player.getScore() >= 150)
         state = Gamestate::gameOver;
+=======
+    // Win condition is handled by GameWindow (artifact collection)
+    // Do NOT auto-win based on score — score accumulates across levels
+    // and would falsely trigger game over in Level 2
+>>>>>>> Stashed changes
 }
 
 /* ================= LOSE ================= */
