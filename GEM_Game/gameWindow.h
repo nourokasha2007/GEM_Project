@@ -153,6 +153,7 @@ private:
 
       QSoundEffect* startMusic;
       QSoundEffect* horrorMusic;
+      QSoundEffect* level3Music;
 
 
     //================ HELPERS =================//

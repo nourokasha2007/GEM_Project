@@ -188,7 +188,7 @@ void Level1Enemy::shootHomingProjectile() {
         double normalX = distanceX / distanceToTarget;
         double normalY = distanceY / distanceToTarget;
 
-        projectile->setPos(projectileX + (normalX * 4), projectileY + (normalY * 4));
+        projectile->setPos(projectileX + (normalX * 5), projectileY + (normalY * 5));
     });
 
     homingTimer->start(50);

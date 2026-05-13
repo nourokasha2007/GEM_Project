@@ -33,6 +33,8 @@ private:
 
     bool passwordSolved;
 
+    bool popupShown;
+
     QPixmap closedTreasure;
 
     QPixmap openTreasure;

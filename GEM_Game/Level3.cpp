@@ -1,5 +1,4 @@
 #include "Level3.h"
-
 #include <QBrush>
 #include <QColor>
 #include <QPen>
@@ -7,6 +6,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QApplication>
+#include <QObject>
 
 /* ================================================================
    CONSTRUCTOR
@@ -19,6 +19,12 @@ Level3::Level3()
     treasureOpened = false;
 
     passwordSolved = false;
+
+    popupShown = false;
+
+    collisionMask.load(
+        ":/new/prefix1/images/level3 BW.png"
+        );
 
     closedTreasure.load(
         ":/new/prefix1/images/Treasureclosed.png"
@@ -57,6 +63,7 @@ void Level3::loadScene(
     scene->setSceneRect(
         bg.rect()
         );
+
 
     //================ TREASURE =================//
 
@@ -99,8 +106,9 @@ void Level3::checkTreasureCollision(
     QRectF treasureArea =
         treasure->sceneBoundingRect();
 
-    if(playerRect.intersects(treasureArea))
+    if(playerRect.intersects(treasureArea)&& !popupShown)
     {
+        popupShown =true;
         showPasswordPopup();
     }
 }
@@ -354,7 +362,7 @@ void Level3::showVictoryPopup()
 
     //================ PLAY AGAIN =================//
 
-    QBoxLayout::connect(
+    QObject::connect(
         playAgain,
         &QPushButton::clicked,
         [=]()
@@ -365,7 +373,7 @@ void Level3::showVictoryPopup()
 
     //================ EXIT =================//
 
-    QBoxLayout::connect(
+    QObject::connect(
         exitBtn,
         &QPushButton::clicked,
         [=]()

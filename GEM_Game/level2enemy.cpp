@@ -80,14 +80,18 @@ void Level2Enemy::updateAI() {
         if (std::abs(differenceX) > std::abs(differenceY)) {
             if (differenceX > 0) {
                 setPixmap(imgRight);
+                setScale(0.15);
             } else {
                 setPixmap(imgLeft);
+                setScale(0.1);
             }
         } else {
             if (differenceY > 0) {
                 setPixmap(imgForward);
+                setScale(0.2);
             } else {
                 setPixmap(imgBack);
+                setScale(0.2);
             }
         }
 

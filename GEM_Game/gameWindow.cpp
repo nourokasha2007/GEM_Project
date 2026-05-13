@@ -7,7 +7,7 @@
 #include <QDir>
 #include "level1enemy.h"
 #include "Level2.h"
-// #include "Level3.h"
+#include "Level3.h"
 
 /* ================= CONSTRUCTOR ================= */
 
@@ -84,7 +84,7 @@ GameWindow::GameWindow(QWidget *parent)
 
     startMusic->play();
 
-     //================ MUSIC LEVEL 2 =================//
+    //================ MUSIC LEVEL 2 =================//
     startMusic->setLoopCount(
         QSoundEffect::Infinite
         );
@@ -95,6 +95,13 @@ GameWindow::GameWindow(QWidget *parent)
     horrorMusic->setSource(QUrl("qrc:/new/prefix1/sounds/horror theme.wav"));
     horrorMusic->setVolume(0.5);
     horrorMusic->setLoopCount(QSoundEffect::Infinite);
+
+
+    //================ MUSIC LEVEL 3 =================//
+    level3Music = new QSoundEffect(this);
+    level3Music->setSource(QUrl("qrc:/new/prefix1/sounds/Victory theme.wav"));
+    level3Music->setVolume(0.5);
+    level3Music->setLoopCount(QSoundEffect::Infinite);
 }
 
 /* ================= START SCREEN ================= */
@@ -506,13 +513,9 @@ void GameWindow::showBriefingPopup(const QString &playerName)
         this,
         [=]()
         {
-            // dimmer->deleteLater();
-
-            // startGame();
-
             dimmer->deleteLater();
-            game.startGame();              // Initialize the engine
-            showLevel2BriefingPopup();     // Skip straight to Level 2
+
+            startGame();
         }
         );
 }
@@ -1081,40 +1084,56 @@ void GameWindow::handleGhostStrike()
     if (playerSpeedStep < 1) {
         playerSpeedStep = 1;
     }
-}
 
+    QTimer::singleShot(10000, this, [=]() {
+        playerSpeedStep = playerSpeedStep + 1;
+
+        if (playerSpeedStep > 3) {
+            playerSpeedStep = 3;
+        }
+    });
+}
 /* ================= GHOST FLASH EFFECT ================= */
 
 void GameWindow::showBlankScreen()
 {
-    // Each time the ghost screeches, we flash again.
-    // Only after the 3rd screech we go to Game Over.
+
     static int screechFlashCount = 0;
     screechFlashCount++;
 
     bool finalHit = (screechFlashCount >= 3);
 
-    // Stop the game timer and pause everything.
-    // (Gameplay will resume only after 1st/2nd hits.)
+
     timer->stop();
     game.pauseGame();
 
     if (ghost) ghost->setPaused(true);
 
-    // Silence background horror music during the flash.
     if (horrorMusic) horrorMusic->setVolume(0.0);
 
-    // Flash overlay
+
     QWidget* flash = new QWidget(this);
     flash->setGeometry(0, 0, width(), height());
     flash->show();
     flash->raise();
 
-    // Longer flash on the 3rd screech
-    int whiteMs = finalHit ? 250 : 120;
-    int blackMs = finalHit ? 200 : 100;
-    int white2Ms = finalHit ? 250 : 120;
-    int redMs = finalHit ? 700 : 250;
+
+    int whiteMs;
+    int blackMs;
+    int white2Ms;
+    int redMs;
+
+    if (finalHit == true) {
+        whiteMs = 250;
+        blackMs = 200;
+        white2Ms = 250;
+        redMs = 700;
+    } else {
+        whiteMs = 120;
+        blackMs = 100;
+        white2Ms = 120;
+        redMs = 250;
+    }
 
     flash->setStyleSheet("background-color: white;");
 
@@ -1130,22 +1149,37 @@ void GameWindow::showBlankScreen()
                 QTimer::singleShot(redMs, this, [=]() {
                     flash->deleteLater();
 
-                    // Teleport the ghost away from the player after the flash finishes.
+
                     if (ghost) {
                         const double px = game.getPlayer().getX();
                         const double py = game.getPlayer().getY();
 
-                        // Offset keeps it far enough in most cases.
-                        double tx = px + 600;
-                        double ty = py + 300;
 
-                        // Clamp into the visible scene rect if available.
-                        const QRectF r = scene ? scene->sceneRect() : QRectF();
-                        if (r.isValid()) {
-                            tx = std::max(r.left(), std::min(tx, r.right()  - ghost->boundingRect().width()));
-                            ty = std::max(r.top(),  std::min(ty, r.bottom() - ghost->boundingRect().height()));
+                        double tx = px + 200;
+                        double ty = py + 100;
+
+                        if (scene != nullptr) {
+                            double minX = scene->sceneRect().left();
+                            double maxX = scene->sceneRect().right() - ghost->boundingRect().width();
+                            double minY = scene->sceneRect().top();
+                            double maxY = scene->sceneRect().bottom() - ghost->boundingRect().height();
+
+                            if (tx < minX) {
+                                tx = minX;
+                            }
+
+                            if (tx > maxX) {
+                                tx = maxX;
+                            }
+
+                            if (ty < minY) {
+                                ty = minY;
+                            }
+
+                            if (ty > maxY) {
+                                ty = maxY;
+                            }
                         }
-
                         ghost->setPos(tx, ty);
                     }
 
@@ -1155,7 +1189,7 @@ void GameWindow::showBlankScreen()
                     }
                     else
                     {
-                        // Resume play after 1st/2nd screech.
+
                         game.resumeGame();
                         if (ghost) ghost->setPaused(false);
                         timer->start(1000);
@@ -1205,6 +1239,18 @@ void GameWindow::movePlayer(
             );
 
         checkArtifactCollisions();
+
+        //================ LEVEL 3 TREASURE =================//
+
+        Level3* level3 =
+            dynamic_cast<Level3*>(currentLevel);
+
+        if(level3)
+        {
+            level3->checkTreasureCollision(
+                playerSprite
+                );
+        }
     }
 }
 
@@ -1494,244 +1540,248 @@ void GameWindow::updateLevel2HUD()
 
 void GameWindow::showHieroglyphScreen()
 {
-        timer->stop();
+    timer->stop();
 
-        QWidget* dimmer =
-            new QWidget(this);
+    QWidget* dimmer =
+        new QWidget(this);
 
-        dimmer->setGeometry(
-            0,
-            0,
-            width(),
-            height()
+    dimmer->setGeometry(
+        0,
+        0,
+        width(),
+        height()
+        );
+
+    dimmer->setStyleSheet(
+        "background-color:rgba(0,0,0,220);"
+        );
+
+    dimmer->show();
+
+    dimmer->raise();
+
+    //================ SCREEN =================//
+
+    QWidget* popup =
+        new QWidget(dimmer);
+
+    popup->setFixedSize(900,650);
+
+    popup->move(
+        (width()-900)/2,
+        (height()-650)/2
+        );
+
+    popup->setStyleSheet(
+        "background-color:rgba(8,4,0,240);"
+        "border:2px solid rgba(200,160,60,220);"
+        "border-radius:14px;"
+        );
+
+    //================ LAYOUT =================//
+
+    QVBoxLayout* layout =
+        new QVBoxLayout(popup);
+
+    layout->setContentsMargins(
+        30,
+        20,
+        30,
+        20
+        );
+
+    layout->setSpacing(16);
+
+    //================ TITLE =================//
+
+    QLabel* title =
+        new QLabel(
+            "THE SACRED STONES REVEAL A WORD"
             );
 
-        dimmer->setStyleSheet(
-            "background-color:rgba(0,0,0,220);"
+    title->setAlignment(Qt::AlignCenter);
+
+    title->setStyleSheet(
+        "font-size:22px;"
+        "font-weight:bold;"
+        "color:#f5d060;"
+        "letter-spacing:4px;"
+        );
+
+    //================ IMAGE =================//
+
+    QLabel* image =
+        new QLabel();
+
+    image->setPixmap(
+        QPixmap(":/new/prefix1/images/hieroglyph_chart-2.png")
+            .scaled(
+                760,
+                430,
+                Qt::KeepAspectRatio,
+                Qt::SmoothTransformation
+                )
+        );
+
+    image->setAlignment(Qt::AlignCenter);
+
+    //================ PASSWORD =================//
+
+    QLabel* password =
+        new QLabel(
+            "The symbols translate to:\n\n"
+            "M   •   A   •   N\n\n"
+            "Memorize the ancient password."
             );
 
-        dimmer->show();
+    password->setAlignment(Qt::AlignCenter);
 
-        dimmer->raise();
+    password->setStyleSheet(
+        "font-size:18px;"
+        "font-weight:bold;"
+        "color:#f5d060;"
+        "line-height:1.8;"
+        );
 
-        //================ SCREEN =================//
+    //================ BUTTON =================//
 
-        QWidget* popup =
-            new QWidget(dimmer);
-
-        popup->setFixedSize(900,650);
-
-        popup->move(
-            (width()-900)/2,
-            (height()-650)/2
+    QPushButton* continueBtn =
+        new QPushButton(
+            "▶ CONTINUE"
             );
 
-        popup->setStyleSheet(
-            "background-color:rgba(8,4,0,240);"
-            "border:2px solid rgba(200,160,60,220);"
-            "border-radius:14px;"
-            );
+    continueBtn->setFixedHeight(50);
 
-        //================ LAYOUT =================//
+    continueBtn->setStyleSheet(
+        "QPushButton {"
+        "background-color:rgba(180,130,40,220);"
+        "color:white;"
+        "font-size:15px;"
+        "font-weight:bold;"
+        "border-radius:8px;"
+        "border:2px solid #c8a84b;"
+        "padding:10px;"
+        "}"
 
-        QVBoxLayout* layout =
-            new QVBoxLayout(popup);
+        "QPushButton:hover {"
+        "background-color:rgba(220,170,60,240);"
+        "}"
+        );
 
-        layout->setContentsMargins(
-            30,
-            20,
-            30,
-            20
-            );
+    //================ ADD =================//
 
-        layout->setSpacing(16);
+    layout->addWidget(title);
 
-        //================ TITLE =================//
+    layout->addWidget(image);
 
-        QLabel* title =
-            new QLabel(
-                "THE SACRED STONES REVEAL A WORD"
+    layout->addWidget(password);
+
+    layout->addStretch();
+
+    layout->addWidget(
+        continueBtn,
+        0,
+        Qt::AlignCenter
+        );
+
+    popup->show();
+
+    //================ CONTINUE =================//
+
+    connect(
+        continueBtn,
+        &QPushButton::clicked,
+        this,
+        [=]()
+        {
+            //================ CLOSE POPUP =================//
+
+            dimmer->deleteLater();
+
+            //================ LOAD LEVEL 3 =================//
+
+            game.loadLevel(3);
+
+            currentLevel = game.getCurrentLevel();
+
+            //================ CLEAR OLD SCENE =================//
+
+            scene->clear();
+
+            //================ CHANGE MUSIC =================//
+            horrorMusic->stop();
+            level3Music->play();
+
+            //================ LOAD NEW LEVEL =================//
+
+            currentLevel->loadScene(scene);
+
+            //================ LEVEL 3 COLLISION =================//
+
+            collisionMask = QImage( ":/new/prefix1/images/level3 BW.png");
+
+            //================ CREATE PLAYER =================//
+
+            playerSprite =
+                scene->addPixmap(spriteFront);
+
+            playerSprite->setScale(0.12);
+
+            playerSprite->setPos(150,650);
+
+            game.getPlayer().moveTo(
+                150,
+                650
                 );
 
-        title->setAlignment(Qt::AlignCenter);
 
-        title->setStyleSheet(
-            "font-size:22px;"
-            "font-weight:bold;"
-            "color:#f5d060;"
-            "letter-spacing:4px;"
-            );
+            //================ TIMER =================//
 
-        //================ IMAGE =================//
+            seconds = 300;
 
-        QLabel* image =
-            new QLabel();
+            timer->start(1000);
 
-        image->setPixmap(
-            QPixmap(":/new/prefix1/images/hieroglyph_chart-2.png")
-                .scaled(
-                    760,
-                    430,
-                    Qt::KeepAspectRatio,
-                    Qt::SmoothTransformation
-                    )
-            );
+            //================ UPDATE UI =================//
 
-        image->setAlignment(Qt::AlignCenter);
+            updateHUD();
 
-        //================ PASSWORD =================//
+            updateInventoryUI();
 
-        QLabel* password =
-            new QLabel(
-                "The symbols translate to:\n\n"
-                "M   •   A   •   N\n\n"
-                "Memorize the ancient password."
+            //================ SHOW GAME SCREEN =================//
+
+            stack->setCurrentWidget(
+                gameScreen
                 );
 
-        password->setAlignment(Qt::AlignCenter);
-
-        password->setStyleSheet(
-            "font-size:18px;"
-            "font-weight:bold;"
-            "color:#f5d060;"
-            "line-height:1.8;"
-            );
-
-        //================ BUTTON =================//
-
-        QPushButton* continueBtn =
-            new QPushButton(
-                "▶ CONTINUE"
-                );
-
-        continueBtn->setFixedHeight(50);
-
-        continueBtn->setStyleSheet(
-            "QPushButton {"
-            "background-color:rgba(180,130,40,220);"
-            "color:white;"
-            "font-size:15px;"
-            "font-weight:bold;"
-            "border-radius:8px;"
-            "border:2px solid #c8a84b;"
-            "padding:10px;"
-            "}"
-
-            "QPushButton:hover {"
-            "background-color:rgba(220,170,60,240);"
-            "}"
-            );
-
-        //================ ADD =================//
-
-        layout->addWidget(title);
-
-        layout->addWidget(image);
-
-        layout->addWidget(password);
-
-        layout->addStretch();
-
-        layout->addWidget(
-            continueBtn,
-            0,
-            Qt::AlignCenter
-            );
-
-        popup->show();
-
-        //================ CONTINUE =================//
-
-        connect(
-            continueBtn,
-            &QPushButton::clicked,
-            this,
-            [=]()
-            {
-                //================ CLOSE POPUP =================//
-
-                dimmer->deleteLater();
-
-                //================ LOAD LEVEL 3 =================//
-
-                game.loadLevel(3);
-
-                currentLevel = game.getCurrentLevel();
-
-                //================ CLEAR OLD SCENE =================//
-
-                scene->clear();
-
-                //================ LOAD NEW LEVEL =================//
-
-                currentLevel->loadScene(scene);
-
-                //================ LEVEL 3 COLLISION =================//
-
-                collisionMask = QImage( ":/new/prefix1/images/level3 BW.png");
-
-                //================ CREATE PLAYER =================//
-
-                playerSprite =
-                    scene->addPixmap(spriteFront);
-
-                playerSprite->setScale(0.12);
-
-                playerSprite->setPos(150,650);
-
-                game.getPlayer().moveTo(
-                    150,
-                    650
-                    );
-
-
-                //================ TIMER =================//
-
-                seconds = 300;
-
-                timer->start(1000);
-
-                //================ UPDATE UI =================//
-
-                updateHUD();
-
-                updateInventoryUI();
-
-                //================ SHOW GAME SCREEN =================//
-
-                stack->setCurrentWidget(
-                    gameScreen
-                    );
-
-                this->setFocus();
-            }
-            );
+            this->setFocus();
+        }
+        );
 }
 /* ================= UPDATE GAME ================= */
 
 void GameWindow::updateGame()
 {
-        seconds--;
+    seconds--;
 
-        updateHUD();
+    updateHUD();
 
-        //================ LEVEL 2 HUD =================//
+    //================ LEVEL 2 HUD =================//
 
-        updateLevel2HUD();
+    updateLevel2HUD();
 
-        //================ GAME LOGIC =================//
+    //================ GAME LOGIC =================//
 
-        game.update(1.0f);
+    game.update(1.0f);
 
-        //================ LEVEL 2 LIGHT =================//
+    //================ LEVEL 2 LIGHT =================//
 
-        Level2* level2 =
-            dynamic_cast<Level2*>(currentLevel);
+    Level2* level2 =
+        dynamic_cast<Level2*>(currentLevel);
 
-        if(level2)
-        {
-            level2->updatePlayerGlow(playerSprite);
-        }
+    if(level2)
+    {
+        level2->updatePlayerGlow(playerSprite);
+    }
 
     if(
         seconds <= 0 ||game.getstate() == Gamestate::gameOver)
@@ -2412,6 +2462,9 @@ void GameWindow::showLevel2BriefingPopup()
                 playerSprite->setPos(200, 400);
                 game.getPlayer().moveTo(200, 400);
 
+                rocksCollected = 0;
+                updateInventoryUI();
+
                 playerSpeedStep = 3;
                 seconds = 300;
                 timer->start(1000);
@@ -2428,9 +2481,13 @@ void GameWindow::showLevel2BriefingPopup()
                 startMusic->stop();
                 horrorMusic->play();
 
+                //================ SCREEN =================//
+
                 stack->setCurrentWidget(gameScreen);
+
                 this->setFocus();
-            });
+            }
+            );
 }
 
 /* ================= RESTART ================= */
@@ -2439,10 +2496,15 @@ void GameWindow::restartGame()
 {
     timer->stop();
 
-  //================ RESTART MUSIC ================//
+    //================ RESTART MUSIC ================//
     if (horrorMusic) {
         horrorMusic->stop();
         horrorMusic->setVolume(0.5);
+    }
+
+    if (level3Music) {
+        level3Music->stop();
+         level3Music->setVolume(0.5);
     }
 
     startMusic->play();
