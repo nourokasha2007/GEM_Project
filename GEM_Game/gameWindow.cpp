@@ -1149,36 +1149,15 @@ void GameWindow::showBlankScreen()
                     flash->deleteLater();
 
 
+
                     if (ghost) {
                         const double px = game.getPlayer().getX();
                         const double py = game.getPlayer().getY();
 
 
-                        double tx = px + 200;
-                        double ty = py + 100;
+                        double tx = px + 10;
+                        double ty = py + 10;
 
-                        if (scene != nullptr) {
-                            double minX = scene->sceneRect().left();
-                            double maxX = scene->sceneRect().right() - ghost->boundingRect().width();
-                            double minY = scene->sceneRect().top();
-                            double maxY = scene->sceneRect().bottom() - ghost->boundingRect().height();
-
-                            if (tx < minX) {
-                                tx = minX;
-                            }
-
-                            if (tx > maxX) {
-                                tx = maxX;
-                            }
-
-                            if (ty < minY) {
-                                ty = minY;
-                            }
-
-                            if (ty > maxY) {
-                                ty = maxY;
-                            }
-                        }
                         ghost->setPos(tx, ty);
                     }
 
@@ -2468,7 +2447,6 @@ void GameWindow::showLevel2BriefingPopup()
                 seconds = 300;
                 timer->start(1000);
 
-                // Create the ghost ONCE when Level 2 actually starts
                 ghost = new Level2Enemy(&game.getPlayer(), playerSprite);
                 ghost->setPos(700, 400);
                 ghost->setZValue(999);
@@ -2480,45 +2458,11 @@ void GameWindow::showLevel2BriefingPopup()
                 startMusic->stop();
                 horrorMusic->play();
 
-                //================ SCREEN =================//
-
                 stack->setCurrentWidget(gameScreen);
 
-
-            game.getPlayer().moveTo(120,620);
-
-            //================ Reset Rocks =================//
-
-            rocksCollected = 0;
-
-            updateInventoryUI();
-
-            //================ TIMER =================//
-
-            seconds = 120;
-
-            timer->start(1000);
-
-            //================ RESUME ENEMY SYSTEM =================//
-            mummy =
-                new Level1Enemy(
-                    &game.getPlayer(),
-                    playerSprite
-                    );
-
-            mummy->setPos(900, 400);
-
-            mummy->setZValue(999);
-
-            scene->addItem(mummy);
-
-            //================ SCREEN =================//
-
-            stack->setCurrentWidget(gameScreen);
-
-            this->setFocus();
-        }
-        );
+                this->setFocus();
+            }
+            );
 }
 
 /* ================= RESTART ================= */

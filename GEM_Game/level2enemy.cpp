@@ -17,7 +17,6 @@ Level2Enemy::Level2Enemy(Player* target, QGraphicsPixmapItem* pSprite)
     playerSprite = pSprite;
     isChasing = false;
     strikeCooldownMs = 0;
-    strikeCount = 0;
     hasFirstScreechPlayed = false;
 
     //================ LOAD ASSETS =================//
@@ -112,7 +111,7 @@ void Level2Enemy::updateAI() {
         if (std::abs(differenceX) > std::abs(differenceY)) {
             if (differenceX > 0) {
                 setPixmap(imgRight);
-                setScale(0.15);
+                setScale(0.1);
             } else {
                 setPixmap(imgLeft);
                 setScale(0.1);
@@ -120,7 +119,7 @@ void Level2Enemy::updateAI() {
         } else {
             if (differenceY > 0) {
                 setPixmap(imgForward);
-                setScale(0.2);
+                setScale(0.15);
             } else {
                 setPixmap(imgBack);
                 setScale(0.1);
@@ -129,18 +128,16 @@ void Level2Enemy::updateAI() {
 
         //================ STRIKE MECHANIC =================//
 
-        if (distanceToPlayer <= 30) {
+
+        if (distanceToPlayer <= 70) {
             if (strikeCooldownMs <= 0) {
                 strikeCooldownMs = 2000;
-                strikeCount = strikeCount + 1;
+
 
                 emit reduceSpeed();
+                emit ghostScreech();
 
-                if (strikeCount >= 3) {
-                    screechSound->play();
-                    emit ghostScreech();
-                    paused = true;
-                }
+
             }
         }
     }
