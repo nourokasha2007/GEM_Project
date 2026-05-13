@@ -49,7 +49,7 @@ private slots:
 
     void handleGhostStrike();
 
-    void performFlash();
+    void showBlankScreen();
 
 private:
 
@@ -140,9 +140,7 @@ private:
     Level1Enemy* mummy;
     Level2Enemy* ghost = nullptr;
     QGraphicsPixmapItem* playerSprite;
-    QTimer* flashTimer;
-    QWidget* flashWidget;
-    int flashCount;
+
 
     //================ DIRECTIONAL SPRITES =================//
 
