@@ -709,7 +709,6 @@ void GameWindow::setupLevel2HUD()
         "font-weight:bold;"
         );
 
-    //================ ROCK SLOTS =================//
 
     //================ ROCK SLOTS =================//
 
@@ -761,7 +760,7 @@ void GameWindow::setupLevel2HUD()
     //================ TIMER =================//
 
     level2TimerLabel =
-        new QLabel("03:00");
+        new QLabel("02:00");
 
     level2TimerLabel->setStyleSheet(
         "color:#f5d060;"
@@ -2485,9 +2484,41 @@ void GameWindow::showLevel2BriefingPopup()
 
                 stack->setCurrentWidget(gameScreen);
 
-                this->setFocus();
-            }
-            );
+
+            game.getPlayer().moveTo(120,620);
+
+            //================ Reset Rocks =================//
+
+            rocksCollected = 0;
+
+            updateInventoryUI();
+
+            //================ TIMER =================//
+
+            seconds = 120;
+
+            timer->start(1000);
+
+            //================ RESUME ENEMY SYSTEM =================//
+            mummy =
+                new Level1Enemy(
+                    &game.getPlayer(),
+                    playerSprite
+                    );
+
+            mummy->setPos(900, 400);
+
+            mummy->setZValue(999);
+
+            scene->addItem(mummy);
+
+            //================ SCREEN =================//
+
+            stack->setCurrentWidget(gameScreen);
+
+            this->setFocus();
+        }
+        );
 }
 
 /* ================= RESTART ================= */
