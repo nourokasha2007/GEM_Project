@@ -37,6 +37,14 @@
         <file>images/hieroglyph_chart-2.png</file>
         <file>images/Treasureclosed.png</file>
         <file>images/Treasureopened.png</file>
+        <file>sounds/ghost sound.wav</file>
+        <file>sounds/horror theme.wav</file>
+        <file>images/ghost right-.png</file>
+        <file>images/ghost back-.png</file>
+        <file>images/ghost front-.png</file>
+        <file>images/ghost idle-.png</file>
+        <file>images/ghost left-.png</file>
+        <file>sounds/Victory theme.wav</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
