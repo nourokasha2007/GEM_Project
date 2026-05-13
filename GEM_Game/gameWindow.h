@@ -19,6 +19,7 @@
 #include <QUrl>
 #include "game.h"
 #include "level1enemy.h"
+#include "level2enemy.h"
 
 class GameWindow : public QMainWindow
 {
@@ -46,6 +47,10 @@ private slots:
 
     void showBriefingPopup(const QString &playerName);
 
+    void handleGhostStrike();
+
+    void performFlash();
+
 private:
 
     //================ GAME =================//
@@ -56,6 +61,7 @@ private:
     QString playerName;
     QTimer* timer;
     int seconds;
+    int playerSpeedStep = 3;
 
     //================ STACK =================//
 
@@ -132,7 +138,11 @@ private:
     QGraphicsScene* scene;
     QGraphicsView* view;
     Level1Enemy* mummy;
+    Level2Enemy* ghost = nullptr;
     QGraphicsPixmapItem* playerSprite;
+    QTimer* flashTimer;
+    QWidget* flashWidget;
+    int flashCount;
 
     //================ DIRECTIONAL SPRITES =================//
 
@@ -143,7 +153,9 @@ private:
       QImage collisionMask;
     //================ SOUND =================//
 
-    QSoundEffect* startMusic;
+      QSoundEffect* startMusic;
+      QSoundEffect* horrorMusic;
+
 
     //================ HELPERS =================//
 

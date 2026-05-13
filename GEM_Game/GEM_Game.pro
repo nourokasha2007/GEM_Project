@@ -26,6 +26,7 @@ SOURCES += \
     item.cpp \
     level.cpp \
     level1enemy.cpp \
+    level2enemy.cpp \
     main.cpp \
     obstacle.cpp \
     player.cpp \
@@ -46,6 +47,7 @@ HEADERS += \
     item.h \
     level.h \
     level1enemy.h \
+    level2enemy.h \
     obstacle.h \
     player.h \
     tools.h
