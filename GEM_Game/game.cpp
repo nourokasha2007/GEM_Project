@@ -172,8 +172,6 @@ void Game::loadLevel(int levelindex)
         currentLevel =
             new Level1();
     }
-
-    player.reset();
 }
 
 /* ================= NEXT LEVEL ================= */

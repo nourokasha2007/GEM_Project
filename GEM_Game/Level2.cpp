@@ -41,7 +41,7 @@ void Level2::loadScene(
         ":/new/prefix1/images/rock_M.png",
         220,
         450,
-        0.18
+        0.09
         );
 
     addRock(
@@ -49,7 +49,7 @@ void Level2::loadScene(
         ":/new/prefix1/images/rock_A-3.png",
         850,
         600,
-        0.18
+        0.09
         );
 
     addRock(
@@ -57,7 +57,7 @@ void Level2::loadScene(
         ":/new/prefix1/images/rock_N.png",
         300,
         700,
-        0.18
+        0.09
         );
 
     //================ PLAYER GLOW =================//
@@ -110,14 +110,22 @@ void Level2::addRock(
     double scale
     )
 {
+    QPixmap px(imagePath);
+
     QGraphicsPixmapItem* rock =
-        scene->addPixmap(
-            QPixmap(imagePath)
-            );
+        scene->addPixmap(px);
+
+    rock->setShapeMode(
+        QGraphicsPixmapItem::MaskShape
+        );
 
     rock->setPos(x, y);
 
     rock->setScale(scale);
+
+    rock->setTransformationMode(Qt::SmoothTransformation);
+
+    rock->setPixmap(rock->pixmap().copy());
 
     rock->setZValue(200);
 
