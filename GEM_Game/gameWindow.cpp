@@ -105,7 +105,7 @@ void GameWindow::setupGameScreen()
     scene = new QGraphicsScene(this);
     view  = new QGraphicsView(scene);
     view->setFocusPolicy(Qt::NoFocus);
-    view->setFixedSize(1200, 650);
+    view->setFixedSize(1400, 750);
 
     gameLayout->addWidget(view);
     mainLayout->addLayout(gameLayout);
@@ -1009,7 +1009,7 @@ void GameWindow::startGame()
     currentLevel->loadScene(scene);
 
     playerSprite = scene->addPixmap(spriteFront);
-    playerSprite->setScale(0.12);
+    playerSprite->setScale(0.07);
     playerSprite->setPos(game.getPlayer().getX(), game.getPlayer().getY());
 
     if (mummy)
@@ -1024,12 +1024,8 @@ void GameWindow::startGame()
     mummy->setZValue(999);
     scene->addItem(mummy);
 
-    connect(mummy, &Level1Enemy::reduceScore, this, [=]() {
-        game.getPlayer().deductScore(10);
-        updateHUD();
-    });
-    connect(mummy, &Level1Enemy::playerKilled, this, &GameWindow::showFireballGameOver);
     connect(mummy, &Level1Enemy::reduceScore, this, [=]() { takeDamage(1); updateHUD(); });
+    connect(mummy, &Level1Enemy::playerKilled, this, &GameWindow::showFireballGameOver);
 
     updateInventoryUI();
     updateHUD();
@@ -1068,7 +1064,7 @@ void GameWindow::startLevel2()
     playerSprite = scene->addPixmap(
         QPixmap(":/new/prefix1/images/ChatGPT Image Apr 28, 2026, 05_48_57 PM.png")
         );
-    playerSprite->setScale(0.08);
+    playerSprite->setScale(0.05);
     playerSprite->setZValue(900);
     playerSprite->setPos(200, 450);
     game.getPlayer().moveTo(200, 450);
@@ -1251,8 +1247,14 @@ void GameWindow::checkArtifactCollisions()
         if (currentLevel->getArtifactCount() == 0 && !level2DoorUnlocked)
         {
             level2DoorUnlocked = true;
+            if (level2Ptr) level2Ptr->illuminateDoor();
+            statusLabel->setText("✦  ALL STONES SECURED — FIND THE GOLDEN EXIT!");
+            statusLabel->setStyleSheet(
+                "color:#f5d060; font-size:14px; font-weight:bold;"
+                "background:rgba(0,0,0,160); padding:4px 10px; border-radius:4px;"
+                );
             showHieroglyphScreen();
-            seconds += 30;
+            seconds += 45;
         }
 
         updateInventoryUI();
@@ -1690,11 +1692,13 @@ void GameWindow::showLevel2BriefingPopup()
         );
 
     QString storyText = QString(
-                            "You secured the first hall — well done, <b>%1</b>.<br><br>"
-                            "You now enter the sacred Room of Tutankhamun.<br><br>"
-                            "But the east wing has gone dark. "
-                            "Something ancient has awakened in the deepest vault "
-                            "of the museum... and it is not alone."
+                            "Outstanding work, <b>%1</b>.<br><br>"
+                            "Wing I of the Grand Egyptian Museum is secure.<br><br>"
+                            "But deep within the museum lies the sacred Hieroglyph Vault — "
+                            "a pitch-black chamber housing three Sacred Stones stolen from "
+                            "Tutankhamun's inner sanctum. A wraith guards them in the darkness. "
+                            "It hunts. It attacks. It will not stop.<br><br>"
+                            "Recover all three stones before time runs out."
                             ).arg(playerName);
 
     QLabel* story = new QLabel(storyText);
@@ -1705,17 +1709,17 @@ void GameWindow::showLevel2BriefingPopup()
         );
 
     QLabel* objective = new QLabel(
-        "<span style='color:#c8a84b; font-weight:bold; font-size:15px;'>NEW OBJECTIVE</span><br><br>"
-        "The vault contains <b>3 Sacred Stones</b>, each carved "
-        "with an ancient hieroglyph.<br><br>"
-        "The stones have been scattered across the chamber. "
-        "<b>Collect all three</b> to reveal their secret.<br><br>"
+        "<span style='color:#c8a84b; font-weight:bold; font-size:14px;'>⚠  WING II BRIEFING</span><br><br>"
         "<span style='color:#f5d060;'>&#9656;</span> "
-        "The room is <b>pitch black</b> — trust your torch.<br><br>"
+        "The vault is <b>pitch black</b> — only your torch lights the way.<br><br>"
         "<span style='color:#f5d060;'>&#9656;</span> "
-        "A dark spirit roams the chamber. Avoid it or lose score.<br><br>"
+        "A <b>cursed wraith</b> patrols the chamber — it chases you and fires shadow bolts.<br><br>"
         "<span style='color:#f5d060;'>&#9656;</span> "
-        "Collect all three stones to unlock the ancient secret."
+        "Collect all <b>3 Sacred Stones</b> to reveal a hieroglyph translation.<br><br>"
+        "<span style='color:#f5d060;'>&#9656;</span> "
+        "<b>Memorize the symbols</b> — you will need them in Level 3.<br><br>"
+        "<span style='color:#f5d060;'>&#9656;</span> "
+        "You have <b>3 minutes</b>. Every wraith hit costs you a life."
         );
     objective->setWordWrap(true);
     objective->setStyleSheet(
@@ -1770,8 +1774,8 @@ void GameWindow::showHieroglyphScreen()
     dimmer->raise();
 
     QWidget* popup = new QWidget(dimmer);
-    popup->setFixedSize(860, 640);
-    popup->move((width() - 900) / 2, (height() - 650) / 2);
+    popup->setFixedSize(860, 660);
+    popup->move((dimmer->width() - 860) / 2, (dimmer->height() - 660) / 2);
     popup->setStyleSheet(
         "background-color:rgba(8,4,0,240);"
         "border:2px solid rgba(200,160,60,220);"
@@ -1779,37 +1783,47 @@ void GameWindow::showHieroglyphScreen()
         );
 
     QVBoxLayout* layout = new QVBoxLayout(popup);
-    layout->setContentsMargins(30, 20, 30, 20);
-    layout->setSpacing(16);
+    layout->setContentsMargins(24, 16, 24, 16);
+    layout->setSpacing(10);
 
     QLabel* title = new QLabel("THE SACRED STONES REVEAL A WORD");
     title->setAlignment(Qt::AlignCenter);
     title->setStyleSheet(
-        "font-size:22px; font-weight:bold; color:#f5d060; letter-spacing:4px;"
+        "font-size:20px; font-weight:bold; color:#f5d060; letter-spacing:4px;"
         );
 
     QLabel* image = new QLabel();
     image->setPixmap(
         QPixmap(":/new/prefix1/images/hieroglyph_chart-2.png")
-            .scaled(700, 400, Qt::KeepAspectRatio, Qt::SmoothTransformation)
+            .scaled(780, 430, Qt::KeepAspectRatio, Qt::SmoothTransformation)
         );
     image->setAlignment(Qt::AlignCenter);
 
-    QLabel* password = new QLabel("The symbols translate to:\n\nM   •   A   •   N\n\nMemorize the ancient password.");
-    password->setAlignment(Qt::AlignCenter);
-    password->setStyleSheet("font-size:18px; font-weight:bold; color:#f5d060; line-height:1.8;");
+    QLabel* memorize = new QLabel(
+        "⚠   Study the chart carefully and memorize each symbol's letter.\n"
+        "The three stones each carry one hieroglyph — together they spell a secret word.\n"
+        "You WILL be asked for this word in Level 3. There are no second chances."
+        );
+    memorize->setAlignment(Qt::AlignCenter);
+    memorize->setWordWrap(true);
+    memorize->setStyleSheet(
+        "font-size:12px; font-weight:bold; color:#f5d060;"
+        "background:rgba(0,0,0,100); padding:8px 14px; border-radius:8px;"
+        "border:1px solid rgba(200,160,60,150);"
+        );
 
-    QPushButton* continueBtn = new QPushButton("▶ CONTINUE");
-    continueBtn->setFixedHeight(50);
+    QPushButton* continueBtn = new QPushButton("✓   I HAVE MEMORIZED THE SYMBOLS — CONTINUE");
+    continueBtn->setFixedHeight(46);
     continueBtn->setStyleSheet(
         "QPushButton { background-color:rgba(180,130,40,220); color:white;"
-        " font-size:15px; font-weight:bold; border-radius:8px;"
-        " border:2px solid #c8a84b; padding:10px; }"
+        " font-size:13px; font-weight:bold; border-radius:8px;"
+        " border:2px solid #c8a84b; padding:8px; }"
         "QPushButton:hover { background-color:rgba(220,170,60,240); }"
         );
 
     layout->addWidget(title);
     layout->addWidget(image);
+    layout->addWidget(memorize);
     layout->addStretch();
     layout->addWidget(continueBtn, 0, Qt::AlignCenter);
 
@@ -1826,7 +1840,7 @@ void GameWindow::showHieroglyphScreen()
         collisionMask = QImage(":/new/prefix1/images/level3 BW.png");
 
         playerSprite = scene->addPixmap(spriteFront);
-        playerSprite->setScale(0.12);
+        playerSprite->setScale(0.07);
         playerSprite->setPos(150, 650);
         game.getPlayer().moveTo(150, 650);
 

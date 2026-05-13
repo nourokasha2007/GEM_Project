@@ -27,7 +27,7 @@ Level2Enemy::Level2Enemy(Player* target, QGraphicsPixmapItem* pSprite)
 
     loadAssets();
     setPixmap(imgIdle);
-    setScale(0.9);
+    setScale(0.45);
     setZValue(860);
 
     pickNewTarget();

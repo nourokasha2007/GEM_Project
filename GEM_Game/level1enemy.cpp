@@ -22,7 +22,7 @@ Level1Enemy::Level1Enemy(Player* target, QGraphicsPixmapItem* pSprite)
 
     loadAssets();
     setPixmap(imgIdle);
-    setScale(0.8);
+    setScale(0.45);
     setZValue(900);
 
     hitSound = new QSoundEffect(this);

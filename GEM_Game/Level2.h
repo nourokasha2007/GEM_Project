@@ -6,14 +6,16 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
+#include <QGraphicsTextItem>
 #include <QPointF>
+#include <QTimer>
 
 /* ================================================================
-   Level2 — The Dark Hieroglyph Room
-   Player must collect 3 sacred stones (rocks) before the timer runs out.
-   The room is dark — a torch glow follows the player.
-   A wraith enemy chases the player throughout.
-   Once all rocks are collected the exit is illuminated.
+   Level2 — The Hieroglyph Vault
+   A pitch-black chamber. The player carries a torch — a small
+   circle of light. Three sacred stones are hidden in the dark.
+   A wraith hunts the player. The exit door pulses with golden
+   light once all stones are collected.
    ================================================================ */
 
 class Level2 : public Level
@@ -23,27 +25,34 @@ public:
 
     void loadScene(QGraphicsScene* scene) override;
 
-    // Moves the player torch glow — call every frame
+    // Call every game tick to move the torch glow with the player
     void updatePlayerGlow(QGraphicsPixmapItem* playerSprite);
 
-    // Lights up the exit door when all rocks collected
+    // Lights up the exit door — call when all rocks collected
     void illuminateDoor();
 
-    // Returns scene centre-position of the exit door
+    // Returns scene position of the exit door (for collision)
     QPointF doorPosition() const;
 
-    // Expose dark overlay (GameWindow may want to remove it)
     QGraphicsRectItem* darkOverlay() const { return overlay; }
 
 private:
-    QGraphicsRectItem*    overlay;      // full-scene black overlay
-    QGraphicsEllipseItem* playerGlow;   // soft circle around player
-    QGraphicsPixmapItem*  doorItem;     // exit door sprite/rect
-    QGraphicsRectItem*    doorLight;    // golden glow on exit door
+    QGraphicsRectItem*    overlay;       // full-scene pitch-black overlay
+    QGraphicsEllipseItem* playerGlow;    // tight torch circle around player
+    QGraphicsEllipseItem* playerGlowOuter; // soft outer halo
+    QGraphicsPixmapItem*  doorItem;
+    QGraphicsRectItem*    doorLight;
+    QGraphicsRectItem*    doorFrame;
+
+    // Ambient candle flicker items (decorative)
+    QList<QGraphicsEllipseItem*> candles;
 
     void addRock(QGraphicsScene* scene,
-                 const QString&  imagePath,
+                 const QString& imagePath,
                  int x, int y, double scale);
+
+    void addCandle(QGraphicsScene* scene, int x, int y);
+    void addWallTorch(QGraphicsScene* scene, int x, int y);
 };
 
 #endif // LEVEL2_H
