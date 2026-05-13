@@ -2497,6 +2497,11 @@ void GameWindow::restartGame()
     timer->stop();
 
     //================ RESTART MUSIC ================//
+
+    if (startMusic) {
+        startMusic->stop();
+    }
+
     if (horrorMusic) {
         horrorMusic->stop();
         horrorMusic->setVolume(0.5);
@@ -2504,10 +2509,22 @@ void GameWindow::restartGame()
 
     if (level3Music) {
         level3Music->stop();
-         level3Music->setVolume(0.5);
+        level3Music->setVolume(0.5);
     }
 
-    startMusic->play();
+    if (game.getLevelIndex() == 1) {
+        if (startMusic) {
+            startMusic->play();
+        }
+    } else if (game.getLevelIndex() == 2) {
+        if (horrorMusic) {
+            horrorMusic->play();
+        }
+    } else if (game.getLevelIndex() == 3) {
+        if (level3Music) {
+            level3Music->play();
+        }
+    }
 
     //================ CLEAR SCENE ================//
 
@@ -2517,11 +2534,13 @@ void GameWindow::restartGame()
 
     game.restartGame();
 
-    game.loadLevel( game.getLevelIndex());
+    game.loadLevel(game.getLevelIndex());
 
     currentLevel = game.getCurrentLevel();
 
     currentLevel->loadScene(scene);
+
+    //================ RECREATE ENEMY =================//
     //================ RECREATE ENEMY =================//
 
     if(game.getLevelIndex() == 1)
