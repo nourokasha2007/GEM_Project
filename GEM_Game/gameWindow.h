@@ -116,6 +116,8 @@ private:
     QLabel* rock1Slot;
     QLabel* rock2Slot;
     QLabel* rock3Slot;
+    QLabel* rock4Slot;
+    QLabel* rock5Slot;
 
     int rocksCollected = 0;
 
