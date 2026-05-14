@@ -729,6 +729,26 @@ void GameWindow::setupLevel2HUD()
 
     rock3Slot->setStyleSheet(slotStyle);
 
+    //================ ROCK 4 =================//
+
+    rock3Slot = new QLabel();
+
+    rock3Slot->setFixedSize(55,55);
+
+    rock3Slot->setAlignment(Qt::AlignCenter);
+
+    rock3Slot->setStyleSheet(slotStyle);
+
+    //================ ROCK 5 =================//
+
+    rock3Slot = new QLabel();
+
+    rock3Slot->setFixedSize(55,55);
+
+    rock3Slot->setAlignment(Qt::AlignCenter);
+
+    rock3Slot->setStyleSheet(slotStyle);
+
     //================ ROCK ROW =================//
 
     QHBoxLayout* rockRow =
@@ -739,6 +759,12 @@ void GameWindow::setupLevel2HUD()
     rockRow->addWidget(rock2Slot);
 
     rockRow->addWidget(rock3Slot);
+
+    rockRow->addWidget(rock4Slot);
+
+    rockRow->addWidget(rock5Slot);
+
+
     //================ TIMER =================//
 
     level2TimerLabel =
@@ -1127,36 +1153,15 @@ void GameWindow::showBlankScreen()
                     flash->deleteLater();
 
 
+
                     if (ghost) {
                         const double px = game.getPlayer().getX();
                         const double py = game.getPlayer().getY();
 
 
-                        double tx = px + 200;
-                        double ty = py + 100;
+                        double tx = px + 10;
+                        double ty = py + 10;
 
-                        if (scene != nullptr) {
-                            double minX = scene->sceneRect().left();
-                            double maxX = scene->sceneRect().right() - ghost->boundingRect().width();
-                            double minY = scene->sceneRect().top();
-                            double maxY = scene->sceneRect().bottom() - ghost->boundingRect().height();
-
-                            if (tx < minX) {
-                                tx = minX;
-                            }
-
-                            if (tx > maxX) {
-                                tx = maxX;
-                            }
-
-                            if (ty < minY) {
-                                ty = minY;
-                            }
-
-                            if (ty > maxY) {
-                                ty = maxY;
-                            }
-                        }
                         ghost->setPos(tx, ty);
                     }
 
@@ -1292,7 +1297,7 @@ void GameWindow::checkArtifactCollisions()
 
             //================ LEVEL 2 =================//
 
-            else if(rocksCollected == 3)
+            else if(rocksCollected == 5)
             {
                 showHieroglyphScreen();
             }
@@ -1542,7 +1547,38 @@ void GameWindow::updateLevel2HUD()
                     )
             );
     }
+
+    //================ ROCK 4 =================//
+
+    if(rocksCollected >= 4)
+    {
+        rock4Slot->setPixmap(
+            QPixmap(":/new/prefix1/images/rock_N.png")
+                .scaled(
+                    28,
+                    28,
+                    Qt::KeepAspectRatio,
+                    Qt::SmoothTransformation
+                    )
+            );
+    }
+
+    //================ ROCK 5 =================//
+
+    if(rocksCollected >= 5)
+    {
+        rock5Slot->setPixmap(
+            QPixmap(":/new/prefix1/images/rock_M.png")
+                .scaled(
+                    28,
+                    28,
+                    Qt::KeepAspectRatio,
+                    Qt::SmoothTransformation
+                    )
+            );
+    }
 }
+
 /* ================= HIEROGLYPH SCREEN ================= */
 
 void GameWindow::showHieroglyphScreen()
@@ -2501,59 +2537,73 @@ void GameWindow::showLevel2BriefingPopup()
                 game.getCurrentLevel();
 
             scene->clear();
-
             currentLevel->loadScene(scene);
+
+            //================ GHOST =================//
+
+            ghost = new Level2Enemy(
+                &game.getPlayer(),
+                playerSprite
+                );
+
+            ghost->setPos(700, 400);
+
+            ghost->setZValue(999);
+
+            scene->addItem(ghost);
 
             //================ PLAYER =================//
 
-            playerSprite =
-                scene->addPixmap(spriteFront);
+            playerSprite =scene->addPixmap(spriteFront);
+
 
             playerSprite->setScale(0.12);
 
             playerSprite->setPos(500,720);
+                stack->setCurrentWidget(gameScreen);
 
-            game.getPlayer().moveTo(120,620);
+                this->setFocus();
+            }
 
-            //================ Reset Rocks =================//
-
-            rocksCollected = 0;
-
-            updateInventoryUI();
-
-            //================ TIMER =================//
-
-            seconds = 120;
-
-            timer->start(1000);
-
-            //================ RESUME ENEMY SYSTEM =================//
-            mummy =
-                new Level1Enemy(
-                    &game.getPlayer(),
-                    playerSprite
-                    );
-
-            mummy->setPos(900, 400);
-
-            mummy->setZValue(999);
-
-            scene->addItem(mummy);
-
-            //================ SCREEN =================//
-
-            stack->setCurrentWidget(gameScreen);
-
-            this->setFocus();
-        }
-        );
+            );
 }
+
 /* ================= RESTART ================= */
 
 void GameWindow::restartGame()
 {
     timer->stop();
 
+
+    //================ RESTART MUSIC ================//
+
+    if (startMusic) {
+        startMusic->stop();
+    }
+
+    if (horrorMusic) {
+        horrorMusic->stop();
+        horrorMusic->setVolume(0.5);
+    }
+
+    if (level3Music) {
+        level3Music->stop();
+        level3Music->setVolume(0.5);
+    }
+
+    if (game.getLevelIndex() == 1) {
+        if (startMusic) {
+            startMusic->play();
+        }
+    } else if (game.getLevelIndex() == 2) {
+        if (horrorMusic) {
+            horrorMusic->play();
+        }
+    } else if (game.getLevelIndex() == 3) {
+        if (level3Music) {
+            level3Music->play();
+        }
+    }
     //================ CLEAR SCENE ================//
 
     scene->clear();
@@ -2562,7 +2612,7 @@ void GameWindow::restartGame()
 
     game.restartGame();
 
-    game.loadLevel( game.getLevelIndex());
+    game.loadLevel(game.getLevelIndex());
 
     currentLevel = game.getCurrentLevel();
 
