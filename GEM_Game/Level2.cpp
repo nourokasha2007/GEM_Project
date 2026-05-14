@@ -12,7 +12,7 @@ Level2::Level2()
 
     playerGlow = nullptr;
 
- //================ LOAD COLLISION MASK =================//
+    //================ LOAD COLLISION MASK =================//
 
     collisionMask.load( ":/new/prefix1/images/Level2 - BW.png" );
 }

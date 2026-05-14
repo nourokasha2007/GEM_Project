@@ -14,6 +14,8 @@ public:
     Level2Enemy(Player* target, QGraphicsPixmapItem* playerSprite);
     void setPaused(bool value);
 
+    int getStrikeCount() const;
+
 signals:
     void ghostScreech();
     void reduceSpeed();

@@ -1,9 +1,7 @@
 #include "game.h"
-
 #include "Level1.h"
 #include "Level2.h"
 #include "Level3.h"
-
 #include <iostream>
 
 using namespace std;
@@ -312,3 +310,4 @@ int Game::getLevelIndex() const
 {
     return currentLevelIndex;
 }
+

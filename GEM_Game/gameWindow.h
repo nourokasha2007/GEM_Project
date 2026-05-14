@@ -51,13 +51,13 @@ private slots:
 
     void handleGhostStrike();
 
-    void showBlankScreen();
+    // void showBlankScreen();
 
 private:
 
     //================ GAME =================//
     void showFireballGameOver();
-   void showGhostGameOver();
+    void showGhostGameOver();
     Game game;
 
     Level* currentLevel;
@@ -98,6 +98,8 @@ private:
     QLabel* clockLabel;
 
     QLabel* scoreLabel;
+
+    QLabel* livesLabel;
 
     QLabel* statusLabel;
 
@@ -153,12 +155,12 @@ private:
     QPixmap spriteBack;    // player back.png   — up arrow
     QPixmap spriteLeft;    // player left.png   — left arrow
     QPixmap spriteRight;   // player right.png  — right arrow
-      QImage collisionMask;
+    QImage collisionMask;
     //================ SOUND =================//
 
-      QSoundEffect* startMusic;
-      QSoundEffect* horrorMusic;
-      QSoundEffect* level3Music;
+    QSoundEffect* startMusic;
+    QSoundEffect* horrorMusic;
+    QSoundEffect* level3Music;
 
 
     //================ HELPERS =================//

@@ -17,6 +17,7 @@ Level2Enemy::Level2Enemy(Player* target, QGraphicsPixmapItem* pSprite)
     playerSprite = pSprite;
     isChasing = false;
     strikeCooldownMs = 0;
+    strikeCount = 0;
     hasFirstScreechPlayed = false;
 
     //================ LOAD ASSETS =================//
@@ -42,6 +43,11 @@ Level2Enemy::Level2Enemy(Player* target, QGraphicsPixmapItem* pSprite)
 
 void Level2Enemy::setPaused(bool value) {
     paused = value;
+}
+
+int Level2Enemy::getStrikeCount() const
+{
+    return strikeCount;
 }
 
 /* ================= LOAD ASSETS ================= */
@@ -158,5 +164,6 @@ void Level2Enemy::updateAI() {
             }
         }
 
-        }
     }
+}
+

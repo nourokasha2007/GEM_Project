@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/new/prefix1">
+        <file>scroll.png</file>
+        <file>mask.png</file>
+        <file>nose.png</file>
+        <file>timerboost.png</file>
+        <file>amulet.png</file>
+        <file>coin.png</file>
+    </qresource>
+</RCC>
