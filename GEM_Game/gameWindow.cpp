@@ -747,6 +747,26 @@ void GameWindow::setupLevel2HUD()
 
     rock3Slot->setStyleSheet(slotStyle);
 
+    //================ ROCK 4 =================//
+
+    rock3Slot = new QLabel();
+
+    rock3Slot->setFixedSize(55,55);
+
+    rock3Slot->setAlignment(Qt::AlignCenter);
+
+    rock3Slot->setStyleSheet(slotStyle);
+
+    //================ ROCK 5 =================//
+
+    rock3Slot = new QLabel();
+
+    rock3Slot->setFixedSize(55,55);
+
+    rock3Slot->setAlignment(Qt::AlignCenter);
+
+    rock3Slot->setStyleSheet(slotStyle);
+
     //================ ROCK ROW =================//
 
     QHBoxLayout* rockRow =
@@ -757,6 +777,12 @@ void GameWindow::setupLevel2HUD()
     rockRow->addWidget(rock2Slot);
 
     rockRow->addWidget(rock3Slot);
+
+    rockRow->addWidget(rock4Slot);
+
+    rockRow->addWidget(rock5Slot);
+
+
     //================ TIMER =================//
 
     level2TimerLabel =
@@ -1293,7 +1319,7 @@ void GameWindow::checkArtifactCollisions()
 
             //================ LEVEL 2 =================//
 
-            else if(rocksCollected == 3)
+            else if(rocksCollected == 5)
             {
                 showHieroglyphScreen();
             }
@@ -1513,7 +1539,38 @@ void GameWindow::updateLevel2HUD()
                     )
             );
     }
+
+    //================ ROCK 4 =================//
+
+    if(rocksCollected >= 4)
+    {
+        rock4Slot->setPixmap(
+            QPixmap(":/new/prefix1/images/rock_N.png")
+                .scaled(
+                    28,
+                    28,
+                    Qt::KeepAspectRatio,
+                    Qt::SmoothTransformation
+                    )
+            );
+    }
+
+    //================ ROCK 5 =================//
+
+    if(rocksCollected >= 5)
+    {
+        rock5Slot->setPixmap(
+            QPixmap(":/new/prefix1/images/rock_M.png")
+                .scaled(
+                    28,
+                    28,
+                    Qt::KeepAspectRatio,
+                    Qt::SmoothTransformation
+                    )
+            );
+    }
 }
+
 /* ================= HIEROGLYPH SCREEN ================= */
 
 void GameWindow::showHieroglyphScreen()
@@ -2462,8 +2519,12 @@ void GameWindow::showLevel2BriefingPopup()
 
                 this->setFocus();
             }
+
             );
 }
+
+
+
 
 /* ================= RESTART ================= */
 

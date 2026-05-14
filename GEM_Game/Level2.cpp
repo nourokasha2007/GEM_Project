@@ -60,6 +60,22 @@ void Level2::loadScene(
         0.09
         );
 
+    addRock(
+        scene,
+        ":/new/prefix1/images/rock_M.png",
+        920,
+        200,
+        0.09
+        );
+
+    addRock(
+        scene,
+        ":/new/prefix1/images/rock_N.png",
+        920,
+        700,
+        0.09
+        );
+
     //================ PLAYER GLOW =================//
 
     playerGlow =
