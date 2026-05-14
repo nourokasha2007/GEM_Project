@@ -52,9 +52,12 @@ void Enemy::takeDamage(int amount)
 {
     health -= amount;
     if (health <= 0) {
-        delete this;
+        // Beginner-friendly + Qt-safe: delete later instead of deleting immediately.
+        // This avoids crashes caused by use-after-free / double delete.
+        deleteLater();
     }
 }
+
 
 int Enemy::getDamage() const
 {

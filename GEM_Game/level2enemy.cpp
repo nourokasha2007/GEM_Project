@@ -58,7 +58,13 @@ void Level2Enemy::loadAssets() {
 
 void Level2Enemy::updateAI() {
 
-    //================ CHECKS =================//
+    //================ 1. ALWAYS TICK DOWN COOLDOWN ================//
+
+    if (strikeCooldownMs > 0) {
+        strikeCooldownMs = strikeCooldownMs - 33;
+    }
+
+    //================ 2. CHECKS ================//
 
     if (player == nullptr) {
         return;
@@ -68,36 +74,30 @@ void Level2Enemy::updateAI() {
         return;
     }
 
-    //================ DISTANCE =================//
+    //================ 3. DISTANCE ================//
 
     double differenceX = player->getX() - this->x();
     double differenceY = player->getY() - this->y();
     double distanceToPlayer = std::sqrt((differenceX * differenceX) + (differenceY * differenceY));
 
-    if (distanceToPlayer < 700) {
+    if (distanceToPlayer < 1000) {
         isChasing = true;
     }
 
-    //================ CHASING LOGIC =================//
+    //================ 4. CHASING LOGIC ================//
 
     if (isChasing == true) {
 
-        //================ COOLDOWN =================//
+        //================ AUDIO CUE ================//
 
-        if (strikeCooldownMs > 0) {
-            strikeCooldownMs = strikeCooldownMs - 33;
-        }
-
-        //================ AUDIO CUE =================//
-
-        if (distanceToPlayer < 150) {
+        if (distanceToPlayer < 70) {
             if (hasFirstScreechPlayed == false) {
                 screechSound->play();
                 hasFirstScreechPlayed = true;
             }
         }
 
-        //================ MOVEMENT =================//
+        //================ MOVEMENT ================//
 
         if (distanceToPlayer > speed) {
             double moveX = (differenceX / distanceToPlayer) * speed;
@@ -106,7 +106,7 @@ void Level2Enemy::updateAI() {
             setPos(x() + moveX, y() + moveY);
         }
 
-        //================ CHANGE SPRITE =================//
+        //================ CHANGE SPRITE ================//
 
         if (std::abs(differenceX) > std::abs(differenceY)) {
             if (differenceX > 0) {
@@ -126,19 +126,33 @@ void Level2Enemy::updateAI() {
             }
         }
 
-        //================ STRIKE MECHANIC =================//
-
-
-        if (distanceToPlayer <= 70) {
+        //================ 5. STRIKE MECHANIC ================//
+        if (distanceToPlayer <= 30) {
             if (strikeCooldownMs <= 0) {
-                strikeCooldownMs = 2000;
 
+                strikeCooldownMs = 4000;
+                strikeCount = strikeCount + 1;
+
+
+                if (screechSound->isPlaying()) {
+                    screechSound->stop();
+                }
+                screechSound->play();
 
                 emit reduceSpeed();
-                emit ghostScreech();
 
 
+                double pushX = (differenceX / distanceToPlayer) * -100;
+                double pushY = (differenceY / distanceToPlayer) * -100;
+                setPos(x() + pushX, y() + pushY);
+
+
+                if (strikeCount >= 3) {
+                    emit ghostScreech();
+                    paused = true;
+                }
             }
         }
+
+        }
     }
-}
