@@ -45,6 +45,7 @@
         <file>images/ghost idle-.png</file>
         <file>images/ghost left-.png</file>
         <file>sounds/Victory theme.wav</file>
+        <file>images/win.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

@@ -391,6 +391,7 @@
 
 // } // <--- ADD THIS BRACE HERE
 #include "Level3.h"
+#include "qtimer.h"
 #include <QBrush>
 #include <QColor>
 #include <QPen>
@@ -503,7 +504,7 @@ void Level3::showPasswordPopup()
 
     QWidget* card = new QWidget(overlay);
 
-    card->setFixedSize(640, 440);
+card->setFixedSize(700, 520);
 
     card->move(
         (overlay->width()  - 640) / 2,
@@ -522,7 +523,7 @@ void Level3::showPasswordPopup()
 
     layout->setContentsMargins(50, 36, 50, 36);
 
-    layout->setSpacing(16);
+    layout->setSpacing(12);
 
     //================ ICON ROW =================//
 
@@ -556,8 +557,8 @@ void Level3::showPasswordPopup()
     QLabel* hint = new QLabel(
         "The Great Sphinx guards this treasure.\n"
         "Answer the ancient riddle to claim what was lost:\n\n"
-        "\"What walks on four legs in the morning,\n"
-        " two legs at noon, and three in the evening?\"\n\n"
+        "\"The Sphinx bears the body of a lion,\n"
+        "but the face of what creature?\"\n\n"
         "Enter the 3-letter answer:"
         );
 
@@ -570,7 +571,7 @@ void Level3::showPasswordPopup()
         "color:#e8d5a8;"
         "background:transparent;"
         "border:none;"
-        "line-height:1.6;"
+        "line-height:1.3;"
         );
 
     //================ INPUT =================//
@@ -709,7 +710,8 @@ void Level3::showVictoryPopup()
 
     QWidget* overlay = new QWidget();
 
-    QRect screen = QApplication::primaryScreen()->geometry();
+    QRect screen =
+        QApplication::primaryScreen()->geometry();
 
     overlay->setGeometry(screen);
 
@@ -723,13 +725,14 @@ void Level3::showVictoryPopup()
 
     //================ CARD =================//
 
-    QWidget* card = new QWidget(overlay);
+    QWidget* card =
+        new QWidget(overlay);
 
-    card->setFixedSize(860, 640);
+    card->setFixedSize(760,560);
 
     card->move(
-        (overlay->width()  - 860) / 2,
-        (overlay->height() - 640) / 2
+        (overlay->width()  - 900) / 2,
+        (overlay->height() - 700) / 2
         );
 
     card->setStyleSheet(
@@ -740,17 +743,28 @@ void Level3::showVictoryPopup()
 
     //================ LAYOUT =================//
 
-    QVBoxLayout* layout = new QVBoxLayout(card);
+    QVBoxLayout* layout =
+        new QVBoxLayout(card);
 
-    layout->setContentsMargins(50, 28, 50, 28);
+    layout->setContentsMargins(
+        50,
+        28,
+        50,
+        28
+        );
 
-    layout->setSpacing(12);
+    layout->setSpacing(14);
 
     //================ TOP BADGE =================//
 
-    QLabel* badge = new QLabel("🏺   ARTIFACT RECOVERED   🏺");
+    QLabel* badge =
+        new QLabel(
+            "🏺   ARTIFACT RECOVERED   🏺"
+            );
 
-    badge->setAlignment(Qt::AlignCenter);
+    badge->setAlignment(
+        Qt::AlignCenter
+        );
 
     badge->setStyleSheet(
         "font-size:13px;"
@@ -765,33 +779,43 @@ void Level3::showVictoryPopup()
 
     //================ TITLE =================//
 
-    QLabel* title = new QLabel("HERITAGE PROTECTED");
+    QLabel* title =
+        new QLabel(
+            "HERITAGE PROTECTED"
+            );
 
-    title->setAlignment(Qt::AlignCenter);
+    title->setAlignment(
+        Qt::AlignCenter
+        );
 
     title->setStyleSheet(
-        "font-size:38px;"
+        "font-size:40px;"
         "font-weight:bold;"
         "color:#f5d060;"
-        "letter-spacing:7px;"
+        "letter-spacing:8px;"
         "background:transparent;"
         "border:none;"
         );
 
     //================ TREASURE IMAGE =================//
 
-    QLabel* img = new QLabel();
+    QLabel* img =
+        new QLabel();
 
     img->setPixmap(
-        QPixmap(":/new/prefix1/images/Treasureopened.png")
-            .scaled(
-                200, 200,
+        QPixmap(
+            ":/new/prefix1/images/Treasureopened.png"
+            ).scaled(
+                320,
+                320,
                 Qt::KeepAspectRatio,
                 Qt::SmoothTransformation
                 )
         );
 
-    img->setAlignment(Qt::AlignCenter);
+    img->setAlignment(
+        Qt::AlignCenter
+        );
 
     img->setStyleSheet(
         "background:transparent;"
@@ -800,37 +824,54 @@ void Level3::showVictoryPopup()
 
     //================ STORY TEXT =================//
 
-    QLabel* story = new QLabel(
-        "Deep inside the treasure chest, beneath layers of golden coins\n"
-        "and ancient jewels, you discovered the impossible —\n\n"
-        "<span style='font-size:18px;'>🗿</span>  "
-        "<b><span style='color:#f5d060;'>The Lost Nose of the Great Sphinx</span></b>  "
-        "<span style='font-size:18px;'>🗿</span>\n\n"
-        "Broken off and hidden for centuries, its return will restore\n"
-        "the Sphinx to its original glory. The museum's greatest\n"
-        "mystery has finally been solved.\n\n"
-        "<i><span style='color:rgba(200,160,60,200);'>Tonight, history survives because of you.</span></i>"
-        );
+    QLabel* story =
+        new QLabel(
+            "Deep inside the treasure chest, beneath layers of golden coins\n"
+            "and ancient jewels, you discovered the impossible —\n\n"
 
-    story->setAlignment(Qt::AlignCenter);
+            "<span style='font-size:22px;'>🗿</span>  "
+
+            "<b><span style='color:#f5d060;'>"
+            "The Lost Nose of the Great Sphinx"
+            "</span></b>  "
+
+            "<span style='font-size:22px;'>🗿</span>\n\n"
+
+            "Broken off and hidden for centuries, its return will restore\n"
+            "the Sphinx to its original glory. The museum's greatest\n"
+            "mystery has finally been solved.\n\n"
+
+            "<i><span style='color:rgba(200,160,60,200);'>"
+            "Tonight, history survives because of you."
+            "</span></i>"
+            );
+
+    story->setAlignment(
+        Qt::AlignCenter
+        );
 
     story->setWordWrap(true);
 
-    story->setTextFormat(Qt::RichText);
+    story->setTextFormat(
+        Qt::RichText
+        );
 
     story->setStyleSheet(
-        "font-size:13px;"
+        "font-size:15px;"
         "color:#e8d5a8;"
         "background:transparent;"
         "border:none;"
-        "line-height:1.7;"
+        "line-height:1.8;"
         );
 
     //================ DIVIDER =================//
 
-    QFrame* line = new QFrame();
+    QFrame* line =
+        new QFrame();
 
-    line->setFrameShape(QFrame::HLine);
+    line->setFrameShape(
+        QFrame::HLine
+        );
 
     line->setFixedHeight(1);
 
@@ -839,71 +880,201 @@ void Level3::showVictoryPopup()
         "border:none;"
         );
 
-    //================ BUTTON STYLE =================//
-
-    QString btnBase =
-        "QPushButton {"
-        "  font-size:15px;"
-        "  font-weight:bold;"
-        "  letter-spacing:3px;"
-        "  border-radius:10px;"
-        "  padding:14px;"
-        "  color:#fff8e7;"
-        "}"
-        "QPushButton:hover { border-color:white; color:white; }"
-        "QPushButton:pressed { background-color:rgba(100,70,10,255); }";
-
-    //================ PLAY AGAIN BUTTON =================//
-
-    QPushButton* playAgain = new QPushButton("▶   PLAY AGAIN FROM THE START");
-
-    playAgain->setFixedHeight(54);
-
-    playAgain->setCursor(Qt::PointingHandCursor);
-
-    playAgain->setStyleSheet(
-        btnBase +
-        "QPushButton { background-color:rgba(180,130,40,220); border:2px solid #c8a84b; }"
-        "QPushButton:hover { background-color:rgba(220,170,60,240); }"
-        );
-
-    //================ EXIT BUTTON =================//
-
-    QPushButton* exitBtn = new QPushButton("✕   EXIT GAME");
-
-    exitBtn->setFixedHeight(54);
-
-    exitBtn->setCursor(Qt::PointingHandCursor);
-
-    exitBtn->setStyleSheet(
-        btnBase +
-        "QPushButton { background-color:rgba(80,20,10,220); border:2px solid #8a3020; }"
-        "QPushButton:hover { background-color:rgba(140,40,20,240); }"
-        );
-
-    //================ BUTTON ROW =================//
-
-    QHBoxLayout* btnRow = new QHBoxLayout();
-
-    btnRow->setSpacing(20);
-
-    btnRow->addWidget(playAgain);
-
-    btnRow->addWidget(exitBtn);
-
     //================ ASSEMBLE =================//
 
-    layout->addWidget(badge,  0, Qt::AlignCenter);
+    layout->addWidget(
+        badge,
+        0,
+        Qt::AlignCenter
+        );
+
     layout->addWidget(title);
+
+    layout->addSpacing(10);
+
     layout->addWidget(img);
+
+    layout->addSpacing(10);
+
     layout->addWidget(story);
+
+    layout->addSpacing(14);
+
     layout->addWidget(line);
+
     layout->addStretch();
-    layout->addLayout(btnRow);
 
     card->show();
 
-    //================ PLAY AGAIN — restart from Level 1 =================//
+    //================ AUTO FINAL MENU =================//
+
+    QTimer::singleShot(
+        7000,
+        [=]()
+        {
+            overlay->deleteLater();
+
+            showFinalMenu();
+        }
+        );
+}
+void Level3::showFinalMenu()
+{
+    //================ FULL SCREEN OVERLAY =================//
+
+    QWidget* overlay =
+        new QWidget();
+
+    QRect screen =
+        QApplication::primaryScreen()->geometry();
+
+    overlay->setGeometry(screen);
+
+    overlay->setStyleSheet(
+        "background-color: rgba(0,0,0,240);"
+        );
+
+    overlay->show();
+
+    overlay->raise();
+
+    //================ BACKGROUND IMAGE =================//
+
+    QLabel* bg =
+        new QLabel(overlay);
+
+    bg->setGeometry(
+        overlay->rect()
+        );
+
+    bg->setPixmap(
+        QPixmap(":/new/prefix1/images/win.png")
+            .scaled(
+                overlay->size(),
+                Qt::KeepAspectRatioByExpanding,
+                Qt::SmoothTransformation
+                )
+        );
+
+    bg->setAlignment(
+        Qt::AlignCenter
+        );
+
+    bg->show();
+
+    //================ DARK LAYER =================//
+
+    QWidget* darkLayer =
+        new QWidget(overlay);
+
+    darkLayer->setGeometry(
+        overlay->rect()
+        );
+
+    darkLayer->setStyleSheet(
+        "background-color: rgba(0,0,0,90);"
+        );
+
+    darkLayer->show();
+
+    //================ LAYOUT =================//
+
+    QVBoxLayout* layout =
+        new QVBoxLayout(overlay);
+
+    layout->setContentsMargins(
+        40,
+        30,
+        40,
+        30
+        );
+
+    layout->setSpacing(22);
+
+    //================ TITLE =================//
+
+    QLabel* title =
+        new QLabel(
+            "THE MUSEUM IS SAFE"
+            );
+
+    title->setAlignment(
+        Qt::AlignCenter
+        );
+
+    title->setStyleSheet(
+        "font-size: 28px;"
+        "font-weight: bold;"
+        "letter-spacing: 6px;"
+        "color: #f5d060;"
+        "background: transparent;"
+        "border: none;"
+        );
+
+    //================ BUTTON STYLE =================//
+
+    QString btnStyle =
+        "QPushButton {"
+        "background-color: rgba(180,130,40,220);"
+        "color: #fff8e7;"
+        "font-size: 16px;"
+        "font-weight: bold;"
+        "letter-spacing: 3px;"
+        "border: 2px solid #c8a84b;"
+        "border-radius: 10px;"
+        "padding: 14px;"
+        "}"
+        "QPushButton:hover {"
+        "background-color: rgba(220,170,60,240);"
+        "border: 2px solid white;"
+        "}"
+        "QPushButton:pressed {"
+        "background-color: rgba(130,90,20,255);"
+        "}";
+
+    //================ PLAY AGAIN =================//
+
+    QPushButton* playAgain =
+        new QPushButton(
+            "↺   PLAY AGAIN"
+            );
+
+    playAgain->setFixedHeight(54);
+
+    playAgain->setCursor(
+        Qt::PointingHandCursor
+        );
+
+    playAgain->setStyleSheet(
+        btnStyle
+        );
+
+    //================ EXIT =================//
+
+    QPushButton* exitBtn =
+        new QPushButton(
+            "✕   EXIT GAME"
+            );
+
+    exitBtn->setFixedHeight(54);
+
+    exitBtn->setCursor(
+        Qt::PointingHandCursor
+        );
+
+    exitBtn->setStyleSheet(
+        btnStyle
+        );
+
+    //================ ASSEMBLE =================//
+
+    layout->addWidget(title);
+
+    layout->addWidget(playAgain);
+
+    layout->addWidget(exitBtn);
+
+    //================ PLAY AGAIN =================//
 
     QObject::connect(
         playAgain,
@@ -913,7 +1084,9 @@ void Level3::showVictoryPopup()
             overlay->deleteLater();
 
             if(restartCallback)
+            {
                 restartCallback();
+            }
         }
         );
 

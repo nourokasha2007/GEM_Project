@@ -63,8 +63,8 @@ void Level2::loadScene(
     addRock(
         scene,
         ":/new/prefix1/images/rock_M.png",
-        920,
-        200,
+        450,
+        650,
         0.09
         );
 

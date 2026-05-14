@@ -57,6 +57,10 @@ void Level2Enemy::loadAssets() {
 /* ================= UPDATE AI ================= */
 
 void Level2Enemy::updateAI() {
+    if(!scene())
+    {
+        return;
+    }
 
     //================ 1. ALWAYS TICK DOWN COOLDOWN ================//
 

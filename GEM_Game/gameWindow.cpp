@@ -1,4 +1,3 @@
-
 #include "gameWindow.h"
 #include <QDebug>
 #include <QPixmap>
@@ -37,10 +36,6 @@ GameWindow::GameWindow(QWidget *parent)
     setupStartScreen();
 
     setupGameScreen();
-
-    setupGameOverScreen();
-
-    setupVictoryScreen();
 
     //================ INPUT =================//
 
@@ -560,52 +555,6 @@ void GameWindow::setupGameScreen()
     setupButtons(mainLayout);
 
     stack->addWidget(gameScreen);
-}
-
-/* ================= GAME OVER SCREEN ================= */
-
-void GameWindow::setupGameOverScreen()
-{
-    gameOverScreen =
-        new QWidget();
-
-    QVBoxLayout* layout =
-        new QVBoxLayout(gameOverScreen);
-
-    QLabel* over =
-        new QLabel("GAME OVER");
-
-    over->setAlignment(
-        Qt::AlignCenter
-        );
-
-    QPushButton* restartBtn =
-        new QPushButton("RESTART");
-
-    QPushButton* exitBtn =
-        new QPushButton("EXIT");
-
-    connect(
-        restartBtn,
-        &QPushButton::clicked,
-        this,
-        &GameWindow::restartGame
-        );
-
-    connect(
-        exitBtn,
-        &QPushButton::clicked,
-        this,
-        &GameWindow::exitGame
-        );
-
-    layout->addWidget(over);
-
-    layout->addWidget(restartBtn);
-
-    layout->addWidget(exitBtn);
-
-    stack->addWidget(gameOverScreen);
 }
 /* ================= HUD ================= */
 void GameWindow::setupHUD(QVBoxLayout* mainLayout)
@@ -1166,15 +1115,23 @@ void GameWindow::showBlankScreen()
                         ghost->setPos(tx, ty);
                     }
 
-                    if (finalHit)
+                    if(finalHit)
                     {
-                        stack->setCurrentWidget(gameOverScreen);
+                        flash->deleteLater();
+
+                        showGhostGameOver();
+
+                        return;
                     }
                     else
                     {
-
                         game.resumeGame();
-                        if (ghost) ghost->setPaused(false);
+
+                        if(ghost)
+                        {
+                            ghost->setPaused(false);
+                        }
+
                         timer->start(1000);
                     }
                 });
@@ -1844,16 +1801,22 @@ void GameWindow::updateGame()
     {
         level2->updatePlayerGlow(playerSprite);
     }
-
-    if(
-        seconds <= 0 ||game.getstate() == Gamestate::gameOver)
+    if(seconds <= 0)
     {
         timer->stop();
 
-        stack->setCurrentWidget(
-            gameOverScreen
-            );
+        if(game.getLevelIndex() == 1)
+        {
+            showFireballGameOver();
+        }
+        else if(game.getLevelIndex() == 2)
+        {
+            showGhostGameOver();
+        }
+
+        return;
     }
+
 }
 
 /* ================= KEY PRESS ================= */
@@ -2075,6 +2038,251 @@ void GameWindow::showFireballGameOver()
         dimmer->deleteLater();
         exitGame();
     });
+}
+
+void GameWindow::showGhostGameOver()
+{
+    //================ STOP GAME =================//
+
+    timer->stop();
+
+    game.pauseGame();
+
+    if(ghost)
+    {
+        ghost->setPaused(true);
+    }
+
+    //================ FULL SCREEN DIM =================//
+
+    QWidget* dimmer =
+        new QWidget(this);
+
+    dimmer->setGeometry(
+        0,
+        0,
+        width(),
+        height()
+        );
+
+    dimmer->setStyleSheet(
+        "background-color: rgba(0, 0, 0, 210);"
+        );
+
+    dimmer->show();
+
+    dimmer->raise();
+
+    //================ POPUP CARD =================//
+
+    QWidget* popup =
+        new QWidget(dimmer);
+
+    popup->setFixedSize(600,420);
+
+    popup->move(
+        (dimmer->width()  - 600) / 2,
+        (dimmer->height() - 420) / 2
+        );
+
+    popup->setStyleSheet(
+        "background-color: rgba(10, 10, 25, 240);"
+        "border: 3px solid rgba(120, 180, 255, 200);"
+        "border-radius: 16px;"
+        );
+
+    //================ LAYOUT =================//
+
+    QVBoxLayout* layout =
+        new QVBoxLayout(popup);
+
+    layout->setContentsMargins(
+        50,
+        40,
+        50,
+        40
+        );
+
+    layout->setSpacing(18);
+
+    //================ SOUL ICONS =================//
+
+    QLabel* souls =
+        new QLabel("👻  👻  👻");
+
+    souls->setAlignment(Qt::AlignCenter);
+
+    souls->setStyleSheet(
+        "font-size: 36px;"
+        "background: transparent;"
+        "border: none;"
+        );
+
+    //================ TITLE =================//
+
+    QLabel* title =
+        new QLabel("GAME OVER");
+
+    title->setAlignment(Qt::AlignCenter);
+
+    title->setStyleSheet(
+        "font-size: 52px;"
+        "font-weight: bold;"
+        "letter-spacing: 10px;"
+        "color: #9fd0ff;"
+        "background: transparent;"
+        "border: none;"
+        );
+
+    //================ SUBTITLE =================//
+
+    QLabel* subtitle =
+        new QLabel(
+            "You were hit 3 times by the soul of Tutankhamun!"
+            );
+
+    subtitle->setAlignment(Qt::AlignCenter);
+
+    subtitle->setWordWrap(true);
+
+    subtitle->setStyleSheet(
+        "font-size: 15px;"
+        "color: #d8ebff;"
+        "background: transparent;"
+        "border: none;"
+        "letter-spacing: 2px;"
+        );
+
+    //================ EXTRA TEXT =================//
+
+    QLabel* hitInfo =
+        new QLabel(
+            "The spirit reclaimed the sacred chamber."
+            );
+
+    hitInfo->setAlignment(Qt::AlignCenter);
+
+    hitInfo->setStyleSheet(
+        "font-size: 13px;"
+        "color: rgba(180,220,255,200);"
+        "font-style: italic;"
+        "background: transparent;"
+        "border: none;"
+        );
+
+    //================ BUTTON STYLE =================//
+
+    QString btnStyle =
+        "QPushButton {"
+        "  background-color: rgba(70,110,180,220);"
+        "  color: #fff8e7;"
+        "  font-size: 15px;"
+        "  font-weight: bold;"
+        "  letter-spacing: 3px;"
+        "  border: 2px solid #9fd0ff;"
+        "  border-radius: 8px;"
+        "  padding: 14px;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: rgba(110,160,240,240);"
+        "  border: 2px solid #ffffff;"
+        "  color: #ffffff;"
+        "}"
+        "QPushButton:pressed {"
+        "  background-color: rgba(40,70,130,255);"
+        "}";
+
+    //================ TRY AGAIN =================//
+
+    QPushButton* restartBtn =
+        new QPushButton(
+            "↺   TRY AGAIN"
+            );
+
+    restartBtn->setFixedHeight(52);
+
+    restartBtn->setCursor(
+        Qt::PointingHandCursor
+        );
+
+    restartBtn->setStyleSheet(btnStyle);
+
+    //================ EXIT =================//
+
+    QPushButton* exitBtn =
+        new QPushButton(
+            "✕   EXIT GAME"
+            );
+
+    exitBtn->setFixedHeight(52);
+
+    exitBtn->setCursor(
+        Qt::PointingHandCursor
+        );
+
+    exitBtn->setStyleSheet(
+        "QPushButton {"
+        "  background-color: rgba(40,50,90,220);"
+        "  color: #fff8e7;"
+        "  font-size: 15px;"
+        "  font-weight: bold;"
+        "  letter-spacing: 3px;"
+        "  border: 2px solid #4d6fb3;"
+        "  border-radius: 8px;"
+        "  padding: 14px;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: rgba(70,90,150,240);"
+        "}"
+        );
+
+    //================ ADD =================//
+
+    layout->addWidget(souls);
+
+    layout->addWidget(title);
+
+    layout->addWidget(subtitle);
+
+    layout->addWidget(hitInfo);
+
+    layout->addStretch();
+
+    layout->addWidget(restartBtn);
+
+    layout->addWidget(exitBtn);
+
+    popup->show();
+
+    //================ TRY AGAIN =================//
+
+    connect(
+        restartBtn,
+        &QPushButton::clicked,
+        this,
+        [=]()
+        {
+            dimmer->deleteLater();
+
+            rocksCollected = 0;
+
+            restartGame();
+        }
+        );
+
+    //================ EXIT =================//
+
+    connect(
+        exitBtn,
+        &QPushButton::clicked,
+        this,
+        [=]()
+        {
+            dimmer->deleteLater();
+
+            exitGame();
+        }
+        );
 }
 
 /* ================= PAUSE GAME ================= */
@@ -2425,12 +2633,12 @@ void GameWindow::showLevel2BriefingPopup()
         new QLabel(
             "<span style='color:#c8a84b; font-weight:bold; font-size:15px;'>NEW OBJECTIVE</span><br><br>"
 
-            "The vault contains <b>3 Sacred Stones</b>, each carved "
+            "The vault contains <b>5 Sacred Stones</b>, each carved "
             "with an ancient hieroglyph — a symbol whose meaning "
             "has been lost to time.<br><br>"
 
             "The stones have been scattered across the chamber. "
-            "<b>Collect all three</b> to reveal their secret.<br><br>"
+            "<b>Collect all five</b> to reveal their secret.<br><br>"
 
             "<span style='color:#f5d060;'>&#9656;</span> "
             "The room is <b>pitch black</b> — trust your torch.<br><br>"
@@ -2475,7 +2683,7 @@ void GameWindow::showLevel2BriefingPopup()
 
     QPushButton* enterBtn =
         new QPushButton(
-            "▶   ENTER THE ROOM OF TUTANKHAMUN"
+            "▶   ENTER THE ROOM OF TUTANKHAMUN "
             );
 
     enterBtn->setFixedHeight(58);
@@ -2537,6 +2745,11 @@ void GameWindow::showLevel2BriefingPopup()
 
             game.loadLevel(2);
 
+            rocksCollected = 0;
+            updateInventoryUI();
+            updateLevel2HUD();
+            seconds = 180;
+            timer->start(1000);
             currentLevel =
                 game.getCurrentLevel();
 
@@ -2555,7 +2768,19 @@ void GameWindow::showLevel2BriefingPopup()
             ghost->setZValue(999);
 
             scene->addItem(ghost);
+            connect(
+                ghost,
+                &Level2Enemy::reduceSpeed,
+                this,
+                &GameWindow::handleGhostStrike
+                );
 
+            connect(
+                ghost,
+                &Level2Enemy::ghostScreech,
+                this,
+                &GameWindow::showGhostGameOver
+                );
             //================ PLAYER =================//
 
             playerSprite =scene->addPixmap(spriteFront);
@@ -2564,64 +2789,147 @@ void GameWindow::showLevel2BriefingPopup()
             playerSprite->setScale(0.12);
 
             playerSprite->setPos(500,720);
-                stack->setCurrentWidget(gameScreen);
+            stack->setCurrentWidget(gameScreen);
 
-                this->setFocus();
-            }
-
-            );
+            this->setFocus();
+        }
+        );
 }
 
 /* ================= RESTART ================= */
 
 void GameWindow::restartGame()
 {
+    //================ STOP TIMER =================//
+
     timer->stop();
 
+    //================ STOP MUSIC =================//
 
-    //================ RESTART MUSIC ================//
-
-    if (startMusic) {
+    if(startMusic)
+    {
         startMusic->stop();
     }
 
-    if (horrorMusic) {
+    if(horrorMusic)
+    {
         horrorMusic->stop();
         horrorMusic->setVolume(0.5);
     }
 
-    if (level3Music) {
+    if(level3Music)
+    {
         level3Music->stop();
         level3Music->setVolume(0.5);
     }
 
-    if (game.getLevelIndex() == 1) {
-        if (startMusic) {
+    //================ PLAY CURRENT LEVEL MUSIC =================//
+
+    if(game.getLevelIndex() == 1)
+    {
+        if(startMusic)
+        {
             startMusic->play();
         }
-    } else if (game.getLevelIndex() == 2) {
-        if (horrorMusic) {
+    }
+
+    else if(game.getLevelIndex() == 2)
+    {
+        if(horrorMusic)
+        {
             horrorMusic->play();
         }
-    } else if (game.getLevelIndex() == 3) {
-        if (level3Music) {
+    }
+
+    else if(game.getLevelIndex() == 3)
+    {
+        if(level3Music)
+        {
             level3Music->play();
         }
     }
-    //================ CLEAR SCENE ================//
+
+    //================ CLEAR SCENE =================//
 
     scene->clear();
 
-    //================ RESET GAME =================//
+    //================ RESET POINTERS =================//
 
-    game.restartGame();
+    playerSprite = nullptr;
 
-    game.loadLevel(game.getLevelIndex());
+    mummy = nullptr;
 
-    currentLevel = game.getCurrentLevel();
+    ghost = nullptr;
+
+    //================ RESET PLAYER =================//
+
+    game.getPlayer().reset();
+
+    //================ RELOAD CURRENT LEVEL =================//
+
+    game.loadLevel(
+        game.getLevelIndex()
+        );
+
+    currentLevel =
+        game.getCurrentLevel();
 
     currentLevel->loadScene(scene);
-    //================ RECREATE ENEMY =================//
+
+    //================ LOAD PLAYER SPRITES =================//
+
+    spriteFront =
+        QPixmap(":/new/prefix1/images/player front.png");
+
+    spriteBack =
+        QPixmap(":/new/prefix1/images/player back.png");
+
+    spriteLeft =
+        QPixmap(":/new/prefix1/images/player left.png");
+
+    spriteRight =
+        QPixmap(":/new/prefix1/images/player right.png");
+
+    //================ CREATE PLAYER =================//
+
+    playerSprite =
+        scene->addPixmap(spriteFront);
+
+    playerSprite->setScale(0.12);
+
+    //================ LEVEL POSITIONS =================//
+
+    if(game.getLevelIndex() == 1)
+    {
+        playerSprite->setPos(120,620);
+
+        game.getPlayer().moveTo(
+            120,
+            620
+            );
+    }
+
+    else if(game.getLevelIndex() == 2)
+    {
+        playerSprite->setPos(500,720);
+
+        game.getPlayer().moveTo(
+            500,
+            720
+            );
+    }
+
+    else if(game.getLevelIndex() == 3)
+    {
+        playerSprite->setPos(605,816);
+
+        game.getPlayer().moveTo(
+            605,
+            810
+            );
+    }
+
+    //================ LEVEL 1 ENEMY =================//
 
     if(game.getLevelIndex() == 1)
     {
@@ -2631,7 +2939,7 @@ void GameWindow::restartGame()
                 playerSprite
                 );
 
-        mummy->setPos(800, 500);
+        mummy->setPos(800,500);
 
         mummy->setZValue(999);
 
@@ -2648,45 +2956,94 @@ void GameWindow::restartGame()
                 updateHUD();
             }
             );
+
+        connect(
+            mummy,
+            &Level1Enemy::playerKilled,
+            this,
+            &GameWindow::showFireballGameOver
+            );
     }
 
-    //================ RELOAD SPRITES ================//
+    //================ LEVEL 2 GHOST =================//
 
-    spriteFront =
-        QPixmap(":/new/prefix1/images/player front.png");
+    else if(game.getLevelIndex() == 2)
+    {
+        rocksCollected = 0;
 
-    spriteBack =
-        QPixmap(":/new/prefix1/images/player back.png");
+        updateLevel2HUD();
 
-    spriteLeft =
-        QPixmap(":/new/prefix1/images/player left.png");
+        ghost =
+            new Level2Enemy(
+                &game.getPlayer(),
+                playerSprite
+                );
 
-    spriteRight =
-        QPixmap(":/new/prefix1/images/player right.png");
+        ghost->setPos(700,400);
 
-    //================ RECREATE PLAYER =================//
+        ghost->setZValue(999);
 
-    playerSprite =
-        scene->addPixmap(spriteFront);
+        scene->addItem(ghost);
 
-    playerSprite->setScale(0.12);
+        connect(
+            ghost,
+            &Level2Enemy::reduceSpeed,
+            this,
+            &GameWindow::handleGhostStrike
+            );
 
-    playerSprite->setPos(
-        game.getPlayer().getX(),
-        game.getPlayer().getY()
-        );
+        connect(
+            ghost,
+            &Level2Enemy::ghostScreech,
+            this,
+            &GameWindow::showGhostGameOver
+            );
+    }
 
-    //================ RESET TIMER ================//
+    //================ LEVEL 3 =================//
 
-    seconds = 300;
+    else if(game.getLevelIndex() == 3)
+    {
+        Level3* lvl3 =
+            dynamic_cast<Level3*>(currentLevel);
+
+        if(lvl3)
+        {
+            lvl3->setRestartCallback(
+                [=]()
+                {
+                    rocksCollected = 0;
+
+                    game.loadLevel(1);
+
+                    restartGame();
+                }
+                );
+        }
+    }
+
+    //================ TIMER =================//
+
+    if(game.getLevelIndex() == 2)
+    {
+        seconds = 180;
+    }
+    else
+    {
+        seconds = 300;
+    }
 
     timer->start(1000);
 
-    //================ UPDATE UI ================//
+    //================ UPDATE UI =================//
 
     updateInventoryUI();
 
     updateHUD();
+
+    updateLevel2HUD();
+
+    //================ SHOW GAME SCREEN =================//
 
     stack->setCurrentWidget(
         gameScreen
@@ -2694,16 +3051,6 @@ void GameWindow::restartGame()
 
     this->setFocus();
 }
-
-/* ================= EXIT ================= */
-
-void GameWindow::exitGame()
-{
-    game.exitGame();
-
-    close();
-}
-
 //=================SAVE=====================//
 void GameWindow::saveGame()
 {
@@ -2744,331 +3091,26 @@ void GameWindow::resizeEvent(
 {
     QMainWindow::resizeEvent(event);
 }
-//===============Treasure==================//
-void GameWindow::showTreasureRecoveredPopup()
+void GameWindow::mousePressEvent(QMouseEvent *event)
 {
-    timer->stop();
-
-    QWidget* dimmer =
-        new QWidget(this);
-
-    dimmer->setGeometry(
-        0,
-        0,
-        width(),
-        height()
-        );
-
-    dimmer->setStyleSheet(
-        "background-color:rgba(0,0,0,220);"
-        );
-
-    dimmer->show();
-
-    dimmer->raise();
-
-    //================ POPUP =================//
-
-    QWidget* popup =
-        new QWidget(dimmer);
-
-    popup->setFixedSize(760,560);
-
-    popup->move(
-        (dimmer->width()-760)/2,
-        (dimmer->height()-560)/2
-        );
-
-    popup->setStyleSheet(
-        "background-color:rgba(5,3,0,245);"
-        "border:2px solid rgba(200,160,60,220);"
-        "border-radius:16px;"
-        );
-
-    //================ LAYOUT =================//
-
-    QVBoxLayout* layout =
-        new QVBoxLayout(popup);
-
-    layout->setContentsMargins(
-        40,
-        30,
-        40,
-        30
-        );
-
-    layout->setSpacing(18);
-
-    //================ TITLE =================//
-
-    QLabel* title =
-        new QLabel(
-            "THE FINAL VAULT HAS BEEN OPENED"
+    QPoint viewPos =
+        view->mapFrom(
+            this,
+            event->pos()
             );
 
-    title->setAlignment(Qt::AlignCenter);
+    QPointF scenePos =
+        view->mapToScene(viewPos);
 
-    title->setStyleSheet(
-        "font-size:24px;"
-        "font-weight:bold;"
-        "letter-spacing:4px;"
-        "color:#f5d060;"
-        "background:transparent;"
-        "border:none;"
-        );
-
-    //================ IMAGE =================//
-
-    QLabel* image =
-        new QLabel();
-
-    image->setPixmap(
-        QPixmap(
-            ":/new/prefix1/images/opened_treasure.png"
-            ).scaled(
-                420,
-                320,
-                Qt::KeepAspectRatio,
-                Qt::SmoothTransformation
-                )
-        );
-
-    image->setAlignment(Qt::AlignCenter);
-
-    image->setStyleSheet(
-        "background:transparent;"
-        "border:none;"
-        );
-
-    //================ TEXT =================//
-
-    QLabel* text =
-        new QLabel(
-            "The sacred relic of Tutankhamun has finally been recovered.<br><br>"
-
-            "For centuries it remained hidden beneath the sands of time.<br><br>"
-
-            "Tonight, history survives because of you."
-            );
-
-    text->setWordWrap(true);
-
-    text->setAlignment(Qt::AlignCenter);
-
-    text->setStyleSheet(
-        "font-size:14px;"
-        "color:#e8d5a8;"
-        "background:transparent;"
-        "border:none;"
-        "line-height:1.7;"
-        );
-
-    //================ BUTTON =================//
-
-    QPushButton* continueBtn =
-        new QPushButton(
-            "▶   CONTINUE"
-            );
-
-    continueBtn->setFixedHeight(54);
-
-    continueBtn->setCursor(Qt::PointingHandCursor);
-
-    continueBtn->setStyleSheet(
-        "QPushButton {"
-        " background-color:rgba(180,130,40,220);"
-        " color:#fff8e7;"
-        " font-size:15px;"
-        " font-weight:bold;"
-        " letter-spacing:3px;"
-        " border:2px solid #c8a84b;"
-        " border-radius:8px;"
-        "}"
-        "QPushButton:hover {"
-        " background-color:rgba(220,170,60,240);"
-        " border:2px solid #fff;"
-        "}"
-        );
-
-    //================ ADD =================//
-
-    layout->addWidget(title);
-
-    layout->addWidget(image);
-
-    layout->addWidget(text);
-
-    layout->addStretch();
-
-    layout->addWidget(
-        continueBtn,
-        0,
-        Qt::AlignCenter
-        );
-
-    popup->show();
-
-    //================ CONTINUE =================//
-
-    connect(
-        continueBtn,
-        &QPushButton::clicked,
-        this,
-        [=]()
-        {
-            dimmer->deleteLater();
-
-            showVictoryScreen();
-        }
-        );
+    qDebug()
+        << "X:"
+        << scenePos.x()
+        << "Y:"
+        << scenePos.y();
 }
-
-void GameWindow::setupVictoryScreen()
+void GameWindow::exitGame()
 {
-    victoryScreen =
-        new QWidget();
+    game.exitGame();
 
-    victoryScreen->setStyleSheet(
-        "background-image:url(:/new/prefix1/images/victory_background.png);"
-        "background-position:center;"
-        "background-repeat:no-repeat;"
-        "background-color:black;"
-        );
-
-    QVBoxLayout* layout =
-        new QVBoxLayout(victoryScreen);
-
-    layout->setAlignment(Qt::AlignCenter);
-
-    layout->setSpacing(18);
-
-    //================ TITLE =================//
-
-    QLabel* title =
-        new QLabel(
-            "HERITAGE PROTECTED"
-            );
-
-    title->setAlignment(Qt::AlignCenter);
-
-    title->setStyleSheet(
-        "font-size:38px;"
-        "font-weight:bold;"
-        "letter-spacing:6px;"
-        "color:#f5d060;"
-        "background:transparent;"
-        );
-
-    //================ SUBTITLE =================//
-
-    QLabel* subtitle =
-        new QLabel(
-            "The museum is safe once more."
-            );
-
-    subtitle->setAlignment(Qt::AlignCenter);
-
-    subtitle->setStyleSheet(
-        "font-size:16px;"
-        "color:#f5d8a0;"
-        "background:transparent;"
-        );
-
-    //================ SCORE =================//
-
-    QLabel* score =
-        new QLabel(
-            "Final Score: "
-            + QString::number(
-                game.getPlayer().getScore()
-                )
-            );
-
-    score->setAlignment(Qt::AlignCenter);
-
-    score->setStyleSheet(
-        "font-size:20px;"
-        "font-weight:bold;"
-        "color:white;"
-        "background:transparent;"
-        );
-
-    //================ BUTTON STYLE =================//
-
-    QString buttonStyle =
-        "QPushButton {"
-        " background-color:rgba(180,130,40,220);"
-        " color:#fff8e7;"
-        " font-size:16px;"
-        " font-weight:bold;"
-        " letter-spacing:3px;"
-        " border:2px solid #c8a84b;"
-        " border-radius:8px;"
-        " padding:14px 30px;"
-        "}"
-        "QPushButton:hover {"
-        " background-color:rgba(220,170,60,240);"
-        " border:2px solid white;"
-        "}";
-
-    //================ BUTTONS =================//
-
-    QPushButton* replayBtn =
-        new QPushButton(
-            "▶   PLAY AGAIN"
-            );
-
-    QPushButton* exitBtn =
-        new QPushButton(
-            "✕   EXIT"
-            );
-
-    replayBtn->setStyleSheet(buttonStyle);
-
-    exitBtn->setStyleSheet(buttonStyle);
-
-    replayBtn->setFixedSize(260,58);
-
-    exitBtn->setFixedSize(260,58);
-
-    connect(
-        replayBtn,
-        &QPushButton::clicked,
-        this,
-        &GameWindow::restartGame
-        );
-
-    connect(
-        exitBtn,
-        &QPushButton::clicked,
-        this,
-        &GameWindow::exitGame
-        );
-
-    //================ ADD =================//
-
-    layout->addStretch();
-
-    layout->addWidget(title);
-
-    layout->addWidget(subtitle);
-
-    layout->addSpacing(14);
-
-    layout->addWidget(score);
-
-    layout->addSpacing(30);
-
-    layout->addWidget(replayBtn,0,Qt::AlignCenter);
-
-    layout->addWidget(exitBtn,0,Qt::AlignCenter);
-
-    layout->addStretch();
-
-    stack->addWidget(victoryScreen);
-}
-
-void GameWindow::showVictoryScreen()
-{
-    stack->setCurrentWidget(victoryScreen);
+    close();
 }

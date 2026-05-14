@@ -166,6 +166,7 @@ private:
     void showTreasurePopup();
 
     void showVictoryPopup();
+    void showFinalMenu();
 };
 
 #endif

@@ -20,7 +20,7 @@
 #include "game.h"
 #include "level1enemy.h"
 #include "level2enemy.h"
-
+#include <QMouseEvent>
 
 class GameWindow : public QMainWindow
 {
@@ -33,6 +33,7 @@ public:
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
 private slots:
 
@@ -56,6 +57,7 @@ private:
 
     //================ GAME =================//
     void showFireballGameOver();
+   void showGhostGameOver();
     Game game;
 
     Level* currentLevel;
@@ -184,9 +186,6 @@ private:
 
     void updateLevel2HUD();
     void setupHieroglyphScreen();
-    void setupVictoryScreen();
-    void showTreasureRecoveredPopup();
-    void showVictoryScreen();
 
 };
 
