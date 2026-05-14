@@ -1155,8 +1155,8 @@ void GameWindow::showBlankScreen()
                         const double py = game.getPlayer().getY();
 
 
-                        double tx = px + 10;
-                        double ty = py + 10;
+                        double tx = px + 400;
+                        double ty = py + 400;
 
                         ghost->setPos(tx, ty);
                     }
