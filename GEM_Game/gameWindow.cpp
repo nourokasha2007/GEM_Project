@@ -749,23 +749,24 @@ void GameWindow::setupLevel2HUD()
 
     //================ ROCK 4 =================//
 
-    rock3Slot = new QLabel();
+    rock4Slot = new QLabel();
 
-    rock3Slot->setFixedSize(55,55);
+    rock4Slot->setFixedSize(55,55);
 
-    rock3Slot->setAlignment(Qt::AlignCenter);
+    rock4Slot->setAlignment(Qt::AlignCenter);
 
-    rock3Slot->setStyleSheet(slotStyle);
+    rock4Slot->setStyleSheet(slotStyle);
 
     //================ ROCK 5 =================//
 
-    rock3Slot = new QLabel();
+    rock5Slot = new QLabel();
 
-    rock3Slot->setFixedSize(55,55);
+    rock5Slot->setFixedSize(55,55);
 
-    rock3Slot->setAlignment(Qt::AlignCenter);
+    rock5Slot->setAlignment(Qt::AlignCenter);
 
-    rock3Slot->setStyleSheet(slotStyle);
+    rock5Slot->setStyleSheet(slotStyle);
+
 
     //================ ROCK ROW =================//
 
@@ -1796,17 +1797,20 @@ void GameWindow::showHieroglyphScreen()
 
 void GameWindow::updateGame()
 {
+    // Only run game logic while the actual game screen is visible.
+    if (stack && stack->currentWidget() != gameScreen)
+        return;
+
+    if (!currentLevel || !playerSprite)
+        return;
+
     seconds--;
-
     updateHUD();
-
     //================ LEVEL 2 HUD =================//
-
     updateLevel2HUD();
-
     //================ GAME LOGIC =================//
-
     game.update(1.0f);
+
 
     //================ LEVEL 2 LIGHT =================//
 
