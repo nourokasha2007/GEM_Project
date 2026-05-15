@@ -1,6 +1,7 @@
 #include "gameWindow.h"
 #include <QDebug>
 #include <QPixmap>
+#include <QRandomGenerator>
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>
@@ -106,6 +107,100 @@ void GameWindow::setupStartScreen()
 
     startScreen->setObjectName(
         "startScreen"
+        );
+
+    //================ AMBIENT PARTICLES =================//
+
+    startScreenParticles.clear();
+
+    startParticleVelocities.clear();
+
+    for (
+        int i =
+        0;
+        i < 18;
+        ++i
+        )
+    {
+        QLabel *particleLabel =
+            new QLabel(
+                QStringLiteral(
+                    "\u2726"
+                    ),
+                startScreen
+                );
+
+        particleLabel->setStyleSheet(
+            "color:rgba(200,160,60,120);"
+            " font-size:14px;"
+            " background:transparent;"
+            );
+
+        particleLabel->resize(
+            20,
+            20
+            );
+
+        particleLabel->move(
+            50
+                + QRandomGenerator::global()->bounded(
+                    1200
+                    ),
+            100
+                + QRandomGenerator::global()->bounded(
+                    700
+                    )
+            );
+
+        particleLabel->show();
+
+        startScreenParticles.append(
+            particleLabel
+            );
+
+        int vx =
+            QRandomGenerator::global()->bounded(
+                7
+                )
+            - 3;
+
+        int vy =
+            QRandomGenerator::global()->bounded(
+                7
+                )
+            - 3;
+
+        if(
+            vx == 0
+            && vy == 0
+            )
+        {
+            vy =
+                2;
+        }
+
+        startParticleVelocities.append(
+            QPoint(
+                vx,
+                vy
+                )
+            );
+    }
+
+    startParticleTimer =
+        new QTimer(
+            this
+            );
+
+    connect(
+        startParticleTimer,
+        &QTimer::timeout,
+        this,
+        &GameWindow::tickStartScreenParticles
+        );
+
+    startParticleTimer->start(
+        45
         );
 
     //================ DARK OVERLAY =================//
@@ -276,6 +371,70 @@ void GameWindow::setupStartScreen()
 
     stack->addWidget(startScreen);
 }
+/* ================= START SCREEN PARTICLES ================= */
+
+void GameWindow::tickStartScreenParticles()
+{
+    if( !stack|| stack->currentWidget() != startScreen || !startScreen )
+    {
+        return;
+    }
+
+    const QRect bounds =
+        startScreen->contentsRect();
+
+    for( int i = 0;i < startScreenParticles.size();++i)
+    {
+        QLabel* lab =
+            startScreenParticles.at(i);
+
+        QPoint v =
+            startParticleVelocities.at(i);
+
+        QPoint p =
+            lab->pos();
+
+        //================ MOVE DOWNWARD =================//
+
+        p.setX( p.x() + v.x());
+
+        p.setY(p.y() + v.y());
+
+        //================ SOFT SIDE DRIFT =================//
+
+        int drift =
+            QRandomGenerator::global()->bounded(-1, 2);
+
+        p.setX( p.x() + drift);
+
+        //================ RESET TO TOP =================//
+
+        if(p.y() > bounds.bottom())
+        {
+            p.setY(bounds.top() - lab->height() );
+
+            p.setX( QRandomGenerator::global()->bounded( bounds.width() ) );
+        }
+
+        //================ WRAP SIDE EDGES =================//
+
+        if(p.x() < bounds.left())
+        {
+            p.setX(bounds.right());
+        }
+
+        if(p.x() > bounds.right())
+        {
+            p.setX(bounds.left());
+        }
+
+        startParticleVelocities[i] =
+            v;
+
+        lab->move(p);
+    }
+}
+
 /* ================= BRIEFING POPUP ================= */
 void GameWindow::showBriefingPopup(const QString &playerName)
 {
@@ -1343,6 +1502,21 @@ void GameWindow::updateHUD()
             )
         );
 
+    //================ LEVEL 2 — USE level2HUD ONLY =================//
+
+    if(game.getLevelIndex() == 2)
+    {
+        clockLabel->hide();
+
+        scoreLabel->hide();
+    }
+    else
+    {
+        clockLabel->show();
+
+        scoreLabel->show();
+    }
+
     if (livesLabel) {
         const int idx = game.getLevelIndex();
         if (idx == 3) {
@@ -1617,6 +1791,15 @@ void GameWindow::showHieroglyphScreen()
 {
     timer->stop();
 
+    game.pauseGame();
+
+    if(ghost)
+    {
+        ghost->setPaused(
+            true
+            );
+    }
+
     if (level2HUD) {
         level2HUD->hide();
     }
@@ -1777,6 +1960,8 @@ void GameWindow::showHieroglyphScreen()
 
             dimmer->deleteLater();
 
+            game.resumeGame();
+
             //================ LOAD LEVEL 3 =================//
 
             game.loadLevel(3);
@@ -1920,6 +2105,18 @@ void GameWindow::keyPressEvent(
 {
     if(stack->currentWidget() != gameScreen)
         return;
+
+    if(
+        game.getstate()
+        != Gamestate::playing
+        )
+    {
+        QMainWindow::keyPressEvent(
+            event
+            );
+
+        return;
+    }
 
     if (event->key() == Qt::Key_Escape) {
         pauseGame();
@@ -2397,6 +2594,13 @@ void GameWindow::pauseGame()
     if(mummy)
     {
         mummy->setPaused(true);
+    }
+
+    if(ghost)
+    {
+        ghost->setPaused(
+            true
+            );
     }
 
     timer->stop();
@@ -2962,6 +3166,7 @@ void GameWindow::restartGame()
         level3Music->stop();
     }
     if (startMusic) {
+        startMusic->stop();
         startMusic->play();
     }
 

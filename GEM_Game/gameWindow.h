@@ -21,6 +21,8 @@
 #include "level1enemy.h"
 #include "level2enemy.h"
 #include <QMouseEvent>
+#include <QList>
+#include <QPoint>
 
 class GameWindow : public QMainWindow
 {
@@ -50,6 +52,8 @@ private slots:
     void showBriefingPopup(const QString &playerName);
 
     void handleGhostStrike();
+
+    void tickStartScreenParticles();
 
     // void showBlankScreen();
 
@@ -110,6 +114,13 @@ private:
     QLabel* bgOverlay;
 
     QLineEdit* guestNameEdit;
+
+    QList<QLabel*> startScreenParticles;
+
+    QList<QPoint> startParticleVelocities;
+
+    QTimer* startParticleTimer = nullptr;
+
     QWidget* level2HUD;
 
     QLabel* level2ScoreLabel;
